@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Paiement réussi 🎉</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .success-page { min-height: 100svh; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .success-card { background: #fff; border-radius: var(--r-2xl); padding: 3.5rem 2rem; max-width: 460px; width: 100%; text-align: center; box-shadow: var(--sh-xl); }
+    .success-icon { font-size: 4rem; margin-bottom: 1.5rem; animation: popIn .5s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-title { font-family: var(--font-serif); font-style: italic; font-size: 2rem; color: var(--green-dark); margin-bottom: .875rem; }
+    .success-desc { font-size: var(--text-base); color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem; }
+    .success-plan-badge { display: inline-flex; align-items: center; gap: .5rem; background: var(--green-pale); color: var(--green-dark); font-weight: 800; font-size: var(--text-sm); padding: .5rem 1.25rem; border-radius: var(--r-full); margin-bottom: 2rem; }
+    .success-loading { display: flex; align-items: center; gap: .75rem; justify-content: center; font-size: var(--text-sm); color: var(--text-muted); margin-bottom: 1.5rem; }
+    .success-spinner { width: 20px; height: 20px; border: 2.5px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .success-error { display: none; background: var(--orange-light); color: #8a4a00; border-radius: var(--r-md); padding: 1rem; font-size: var(--text-sm); margin-top: 1rem; }
+  </style>
+</head>
+<body class="success-page">
+
+<div class="success-card">
+  <div class="success-icon">🎉</div>
+  <h1 class="success-title">Paiement confirmé !</h1>
+  <p class="success-desc">Votre abonnement Brocoli.fit est actif. L'IA prépare maintenant votre programme personnalisé…</p>
+
+  <div class="success-plan-badge" id="planBadge">
+    <span>⭐</span> <span id="planName">Plan activé</span>
+  </div>
+
+  <div class="success-loading" id="loadingMsg">
+    <div class="success-spinner"></div>
+    <span>Vérification du paiement en cours…</span>
+  </div>
+
+  <div class="success-error" id="errorBox">
+    <strong>⚠️</strong> <span id="errorMsg">Une erreur est survenue.</span>
+    <div style="margin-top:.75rem">
+      <a href="index.html" class="btn btn-secondary btn-sm">Retour à l'accueil</a>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const params     = new URLSearchParams(window.location.search);
+  const sessionId  = params.get('session_id');
+  const plan       = params.get('plan');
+
+  const planLabels = { essential: '✅ Plan Essentiel activé', premium: '⭐ Plan Premium activé' };
+  const planEl     = document.getElementById('planName');
+  if (planEl && plan) planEl.textContent = planLabels[plan] || 'Plan activé';
+
+  if (!sessionId) {
+    showError('Paramètre session_id manquant.');
+    return;
+  }
+
+  try {
+    const res  = await fetch(`/api/verify-session?session_id=${sessionId}`);
+    const data = await res.json();
+
+    if (data.success && data.plan) {
+      // Store subscription in localStorage
+      const sub = {
+        plan:           data.plan,
+        paidAt:         new Date().toISOString(),
+        sessionId,
+        customerId:     data.customerId     || null,
+        subscriptionId: data.subscriptionId || null,
+        email:          data.email          || null,
+      };
+      localStorage.setItem('brocoliSubscription', JSON.stringify(sub));
+
+      // Update profile with correct plan
+      const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+      profile.selectedPlan = data.plan;
+      localStorage.setItem('brocoliProfile', JSON.stringify(profile));
+      localStorage.setItem('brocoliSelectedPlan', data.plan);
+
+      document.getElementById('loadingMsg').innerHTML =
+        '<span style="color:var(--green-dark);font-weight:800">✅ Paiement vérifié — redirection…</span>';
+
+      setTimeout(() => {
+        // If profile exists, go to analysis; otherwise questionnaire
+        const hasProfile = profile.profil;
+        window.location.href = hasProfile ? 'analyse.html' : `questionnaire.html?plan=${data.plan}`;
+      }, 1500);
+
+    } else {
+      showError(`Statut du paiement : ${data.success ? 'en attente' : 'non confirmé'}. Contactez le support si le problème persiste.`);
+    }
+  } catch (err) {
+    showError('Impossible de vérifier le paiement. Vérifiez votre connexion.');
+    console.error(err);
+  }
+
+  function showError(msg) {
+    document.getElementById('loadingMsg').style.display = 'none';
+    const box = document.getElementById('errorBox');
+    document.getElementById('errorMsg').textContent = msg;
+    box.style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

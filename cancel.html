@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Paiement annulé</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .cancel-page { min-height: 100svh; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+    .cancel-card { background: #fff; border-radius: var(--r-2xl); padding: 3.5rem 2rem; max-width: 440px; width: 100%; text-align: center; box-shadow: var(--sh-xl); }
+    .cancel-icon  { font-size: 3.5rem; margin-bottom: 1.5rem; }
+    .cancel-title { font-family: var(--font-serif); font-style: italic; font-size: 1.875rem; color: var(--text); margin-bottom: .875rem; }
+    .cancel-desc  { font-size: var(--text-sm); color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem; }
+    .cancel-actions { display: flex; flex-direction: column; gap: .75rem; }
+  </style>
+</head>
+<body class="cancel-page">
+
+<div class="cancel-card">
+  <div class="cancel-icon">😕</div>
+  <h1 class="cancel-title">Paiement annulé</h1>
+  <p class="cancel-desc">Aucun montant n'a été débité. Vous pouvez reprendre votre questionnaire ou choisir le plan gratuit pour commencer.</p>
+
+  <div class="cancel-actions">
+    <a href="questionnaire.html" id="backBtn" class="btn btn-primary btn-lg">Reprendre mon questionnaire</a>
+    <a href="questionnaire.html?plan=free" class="btn btn-outline btn-lg">Continuer avec le plan gratuit</a>
+    <a href="index.html#plans" class="btn btn-ghost" style="color:var(--text-muted);font-size:var(--text-sm)">Voir les plans →</a>
+  </div>
+</div>
+
+<script>
+  // If a plan was in the URL, send back to that questionnaire step
+  const plan = new URLSearchParams(window.location.search).get('plan');
+  if (plan) document.getElementById('backBtn').href = `questionnaire.html?plan=${plan}`;
+</script>
+</body>
+</html>

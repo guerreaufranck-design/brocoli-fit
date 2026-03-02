@@ -5,17 +5,21 @@
 
 const fs = require('fs');
 
-const apiKey = process.env.GEMINI_API_KEY || '';
+const apiKey      = process.env.GEMINI_API_KEY   || '';
+const supabaseUrl = process.env.SUPABASE_URL      || '';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
 
-if (!apiKey) {
-  console.warn('⚠️  GEMINI_API_KEY non défini — le site fonctionnera sans IA');
-}
+if (!apiKey)      console.warn('⚠️  GEMINI_API_KEY non défini — le site fonctionnera sans IA');
+if (!supabaseUrl) console.warn('⚠️  SUPABASE_URL non défini');
+if (!supabaseKey) console.warn('⚠️  SUPABASE_ANON_KEY non défini');
 
 const content = `// Auto-généré au build — ne pas modifier manuellement
 window.BROCOLI_CONFIG = {
-  GEMINI_API_KEY: '${apiKey}',
-  GEMINI_MODEL:   'gemini-2.5-flash',
-  GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/',
+  GEMINI_API_KEY:   '${apiKey}',
+  GEMINI_MODEL:     'gemini-2.5-flash',
+  GEMINI_API_URL:   'https://generativelanguage.googleapis.com/v1beta/models/',
+  SUPABASE_URL:     '${supabaseUrl}',
+  SUPABASE_ANON_KEY:'${supabaseKey}',
   VERSION: '1.0.0',
   DEFAULT_LANG: 'fr',
   LANGUAGES: ['fr', 'en', 'de', 'it'],

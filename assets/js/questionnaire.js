@@ -336,32 +336,55 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el) el.textContent = val;
   }
 
-  function submitQuestionnaire() {
+  async function submitQuestionnaire() {
     // Gather all data
     data.favorites   = favInput.getTags();
     data.dislikeVeg  = dvegInput.getTags();
     data.dislikeMeat = dmeatInput.getTags();
     data.dislikeOther= dotherInput.getTags();
+    data.lang        = window.I18N?.current || 'fr';
 
-    // Save profile
+    // Save profile to localStorage first
     localStorage.setItem('brocoliProfile', JSON.stringify(data));
     localStorage.setItem('brocoliSelectedPlan', data.selectedPlan);
-
-    // Set language in profile
-    data.lang = window.I18N?.current || 'fr';
 
     if (nextLabel) nextLabel.textContent = '⏳ Préparation…';
     if (nextBtn) nextBtn.disabled = true;
 
-    // Check if user is logged in
-    const user = window.AUTH?.getUser();
-    if (!user && data.selectedPlan !== 'free') {
-      // Redirect to login first
-      window.location.href = `login.html?signup=true&plan=${data.selectedPlan}&redirect=analyse.html`;
-    } else {
-      // Go to analysis
-      window.location.href = 'analyse.html';
+    // Paid plan → Stripe Checkout
+    if (data.selectedPlan !== 'free') {
+      // Check if already subscribed to this plan or higher
+      const sub = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
+      const planRank = { free: 0, essential: 1, premium: 2 };
+      if (sub && planRank[sub.plan] >= planRank[data.selectedPlan]) {
+        // Already paid — go straight to analysis
+        window.location.href = 'analyse.html';
+        return;
+      }
+
+      // Redirect to Stripe
+      try {
+        const res  = await fetch('/api/create-checkout-session', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ plan: data.selectedPlan, locale: data.lang }),
+        });
+        const json = await res.json();
+        if (json.url) {
+          window.location.href = json.url;
+        } else {
+          throw new Error(json.error || 'Erreur Stripe');
+        }
+      } catch (err) {
+        showToast?.('Erreur paiement : ' + err.message, 'error');
+        if (nextBtn) { nextBtn.disabled = false; }
+        if (nextLabel) nextLabel.textContent = '🥦 Générer mon plan — 4 semaines !';
+      }
+      return;
     }
+
+    // Free plan → go straight to analysis
+    window.location.href = 'analyse.html';
   }
 
   // Init nav
