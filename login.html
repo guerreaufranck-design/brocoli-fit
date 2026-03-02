@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Connexion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="login-page">
+
+<nav style="background:transparent;padding:1.25rem var(--pad);display:flex;align-items:center;justify-content:space-between">
+  <a href="index.html" style="font-family:var(--font-serif);font-style:italic;font-weight:600;font-size:1.75rem;color:var(--green-dark)">Brocoli<span style="font-family:var(--font-sans);font-weight:900;font-size:.7rem;color:var(--orange)">.fit</span></a>
+  <a href="index.html" class="btn btn-ghost btn-sm" data-i18n="login.back">← Retour</a>
+</nav>
+
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-hd">
+      <div style="font-size:2.5rem;margin-bottom:.75rem">🥦</div>
+      <h1 class="login-title" id="loginTitle" data-i18n="login.title">Bon retour !</h1>
+      <p class="login-desc" id="loginDesc" data-i18n="login.desc">Connectez-vous pour accéder à vos plans et suivis.</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="login-tabs">
+      <button class="login-tab active" id="tabLogin" onclick="switchTab('login')" data-i18n="login.tab">Connexion</button>
+      <button class="login-tab" id="tabRegister" onclick="switchTab('register')" data-i18n="register.tab">Créer un compte</button>
+    </div>
+
+    <!-- Login form -->
+    <div id="loginForm">
+      <div style="display:flex;flex-direction:column;gap:1.1rem">
+        <div class="form-group">
+          <label class="form-label" data-i18n="login.email">Email</label>
+          <input type="email" class="form-input" id="loginEmail" placeholder="votre@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="login.password">Mot de passe</label>
+          <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+          <a href="#" style="font-size:var(--text-xs);color:var(--green-dark);font-weight:700;margin-top:.25rem;display:inline-block" data-i18n="login.forgot">Mot de passe oublié ?</a>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="loginBtn" data-i18n="login.cta">Se connecter</button>
+      </div>
+    </div>
+
+    <!-- Register form -->
+    <div id="registerForm" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:1.1rem">
+        <div class="form-group">
+          <label class="form-label" data-i18n="reg.name">Votre prénom</label>
+          <input type="text" class="form-input" id="regName" placeholder="Marie" autocomplete="given-name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="login.email">Email</label>
+          <input type="email" class="form-input" id="regEmail" placeholder="votre@email.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="login.password">Mot de passe</label>
+          <input type="password" class="form-input" id="regPassword" placeholder="Min. 8 caractères" autocomplete="new-password">
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:.75rem">
+          <input type="checkbox" id="regTerms" style="margin-top:3px;flex-shrink:0;width:18px;height:18px;accent-color:var(--green)">
+          <label for="regTerms" style="font-size:var(--text-xs);color:var(--text-muted);cursor:pointer">
+            <span data-i18n="reg.terms1">J'accepte les </span><a href="#" style="color:var(--green-dark)" data-i18n="reg.termsLink">conditions d'utilisation</a><span data-i18n="reg.terms2"> et la </span><a href="#" style="color:var(--green-dark)" data-i18n="reg.privacyLink">politique de confidentialité</a>
+          </label>
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="registerBtn" data-i18n="reg.cta">Créer mon compte</button>
+      </div>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><span class="divider-txt" data-i18n="login.or">ou</span><div class="divider-line"></div></div>
+
+    <div style="text-align:center">
+      <p style="font-size:var(--text-sm);color:var(--text-muted)" data-i18n="login.noAccount">Pas encore de compte ?</p>
+      <a href="questionnaire.html" class="btn btn-outline btn-full btn-lg" style="margin-top:.75rem">
+        🥦 <span data-i18n="login.startFree">Commencer gratuitement</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('loginForm').style.display = isLogin ? '' : 'none';
+    document.getElementById('registerForm').style.display = isLogin ? 'none' : '';
+    document.getElementById('tabLogin').classList.toggle('active', isLogin);
+    document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+    document.getElementById('loginTitle').setAttribute('data-i18n', isLogin ? 'login.title' : 'register.title');
+    document.getElementById('loginDesc').setAttribute('data-i18n', isLogin ? 'login.desc' : 'register.desc');
+    if (window.applyI18n) applyI18n();
+  }
+  // Handle ?signup=true in URL
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('signup') === 'true') switchTab('register');
+</script>
+</body>
+</html>

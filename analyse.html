@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Analyse en cours…</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="loading-page">
+
+<div class="loading-card">
+  <div class="loading-anim">
+    <div class="loading-emoji">🥦</div>
+    <div class="loading-ring"></div>
+  </div>
+
+  <h2 class="loading-title" data-i18n="ana.title">L'IA analyse le profil…</h2>
+  <p class="loading-subtitle" id="anaSubtitle" data-i18n="ana.sub">L'IA croise les données avec les recommandations nutritionnelles de votre pays.</p>
+
+  <div class="ana-progress-wrap">
+    <div class="ana-progress-bar">
+      <div class="ana-progress-fill" id="anaProgressFill"></div>
+    </div>
+    <span class="ana-progress-pct" id="anaProgressPct">0%</span>
+  </div>
+
+  <div class="loading-steps" id="loadingSteps">
+    <div class="loading-step" id="ls1">
+      <div class="loading-step-ic">1</div>
+      <span data-i18n="ana.s1">Lecture du profil nutritionnel</span>
+    </div>
+    <div class="loading-step" id="ls2">
+      <div class="loading-step-ic">2</div>
+      <span data-i18n="ana.s2">Application des recommandations culturelles</span>
+    </div>
+    <div class="loading-step" id="ls3">
+      <div class="loading-step-ic">3</div>
+      <span data-i18n="ana.s3">Calcul des besoins caloriques & macros</span>
+    </div>
+    <div class="loading-step" id="ls4">
+      <div class="loading-step-ic">4</div>
+      <span data-i18n="ana.s4">Génération du plan sur 4 semaines</span>
+    </div>
+    <div class="loading-step" id="ls5">
+      <div class="loading-step-ic">5</div>
+      <span data-i18n="ana.s5">Vérification des allergènes & restrictions</span>
+    </div>
+  </div>
+
+  <div id="anaError" style="display:none;margin-top:1.5rem;padding:.875rem 1rem;background:var(--orange-light);border-radius:var(--r-md);font-size:var(--text-sm);color:#8a4a00;text-align:left">
+    <strong>⚠️ Erreur :</strong> <span id="anaErrorMsg"></span>
+    <div style="margin-top:.75rem"><button class="btn btn-secondary btn-sm" onclick="location.reload()">Réessayer</button></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/gemini.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+  // Start analysis when page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    // Small delay for UX
+    setTimeout(() => startAnalysis(), 600);
+  });
+
+  function startAnalysis() {
+    const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+    if (!profile || !profile.profil) {
+      window.location.href = 'questionnaire.html';
+      return;
+    }
+    // runGeminiAnalysis defined in gemini.js
+    if (typeof runGeminiAnalysis === 'function') {
+      runGeminiAnalysis(profile);
+    }
+  }
+</script>
+</body>
+</html>

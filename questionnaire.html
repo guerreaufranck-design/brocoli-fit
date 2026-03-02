@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Mon questionnaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    body { background: var(--bg); }
+
+    /* Lang selector — styles in style.css */
+
+    .medical-notice {
+      background: #EEF4FB; border: 1px solid #BFD4EF; border-radius: var(--r-lg);
+      padding: 1rem 1.25rem; display: flex; gap: .75rem; align-items: flex-start;
+      font-size: var(--text-sm); color: #1d4e89; line-height: 1.6; margin-bottom: 1.75rem;
+    }
+
+    /* Allergen grid */
+    .allergen-grid { display: flex; flex-wrap: wrap; gap: .625rem; }
+    .allergen-chip {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .5rem .9rem; background: #fff; border: 2px solid var(--border);
+      border-radius: var(--r-full); font-size: var(--text-sm); font-weight: 700;
+      cursor: pointer; transition: all var(--tf);
+    }
+    .allergen-chip:hover { border-color: var(--orange); color: #c96520; }
+    .allergen-chip.selected { background: var(--orange-light); border-color: var(--orange); color: #c96520; }
+
+    /* Health condition grid */
+    .health-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .875rem; }
+    @media(min-width:640px){ .health-grid { grid-template-columns: repeat(3,1fr); } }
+    .health-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: .5rem; padding: 1.25rem .875rem;
+      background: #fff; border: 2px solid var(--border); border-radius: var(--r-xl);
+      cursor: pointer; transition: all var(--tf);
+    }
+    .health-card:hover { border-color: var(--green); background: var(--green-pale); }
+    .health-card.selected { border-color: var(--green-dark); background: var(--green-pale); }
+    .health-icon { font-size: 1.875rem; }
+    .health-name { font-size: var(--text-sm); font-weight: 800; color: var(--text); }
+    .health-desc { font-size: var(--text-xs); color: var(--text-muted); }
+
+    /* People selector */
+    .people-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: .875rem; }
+    @media(min-width:480px){ .people-grid { grid-template-columns: repeat(4,1fr); } }
+
+    /* Budget cards */
+    .budget-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: .875rem; }
+    .budget-card {
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      gap: .25rem; padding: 1.25rem .75rem;
+      background: #fff; border: 2px solid var(--border); border-radius: var(--r-xl);
+      cursor: pointer; transition: all var(--tf);
+    }
+    .budget-card:hover { border-color: var(--green); background: var(--green-pale); }
+    .budget-card.selected { border-color: var(--green-dark); background: var(--green-pale); }
+    .budget-amount { font-size: var(--text-xl); font-weight: 900; color: var(--green-dark); }
+    .budget-label  { font-size: var(--text-xs); font-weight: 800; color: var(--text); }
+    .budget-desc   { font-size: .65rem; color: var(--text-muted); }
+
+    /* Summary page */
+    .summary-section { background: #fff; border-radius: var(--r-xl); border: 1px solid var(--border); overflow: hidden; margin-bottom: 1rem; }
+    .summary-head { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.25rem; border-bottom: 1px dashed var(--border); }
+    .summary-head-title { display: flex; align-items: center; gap: .625rem; font-size: var(--text-base); font-weight: 900; color: var(--text); }
+    .summary-edit { font-size: var(--text-sm); font-weight: 800; color: var(--green-dark); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .summary-row { display: flex; align-items: center; justify-content: space-between; padding: .875rem 1.25rem; border-bottom: 1px solid var(--border-light); }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-key { font-size: var(--text-sm); color: var(--text-muted); }
+    .summary-val { font-size: var(--text-sm); font-weight: 800; color: var(--text); text-align: right; max-width: 60%; }
+
+    .q-sub-label { font-size: .65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: .625rem; margin-top: 1.25rem; }
+
+    .cuisine-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: .75rem; }
+    @media(min-width:480px){ .cuisine-grid { grid-template-columns: repeat(4,1fr); } }
+    .cuisine-card {
+      display: flex; flex-direction: column; align-items: center; gap: .4rem;
+      padding: 1rem .75rem; background: #fff; border: 2px solid var(--border);
+      border-radius: var(--r-lg); cursor: pointer; transition: all var(--tf); text-align: center;
+    }
+    .cuisine-card:hover { border-color: var(--green); background: var(--green-pale); }
+    .cuisine-card.selected { border-color: var(--green-dark); background: var(--green-pale); }
+    .cuisine-name { font-size: var(--text-xs); font-weight: 800; color: var(--text); }
+  </style>
+</head>
+<body class="q-page">
+
+<!-- HEADER -->
+<header class="q-header">
+  <div class="q-header-inner">
+    <a href="index.html" class="logo" style="font-size:1.1rem">
+      <span style="font-family:var(--font-serif);font-style:italic;font-weight:600;color:var(--green-dark);letter-spacing:-.5px">Brocoli</span><span style="font-weight:900;font-size:.65rem;color:var(--orange)">.fit</span>
+    </a>
+    <div id="qStepLabel" class="q-step-label">Étape 1 sur 8</div>
+    <div class="lang-selector" id="langSelector">
+      <button class="lang-btn" id="langBtn" aria-label="Changer de langue"><span id="currentFlag">🇫🇷</span><span id="currentLang">FR</span><span class="lang-chevron">▾</span></button>
+      <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-option active" data-lang="fr">🇫🇷 Français</button>
+        <button class="lang-option" data-lang="en">🇬🇧 English</button>
+        <button class="lang-option" data-lang="de">🇩🇪 Deutsch</button>
+        <button class="lang-option" data-lang="it">🇮🇹 Italiano</button>
+      </div>
+    </div>
+  </div>
+  <!-- Step nav dots -->
+  <div class="q-steps-nav" id="qStepsNav"></div>
+  <!-- Progress bar -->
+  <div class="q-progress"><div class="progress-bar"><div class="progress-fill" id="qProgressFill" style="width:12.5%"></div></div></div>
+</header>
+
+<!-- BODY -->
+<main class="q-body">
+<div class="q-inner">
+
+  <!-- ===== STEP 1 : Pour qui ? ===== -->
+  <div class="q-step active" data-step="1">
+    <div class="q-step-head">
+      <div class="q-emoji">👋</div>
+      <h2 class="q-title" data-i18n="q1.title">Pour qui on crée ce plan ?</h2>
+      <p class="q-desc" data-i18n="q1.desc">Choisissez le type de profil — vous pourrez en ajouter d'autres après.</p>
+    </div>
+    <div class="option-grid" id="profileOptions">
+      <label class="option-card" data-value="bebe">
+        <input type="radio" name="profil" value="bebe">
+        <span class="option-icon">🍼</span>
+        <span class="option-title" data-i18n="p.bebe">Bébé</span>
+        <span class="option-desc" data-i18n="p.bebe.d">4 mois – 2 ans · Diversification</span>
+      </label>
+      <label class="option-card" data-value="enfant">
+        <input type="radio" name="profil" value="enfant">
+        <span class="option-icon">🎒</span>
+        <span class="option-title" data-i18n="p.enfant">Enfant</span>
+        <span class="option-desc" data-i18n="p.enfant.d">2 – 10 ans · Croissance & école</span>
+      </label>
+      <label class="option-card" data-value="ado">
+        <input type="radio" name="profil" value="ado">
+        <span class="option-icon">🎧</span>
+        <span class="option-title" data-i18n="p.ado">Adolescent</span>
+        <span class="option-desc" data-i18n="p.ado.d">10 – 16 ans · Puberté & sport</span>
+      </label>
+      <label class="option-card" data-value="famille">
+        <input type="radio" name="profil" value="famille">
+        <span class="option-icon">🏡</span>
+        <span class="option-title" data-i18n="p.famille">Famille entière</span>
+        <span class="option-desc" data-i18n="p.famille.d">Plan commun · Tous ensemble</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- ===== STEP 2 : Profil de base ===== -->
+  <div class="q-step" data-step="2">
+    <div class="q-step-head">
+      <div class="q-emoji">👤</div>
+      <h2 class="q-title" data-i18n="q2.title">Le profil de base</h2>
+      <p class="q-desc" data-i18n="q2.desc">Ces informations permettent de calibrer les besoins nutritionnels avec précision.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.25rem">
+      <div class="form-group">
+        <label class="form-label" data-i18n="q2.name">Prénom de l'enfant</label>
+        <input type="text" class="form-input" id="q_name" placeholder="Ex : Lucas, Emma…" autocomplete="off">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label" data-i18n="q2.gender">Sexe</label>
+          <div class="option-grid" id="genderOptions" style="grid-template-columns:1fr 1fr">
+            <label class="option-card" data-value="m" style="padding:1rem .75rem">
+              <input type="radio" name="genre" value="m">
+              <span class="option-icon">👦</span>
+              <span class="option-title" data-i18n="q2.boy">Garçon</span>
+            </label>
+            <label class="option-card" data-value="f" style="padding:1rem .75rem">
+              <input type="radio" name="genre" value="f">
+              <span class="option-icon">👧</span>
+              <span class="option-title" data-i18n="q2.girl">Fille</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="q2.age">Âge</label>
+          <div class="num-input-wrap">
+            <input type="number" class="num-input" id="ageVal" value="7" min="0" max="18">
+            <span class="num-input-unit" data-i18n="q2.years">ans</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label" data-i18n="q2.weight">Poids (kg)</label>
+          <div class="num-input-wrap">
+            <input type="number" class="num-input" id="weightVal" value="28" min="1" max="200" step="0.1">
+            <span class="num-input-unit">kg</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="q2.height">Taille (cm)</label>
+          <div class="num-input-wrap">
+            <input type="number" class="num-input" id="heightVal" value="128" min="30" max="250">
+            <span class="num-input-unit">cm</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="q2.objective">Objectif principal</label>
+        <div class="option-grid" id="goalOptions">
+          <label class="option-card" data-value="sante">
+            <input type="radio" name="objectif" value="sante">
+            <span class="option-icon">💚</span>
+            <span class="option-title" data-i18n="goal.sante">Manger sainement</span>
+          </label>
+          <label class="option-card" data-value="maintien">
+            <input type="radio" name="objectif" value="maintien">
+            <span class="option-icon">⚖️</span>
+            <span class="option-title" data-i18n="goal.maintien">Maintenir le poids</span>
+          </label>
+          <label class="option-card" data-value="prise">
+            <input type="radio" name="objectif" value="prise">
+            <span class="option-icon">📈</span>
+            <span class="option-title" data-i18n="goal.prise">Prendre du poids</span>
+          </label>
+          <label class="option-card" data-value="perte">
+            <input type="radio" name="objectif" value="perte">
+            <span class="option-icon">📉</span>
+            <span class="option-title" data-i18n="goal.perte">Perdre du poids</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 3 : Repas & goûts préférés ===== -->
+  <div class="q-step" data-step="3">
+    <div class="q-step-head">
+      <div class="q-emoji">😋</div>
+      <h2 class="q-title" data-i18n="q3.title">Ce qu'il aime manger</h2>
+      <p class="q-desc" data-i18n="q3.desc">Tapez un aliment et appuyez sur Entrée pour l'ajouter. L'IA favorisera ces aliments dans les menus.</p>
+    </div>
+    <div class="form-group">
+      <div class="q-sub-label" data-i18n="q3.fav">🌟 Aliments et plats préférés</div>
+      <div class="tag-input-wrap" id="favWrap">
+        <input class="tag-input" id="favInput" placeholder="Ex: pâtes, poulet, fraises…" autocomplete="off">
+      </div>
+      <!-- Suggestions -->
+      <div style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.625rem" id="favSuggestions"></div>
+    </div>
+    <div class="form-group" style="margin-top:1.5rem">
+      <div class="q-sub-label" data-i18n="q3.regime">🥗 Régime alimentaire</div>
+      <div class="sub-options" id="dietOptions">
+        <button class="sub-opt selected" data-val="omnivore">🍖 Omnivore</button>
+        <button class="sub-opt" data-val="vegetarien">🥦 <span data-i18n="diet.veg">Végétarien</span></button>
+        <button class="sub-opt" data-val="vegan">🌱 <span data-i18n="diet.vegan">Végétalien</span></button>
+        <button class="sub-opt" data-val="halal">☪️ <span data-i18n="diet.halal">Halal</span></button>
+        <button class="sub-opt" data-val="casher">✡️ <span data-i18n="diet.kosher">Casher</span></button>
+        <button class="sub-opt" data-val="sansporc">🐷 <span data-i18n="diet.nopork">Sans porc</span></button>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:1.5rem">
+      <div class="q-sub-label" data-i18n="q3.cuisine">🌍 Préférences culinaires</div>
+      <div class="cuisine-grid" id="cuisineOptions">
+        <div class="cuisine-card" data-val="familiale"><span style="font-size:1.5rem">🍲</span><span class="cuisine-name" data-i18n="cuis.familiale">Familiale</span></div>
+        <div class="cuisine-card" data-val="legere"><span style="font-size:1.5rem">🥗</span><span class="cuisine-name" data-i18n="cuis.legere">Légère</span></div>
+        <div class="cuisine-card" data-val="monde"><span style="font-size:1.5rem">🌍</span><span class="cuisine-name" data-i18n="cuis.monde">Du monde</span></div>
+        <div class="cuisine-card" data-val="bio"><span style="font-size:1.5rem">🌱</span><span class="cuisine-name" data-i18n="cuis.bio">Bio & saison</span></div>
+        <div class="cuisine-card" data-val="batchcooking"><span style="font-size:1.5rem">📦</span><span class="cuisine-name" data-i18n="cuis.batch">Batch cooking</span></div>
+        <div class="cuisine-card" data-val="lunchbox"><span style="font-size:1.5rem">🥡</span><span class="cuisine-name" data-i18n="cuis.lunch">Boîte à lunch</span></div>
+        <div class="cuisine-card" data-val="rapide"><span style="font-size:1.5rem">⚡</span><span class="cuisine-name" data-i18n="cuis.fast">Rapide</span></div>
+        <div class="cuisine-card" data-val="gourmand"><span style="font-size:1.5rem">😋</span><span class="cuisine-name" data-i18n="cuis.gourmet">Gourmand</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 4 : Aliments détestés ===== -->
+  <div class="q-step" data-step="4">
+    <div class="q-step-head">
+      <div class="q-emoji">🚫</div>
+      <h2 class="q-title" data-i18n="q4.title">Ce qu'il refuse de manger</h2>
+      <p class="q-desc" data-i18n="q4.desc">Ces aliments ne figureront <strong>jamais</strong> dans les menus. Soyez précis — "champignons" plutôt que "légumes" permet des menus plus variés.</p>
+    </div>
+    <div style="background:var(--orange-light);border-radius:var(--r-md);padding:.75rem 1rem;font-size:var(--text-xs);color:#8a4a1a;margin-bottom:1.5rem">
+      💡 <span data-i18n="q4.tip">Astuce : soyez précis ! "Champignons" plutôt que "légumes". Cela permet des menus variés et quand même acceptés.</span>
+    </div>
+    <div class="form-group">
+      <div class="q-sub-label" data-i18n="q4.vegs">🥦 Légumes boudés</div>
+      <div class="tag-input-wrap" id="dislikeVegWrap">
+        <input class="tag-input" id="dislikeVegInput" placeholder="Ex : épinards, courgettes…" autocomplete="off">
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.5rem" id="dislikeVegSugg"></div>
+    </div>
+    <div class="form-group" style="margin-top:1.25rem">
+      <div class="q-sub-label" data-i18n="q4.meat">🍖 Viandes & poissons refusés</div>
+      <div class="tag-input-wrap" id="dislikeMeatWrap">
+        <input class="tag-input" id="dislikeMeatInput" placeholder="Ex : poisson, foie…" autocomplete="off">
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.5rem" id="dislikeMeatSugg"></div>
+    </div>
+    <div class="form-group" style="margin-top:1.25rem">
+      <div class="q-sub-label" data-i18n="q4.other">🙅 Autres aliments ou textures refusés</div>
+      <div class="tag-input-wrap" id="dislikeOtherWrap">
+        <input class="tag-input" id="dislikeOtherInput" placeholder="Ex : purée, légumineuses, épicé…" autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 5 : Allergènes ===== -->
+  <div class="q-step" data-step="5">
+    <div class="q-step-head">
+      <div class="q-emoji">⚠️</div>
+      <h2 class="q-title" data-i18n="q5.title">Allergies & intolérances</h2>
+      <p class="q-desc" data-i18n="q5.desc">Sélectionnez tous les allergènes à exclure strictement des menus. Ces informations sont cruciales pour la sécurité alimentaire.</p>
+    </div>
+    <div class="q-sub-label" data-i18n="q5.official">14 allergènes officiels</div>
+    <div class="allergen-grid" id="allergenGrid">
+      <button class="allergen-chip" data-val="gluten">🌾 <span data-i18n="al.gluten">Gluten</span></button>
+      <button class="allergen-chip" data-val="lactose">🥛 <span data-i18n="al.lactose">Lactose</span></button>
+      <button class="allergen-chip" data-val="oeufs">🥚 <span data-i18n="al.eggs">Œufs</span></button>
+      <button class="allergen-chip" data-val="arachides">🥜 <span data-i18n="al.peanuts">Arachides</span></button>
+      <button class="allergen-chip" data-val="fruits_a_coque">🌰 <span data-i18n="al.nuts">Fruits à coque</span></button>
+      <button class="allergen-chip" data-val="poisson">🐟 <span data-i18n="al.fish">Poisson</span></button>
+      <button class="allergen-chip" data-val="crustaces">🦞 <span data-i18n="al.shellfish">Crustacés</span></button>
+      <button class="allergen-chip" data-val="mollusques">🐙 <span data-i18n="al.molluscs">Mollusques</span></button>
+      <button class="allergen-chip" data-val="soja">🫘 <span data-i18n="al.soy">Soja</span></button>
+      <button class="allergen-chip" data-val="sesame">🫙 <span data-i18n="al.sesame">Sésame</span></button>
+      <button class="allergen-chip" data-val="celeri">🥬 <span data-i18n="al.celery">Céleri</span></button>
+      <button class="allergen-chip" data-val="moutarde">🌿 <span data-i18n="al.mustard">Moutarde</span></button>
+      <button class="allergen-chip" data-val="lupin">🌸 <span data-i18n="al.lupin">Lupin</span></button>
+      <button class="allergen-chip" data-val="sulfites">🍷 <span data-i18n="al.sulfites">Sulfites</span></button>
+    </div>
+    <div style="margin-top:1.5rem">
+      <div class="q-sub-label" data-i18n="q5.other">Autres intolérances ou restrictions</div>
+      <input type="text" class="form-input" id="q_otherAllergy" placeholder="Ex: fructose, sorbitol, FODMAP…">
+    </div>
+  </div>
+
+  <!-- ===== STEP 6 : Santé ===== -->
+  <div class="q-step" data-step="6">
+    <div class="q-step-head">
+      <div class="q-emoji">🏥</div>
+      <h2 class="q-title" data-i18n="q6.title">Profil de santé particulier ?</h2>
+      <p class="q-desc" data-i18n="q6.desc">Ces informations permettent d'adapter les règles nutritionnelles des menus.</p>
+    </div>
+    <div class="medical-notice">
+      <span>ℹ️</span>
+      <span data-i18n="q6.notice">Les menus générés s'appuient sur les recommandations nutritionnelles officielles (ANSES, PNNS) et ne remplacent pas un suivi médical. Si votre enfant est suivi, partagez les menus avec son professionnel de santé.</span>
+    </div>
+    <div class="q-sub-label" data-i18n="q6.conditions">Condition(s) à prendre en compte</div>
+    <div class="health-grid" id="healthGrid">
+      <div class="health-card" data-val="tdah"><span class="health-icon">🧠</span><span class="health-name">TDAH</span><span class="health-desc" data-i18n="h.tdah">Pauvre en additifs, riche en oméga-3</span></div>
+      <div class="health-card" data-val="diabete1"><span class="health-icon">🩸</span><span class="health-name" data-i18n="h.diab1">Diabète type 1</span><span class="health-desc" data-i18n="h.diab1d">Index glycémique contrôlé</span></div>
+      <div class="health-card" data-val="prediabete"><span class="health-icon">📉</span><span class="health-name" data-i18n="h.prediab">Pré-diabète</span><span class="health-desc" data-i18n="h.prediabd">Glucides complexes privilégiés</span></div>
+      <div class="health-card" data-val="epilepsie"><span class="health-icon">⚡</span><span class="health-name" data-i18n="h.epil">Épilepsie</span><span class="health-desc" data-i18n="h.epild">Compatible régime cétogène</span></div>
+      <div class="health-card" data-val="asthme"><span class="health-icon">🫁</span><span class="health-name" data-i18n="h.asthme">Asthme / Reflux</span><span class="health-desc" data-i18n="h.asthmed">Aliments anti-inflammatoires</span></div>
+      <div class="health-card" data-val="croissance"><span class="health-icon">📏</span><span class="health-name" data-i18n="h.growth">Croissance retardée</span><span class="health-desc" data-i18n="h.growthd">Calcium & fer renforcés</span></div>
+      <div class="health-card" data-val="anxiete"><span class="health-icon">😰</span><span class="health-name" data-i18n="h.anxiety">Anxiété / Stress</span><span class="health-desc" data-i18n="h.anxietyd">Magnésium, tryptophane renforcés</span></div>
+      <div class="health-card" data-val="sommeil"><span class="health-icon">😴</span><span class="health-name" data-i18n="h.sleep">Troubles du sommeil</span><span class="health-desc" data-i18n="h.sleepd">Aliments favorisant la sérotonine</span></div>
+      <div class="health-card" data-val="anemie"><span class="health-icon">💉</span><span class="health-name" data-i18n="h.anemia">Anémie / Carence fer</span><span class="health-desc" data-i18n="h.anemiad">Fer & vitamine C renforcés</span></div>
+      <div class="health-card" data-val="neophobie"><span class="health-icon">😤</span><span class="health-name" data-i18n="h.neo">Mangeur difficile</span><span class="health-desc" data-i18n="h.neod">Néophobie alimentaire</span></div>
+      <div class="health-card" data-val="surpoids"><span class="health-icon">⚖️</span><span class="health-name" data-i18n="h.overw">Surpoids</span><span class="health-desc" data-i18n="h.overwId">Gestion du poids adaptée</span></div>
+      <div class="health-card" data-val="insuffisance"><span class="health-icon">📊</span><span class="health-name" data-i18n="h.underw">Insuffisance pondérale</span><span class="health-desc" data-i18n="h.underwId">Menus plus caloriques</span></div>
+    </div>
+    <div style="margin-top:1.5rem">
+      <div class="q-sub-label" data-i18n="q6.other">Information complémentaire (traitement, suivi, précision…)</div>
+      <textarea class="form-input" id="q_healthNote" rows="3" placeholder="Ex : traitement au Ritalin depuis 6 mois, suivi diététique en cours…" style="resize:vertical"></textarea>
+    </div>
+  </div>
+
+  <!-- ===== STEP 7 : Pratique & Organisation ===== -->
+  <div class="q-step" data-step="7">
+    <div class="q-step-head">
+      <div class="q-emoji">🗂️</div>
+      <h2 class="q-title" data-i18n="q7.title">Organisation & budget</h2>
+      <p class="q-desc" data-i18n="q7.desc">Pour des menus qui collent vraiment à votre quotidien.</p>
+    </div>
+    <div class="q-sub-label" data-i18n="q7.people">Nombre de personnes à table (pour les courses)</div>
+    <div class="people-input-wrap">
+      <div class="people-presets" id="peoplePresets">
+        <button type="button" class="people-preset" data-n="1">1</button>
+        <button type="button" class="people-preset" data-n="2">2</button>
+        <button type="button" class="people-preset" data-n="3">3</button>
+        <button type="button" class="people-preset active" data-n="4">4</button>
+        <button type="button" class="people-preset" data-n="5">5</button>
+        <button type="button" class="people-preset" data-n="6">6</button>
+      </div>
+      <div class="num-input-wrap" style="margin-top:.5rem">
+        <input type="number" class="num-input" id="peopleVal" value="4" min="1" max="30">
+        <span class="num-input-unit" data-i18n="q7.pers">personnes</span>
+      </div>
+    </div>
+
+    <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.budget">Budget alimentaire hebdomadaire</div>
+    <div class="budget-grid" id="budgetGrid">
+      <div class="budget-card" data-val="<50"><span class="budget-amount">&lt; 50€</span><span class="budget-label" data-i18n="b.small">Petit budget</span><span class="budget-desc" data-i18n="b.smalld">Légumes de saison, économique</span></div>
+      <div class="budget-card" data-val="50-100"><span class="budget-amount">50-100€</span><span class="budget-label" data-i18n="b.mid">Budget moyen</span><span class="budget-desc" data-i18n="b.midd">Bon équilibre qualité/prix</span></div>
+      <div class="budget-card" data-val=">100"><span class="budget-amount">&gt; 100€</span><span class="budget-label" data-i18n="b.high">Budget confort</span><span class="budget-desc" data-i18n="b.highd">Bio, produits de qualité</span></div>
+    </div>
+
+    <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.time">Temps disponible pour cuisiner / repas</div>
+    <div class="option-grid" id="timeGrid">
+      <label class="option-card" data-value="rapide" style="flex-direction:column;padding:1.25rem .75rem">
+        <input type="radio" name="temps" value="rapide" style="display:none">
+        <span class="option-icon">⚡</span>
+        <span class="option-title" data-i18n="t.fast">Rapide</span>
+        <span class="option-desc" data-i18n="t.fastd">&lt; 20 min / repas</span>
+      </label>
+      <label class="option-card" data-value="normal" style="flex-direction:column;padding:1.25rem .75rem">
+        <input type="radio" name="temps" value="normal" style="display:none">
+        <span class="option-icon">🍳</span>
+        <span class="option-title" data-i18n="t.normal">Normal</span>
+        <span class="option-desc" data-i18n="t.normald">20-40 min / repas</span>
+      </label>
+      <label class="option-card" data-value="cuisine" style="flex-direction:column;padding:1.25rem .75rem">
+        <input type="radio" name="temps" value="cuisine" style="display:none">
+        <span class="option-icon">👨‍🍳</span>
+        <span class="option-title" data-i18n="t.cook">J'aime cuisiner</span>
+        <span class="option-desc" data-i18n="t.cookd">Recettes élaborées OK</span>
+      </label>
+    </div>
+
+    <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.activity">Activité physique</div>
+    <div class="sub-options" id="activityOptions">
+      <button class="sub-opt" data-val="sedentaire">🪑 <span data-i18n="act.sed">Sédentaire</span></button>
+      <button class="sub-opt" data-val="leger">🚶 <span data-i18n="act.light">Peu actif</span></button>
+      <button class="sub-opt" data-val="actif">🏃 <span data-i18n="act.active">Actif</span></button>
+      <button class="sub-opt" data-val="tres_actif">🏆 <span data-i18n="act.very">Très actif / Sportif</span></button>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="q-sub-label" data-i18n="q7.sports">Sports pratiqués</div>
+      <div class="sub-options" id="sportsOptions">
+        <button class="sub-opt" data-val="foot">⚽ <span data-i18n="sp.football">Football</span></button>
+        <button class="sub-opt" data-val="natation">🏊 <span data-i18n="sp.swim">Natation</span></button>
+        <button class="sub-opt" data-val="danse">💃 <span data-i18n="sp.dance">Danse</span></button>
+        <button class="sub-opt" data-val="gym">🤸 <span data-i18n="sp.gym">Gym / Athlé</span></button>
+        <button class="sub-opt" data-val="arts_martiaux">🥋 <span data-i18n="sp.martial">Arts martiaux</span></button>
+        <button class="sub-opt" data-val="velo">🚴 <span data-i18n="sp.bike">Vélo</span></button>
+        <button class="sub-opt" data-val="basket">🏀 <span data-i18n="sp.basket">Basket</span></button>
+        <button class="sub-opt" data-val="rugby">🏉 <span data-i18n="sp.rugby">Rugby</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 8 : Résumé & choix du plan ===== -->
+  <div class="q-step" data-step="8">
+    <div class="q-step-head">
+      <div class="q-emoji">✅</div>
+      <h2 class="q-title" data-i18n="q8.title">Parfait ! Voici le profil</h2>
+      <p class="q-desc" data-i18n="q8.desc">Vérifiez et générez votre plan personnalisé en un clic.</p>
+    </div>
+
+    <!-- Summary sections -->
+    <div id="summaryContent">
+      <div class="summary-section">
+        <div class="summary-head">
+          <div class="summary-head-title">👤 <span data-i18n="s.profile">Profil de base</span></div>
+          <span class="summary-edit" onclick="goToStep(1)" data-i18n="s.edit">Modifier</span>
+        </div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.type">Type de profil</span><span class="summary-val" id="sType">—</span></div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.name">Prénom</span><span class="summary-val" id="sName">—</span></div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.age">Âge</span><span class="summary-val" id="sAge">—</span></div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.weight">Poids / Taille</span><span class="summary-val" id="sBody">—</span></div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.goal">Objectif</span><span class="summary-val" id="sGoal">—</span></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-head">
+          <div class="summary-head-title">⚠️ <span data-i18n="s.allergens">Allergies détectées</span></div>
+          <span class="summary-edit" onclick="goToStep(5)" data-i18n="s.edit">Modifier</span>
+        </div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.excluded">Allergènes exclus</span><span class="summary-val" id="sAllergens">Aucune allergie renseignée</span></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-head">
+          <div class="summary-head-title">🚫 <span data-i18n="s.dislikes">Aliments bannis</span></div>
+          <span class="summary-edit" onclick="goToStep(4)" data-i18n="s.edit">Modifier</span>
+        </div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.never">Ne seront jamais dans les menus</span><span class="summary-val" id="sDislikes">Aucun</span></div>
+      </div>
+      <div class="summary-section">
+        <div class="summary-head">
+          <div class="summary-head-title">🏥 <span data-i18n="s.health">Profil santé</span></div>
+          <span class="summary-edit" onclick="goToStep(6)" data-i18n="s.edit">Modifier</span>
+        </div>
+        <div class="summary-row"><span class="summary-key" data-i18n="s.conditions">Conditions prises en compte</span><span class="summary-val" id="sHealth">Aucune condition particulière</span></div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="medical-notice" style="background:var(--orange-light);border-color:#f0c070;color:#7a4a00;margin-top:1rem">
+      <span>⚠️</span>
+      <span data-i18n="s.disclaimer">Les plans proposés sont informatifs et ne remplacent pas l'avis d'un médecin ou diététicien. Pour tout profil médical, consultez votre professionnel de santé.</span>
+    </div>
+
+    <!-- Plan selection -->
+    <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="s.choosePlan">Choisissez votre plan</div>
+    <div class="plan-select-grid" id="planSelectGrid">
+      <div class="plan-sel-card" data-plan="free">
+        <div class="plan-sel-top">
+          <span class="plan-sel-name" data-i18n="plan.free.name">Découverte</span>
+          <span class="plan-sel-price" data-i18n="plan.free.price">Gratuit</span>
+        </div>
+        <p class="plan-sel-desc" data-i18n="ps.free.desc">Analyse + 3 conseils personnalisés</p>
+        <div class="plan-sel-feats">
+          <div class="plan-sel-feat"><span style="color:var(--green)">✓</span> <span data-i18n="ps.free.f1">Analyse IA du profil</span></div>
+          <div class="plan-sel-feat"><span style="color:var(--green)">✓</span> <span data-i18n="ps.free.f2">3 conseils clés</span></div>
+          <div class="plan-sel-feat" style="opacity:.5"><span>✗</span> <span data-i18n="ps.free.f3">Plan de repas complet</span></div>
+        </div>
+      </div>
+      <div class="plan-sel-card featured-plan" data-plan="essential">
+        <div class="plan-sel-top">
+          <span class="plan-sel-name" data-i18n="plan.ess.name">Essentiel</span>
+          <span class="plan-sel-price">9,90€</span>
+        </div>
+        <p class="plan-sel-desc" data-i18n="ps.ess.desc">Plan 4 semaines complet + suivi</p>
+        <div class="plan-sel-feats">
+          <div class="plan-sel-feat"><span>✓</span> <span data-i18n="ps.ess.f1">Repas détaillés + calories</span></div>
+          <div class="plan-sel-feat"><span>✓</span> <span data-i18n="ps.ess.f2">Allergènes identifiés</span></div>
+          <div class="plan-sel-feat"><span>✓</span> <span data-i18n="ps.ess.f3">Suivi hebdomadaire IA</span></div>
+        </div>
+      </div>
+      <div class="plan-sel-card" data-plan="premium">
+        <div class="plan-sel-top">
+          <span class="plan-sel-name" data-i18n="plan.prem.name">Premium</span>
+          <span class="plan-sel-price">19,90€</span>
+        </div>
+        <p class="plan-sel-desc" data-i18n="ps.prem.desc">Recettes + liste de courses + substitutions</p>
+        <div class="plan-sel-feats">
+          <div class="plan-sel-feat"><span style="color:var(--orange)">★</span> <span data-i18n="ps.prem.f1">Fiches recettes détaillées</span></div>
+          <div class="plan-sel-feat"><span style="color:var(--orange)">★</span> <span data-i18n="ps.prem.f2">Liste de courses auto</span></div>
+          <div class="plan-sel-feat"><span style="color:var(--orange)">★</span> <span data-i18n="ps.prem.f3">Substitutions intelligentes</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- FOOTER NAV -->
+<footer class="q-footer">
+  <div class="q-footer-inner">
+    <button class="btn btn-outline btn-lg" id="qPrev" style="display:none">← <span data-i18n="q.back">Retour</span></button>
+    <div style="flex:1"></div>
+    <div style="text-align:center">
+      <div id="qStepCountText" style="font-size:.7rem;color:var(--text-muted);font-weight:700;margin-bottom:.375rem"></div>
+      <button class="btn btn-primary btn-lg" id="qNext">
+        <span id="qNextLabel" data-i18n="q.continue">Continuer →</span>
+      </button>
+    </div>
+  </div>
+  <p class="q-disclaimer" data-i18n="q.disclaimer">🔒 Vos données sont chiffrées et ne sont jamais partagées. Conformité RGPD.</p>
+</footer>
+
+<!-- TOASTS -->
+<div class="toasts" id="toasts"></div>
+
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/questionnaire.js"></script>
+</body>
+</html>

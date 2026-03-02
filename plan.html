@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Mon plan nutritionnel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* Macros bar */
+    .macro-bar { display:flex; gap:.375rem; height:8px; border-radius:var(--r-full); overflow:hidden; margin-bottom:.375rem; }
+    .macro-prot { background:#4CAF72; }
+    .macro-carb { background:#FF8C42; }
+    .macro-fat  { background:#64B5F6; }
+    .macro-legend { display:flex; gap:1rem; flex-wrap:wrap; }
+    .macro-item { display:flex; align-items:center; gap:.375rem; font-size:var(--text-xs); font-weight:700; color:var(--text-muted); }
+    .macro-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+    /* Week tabs */
+    .week-tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; overflow-x:auto; scrollbar-width:none; padding-bottom:.25rem; }
+    .week-tab  { flex-shrink:0; padding:.4rem 1rem; background:#fff; border:2px solid var(--border); border-radius:var(--r-full); font-size:var(--text-sm); font-weight:800; color:var(--text-muted); cursor:pointer; transition:all var(--tf); }
+    .week-tab.active { background:var(--green-dark); border-color:var(--green-dark); color:#fff; }
+
+    /* Upgrade banner */
+    .upgrade-card { background:linear-gradient(135deg,var(--orange-light),#fff); border:2px dashed var(--orange); border-radius:var(--r-xl); padding:1.5rem; text-align:center; }
+    .upgrade-card h3 { font-size:var(--text-xl); font-weight:900; color:#c96520; margin-bottom:.5rem; }
+    .upgrade-card p  { font-size:var(--text-sm); color:var(--text-muted); margin-bottom:1.25rem; }
+
+    /* Print styles */
+    @media print {
+      .plan-hero-btns, .chatbot-widget, .upgrade-card { display:none; }
+      .plan-page { background:#fff; }
+    }
+  </style>
+</head>
+<body class="plan-page">
+
+<!-- Navbar minimal -->
+<nav style="background:#fff;border-bottom:1px solid var(--border);padding:.875rem var(--pad);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200">
+  <a href="index.html" style="font-family:var(--font-serif);font-style:italic;font-weight:600;font-size:1.5rem;color:var(--green-dark)">Brocoli<span style="font-family:var(--font-sans);font-weight:900;font-size:.65rem;color:var(--orange)">.fit</span></a>
+  <div style="display:flex;gap:.75rem;align-items:center">
+    <button onclick="window.print()" class="btn btn-ghost btn-sm">🖨️ <span data-i18n="plan.print">Imprimer</span></button>
+    <a href="dashboard.html" class="btn btn-outline btn-sm" data-i18n="plan.dashboard">Mon espace</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="plan-hero">
+  <div class="container">
+    <div class="plan-hero-eye" data-i18n="plan.eyebrow">PROGRAMME NUTRITIONNEL PERSONNALISÉ</div>
+    <h1 class="plan-hero-name" id="planHeroName">Plan de Lucas, 8 ans</h1>
+    <p class="plan-hero-meta" id="planHeroMeta">Plan Essentiel · 4 semaines · Généré par IA Gemini</p>
+
+    <!-- Free plan upgrade bar -->
+    <div class="plan-upgrade-bar" id="upgradeBar" style="display:none">
+      🔓 <span data-i18n="plan.upgrade">Débloquez les recettes détaillées et listes de courses avec le plan </span><strong>Premium 19,90€/mois</strong>
+      <a href="questionnaire.html?plan=premium" class="btn btn-white btn-sm" style="margin-left:.5rem" data-i18n="plan.upgradeCta">Passer au Premium</a>
+    </div>
+
+    <!-- Hero actions -->
+    <div class="plan-hero-btns" style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+      <a href="dashboard.html" class="btn btn-white btn-sm">📊 <span data-i18n="plan.tracking">Suivi hebdomadaire</span></a>
+      <button class="btn btn-dark btn-sm" onclick="window.print()">🖨️ <span data-i18n="plan.print">Imprimer le plan</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="plan-content">
+
+  <!-- Summary stats -->
+  <div class="plan-stats-row" id="planStats">
+    <div class="plan-stat-card"><div class="plan-stat-icon">🔥</div><div class="plan-stat-val" id="statCal">—</div><div class="plan-stat-lbl" data-i18n="stat.cal">kcal / jour</div></div>
+    <div class="plan-stat-card"><div class="plan-stat-icon">💪</div><div class="plan-stat-val" id="statProt">—</div><div class="plan-stat-lbl" data-i18n="stat.prot">Protéines</div></div>
+    <div class="plan-stat-card"><div class="plan-stat-icon">⚖️</div><div class="plan-stat-val" id="statIMC">—</div><div class="plan-stat-lbl" data-i18n="stat.imc">IMC</div></div>
+    <div class="plan-stat-card"><div class="plan-stat-icon">📅</div><div class="plan-stat-val">4</div><div class="plan-stat-lbl" data-i18n="stat.weeks">semaines</div></div>
+  </div>
+
+  <!-- Macros -->
+  <div class="card" style="margin-bottom:1.5rem" id="macroCard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem">
+      <span style="font-size:var(--text-sm);font-weight:900;color:var(--text)" data-i18n="plan.macros">Répartition des macronutriments</span>
+      <span class="badge badge-green" id="macroProfile">Équilibré</span>
+    </div>
+    <div class="macro-bar">
+      <div class="macro-prot" id="macroProt" style="width:20%"></div>
+      <div class="macro-carb" id="macroCarb" style="width:55%"></div>
+      <div class="macro-fat"  id="macroFat"  style="width:25%"></div>
+    </div>
+    <div class="macro-legend">
+      <div class="macro-item"><div class="macro-dot" style="background:#4CAF72"></div><span id="mProtVal">20%</span> <span data-i18n="mac.prot">Protéines</span></div>
+      <div class="macro-item"><div class="macro-dot" style="background:#FF8C42"></div><span id="mCarbVal">55%</span> <span data-i18n="mac.carb">Glucides</span></div>
+      <div class="macro-item"><div class="macro-dot" style="background:#64B5F6"></div><span id="mFatVal">25%</span> <span data-i18n="mac.fat">Lipides</span></div>
+    </div>
+  </div>
+
+  <!-- AI advice box -->
+  <div class="advice-box" id="adviceBox">
+    <div class="advice-title">🧠 <span data-i18n="plan.advice">Recommandations de l'IA</span></div>
+    <div class="advice-list" id="adviceList">
+      <div class="advice-item">⏳ <span data-i18n="plan.loading">Chargement du plan…</span></div>
+    </div>
+  </div>
+
+  <!-- Week selector -->
+  <div class="week-tabs" id="weekTabs">
+    <button class="week-tab active" data-week="1" data-i18n="plan.week1">Semaine 1</button>
+    <button class="week-tab" data-week="2" data-i18n="plan.week2">Semaine 2</button>
+    <button class="week-tab" data-week="3" data-i18n="plan.week3">Semaine 3</button>
+    <button class="week-tab" data-week="4" data-i18n="plan.week4">Semaine 4</button>
+  </div>
+
+  <!-- Day tabs -->
+  <div class="day-tabs" id="dayTabs"></div>
+
+  <!-- Meals content -->
+  <div id="mealsContent">
+    <div style="text-align:center;padding:3rem;color:var(--text-muted)">
+      <div style="font-size:3rem;margin-bottom:1rem">🥦</div>
+      <p data-i18n="plan.generating">Génération du plan en cours…</p>
+    </div>
+  </div>
+
+  <!-- Shopping list (Premium only) -->
+  <div id="shoppingSection" style="margin-top:2rem">
+    <!-- Populated by plan.js for premium users -->
+  </div>
+
+  <!-- Recipes (Premium only) -->
+  <div id="recipesSection" style="margin-top:2rem">
+    <!-- Populated by plan.js for premium users -->
+  </div>
+
+</div>
+
+<!-- CHATBOT -->
+<div class="chatbot-widget" id="chatbotWidget">
+  <div class="chatbot-win" id="chatbotWin">
+    <div class="chatbot-head">
+      <div class="chatbot-av">🥦</div>
+      <div class="chatbot-hinfo">
+        <div class="chatbot-hname">NutriBot</div>
+        <div class="chatbot-hstatus" data-i18n="chat.online">En ligne · IA Gemini</div>
+      </div>
+      <button class="chatbot-hclose" id="chatClose">✕</button>
+    </div>
+    <div class="chatbot-msgs" id="chatMsgs">
+      <div class="chat-msg bot">
+        <div class="chat-av">🥦</div>
+        <div class="chat-bubble" data-i18n="chat.planWelcome">Votre plan est prêt ! Avez-vous des questions sur les repas ou les ingrédients ?</div>
+      </div>
+    </div>
+    <div class="chatbot-input-wrap">
+      <input type="text" class="chatbot-inp" id="chatInput" placeholder="Ex: Peut-on remplacer le saumon ?" data-i18n-placeholder="chat.placeholder2">
+      <button class="chatbot-send" id="chatSend">➤</button>
+    </div>
+  </div>
+  <button class="chatbot-btn" id="chatToggle">🥦</button>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/plan.js"></script>
+<script src="assets/js/chatbot.js"></script>
+</body>
+</html>

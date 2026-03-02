@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Brocoli.fit — Programmes nutritionnels personnalisés par IA pour enfants 0-16 ans et familles.">
+  <title>Brocoli.fit — Nutrition enfant & famille par IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ========== NAVBAR ========== -->
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-brocoli">Brocoli</span>
+        <span class="logo-dotfit">.fit</span>
+        <span class="logo-tagline" data-i18n="tagline">Nutrition · Enfants · IA</span>
+      </a>
+
+      <div class="navbar-links">
+        <a href="#comment" class="navbar-link" data-i18n="nav.how">Comment ça marche</a>
+        <a href="#plans" class="navbar-link" data-i18n="nav.plans">Nos plans</a>
+        <a href="#faq" class="navbar-link" data-i18n="nav.faq">FAQ</a>
+      </div>
+
+      <div class="navbar-actions">
+        <!-- Language selector -->
+        <div class="lang-selector" id="langSelector">
+          <button class="lang-btn" id="langBtn" aria-label="Changer de langue">
+            <span id="currentFlag">🇫🇷</span>
+            <span id="currentLang">FR</span>
+            <span class="lang-chevron">▾</span>
+          </button>
+          <div class="lang-dropdown" id="langDropdown">
+            <button class="lang-option active" data-lang="fr">🇫🇷 Français</button>
+            <button class="lang-option" data-lang="en">🇬🇧 English</button>
+            <button class="lang-option" data-lang="de">🇩🇪 Deutsch</button>
+            <button class="lang-option" data-lang="it">🇮🇹 Italiano</button>
+          </div>
+        </div>
+        <a href="login.html" class="btn btn-ghost btn-sm" data-i18n="nav.login">Connexion</a>
+        <a href="questionnaire.html" class="btn btn-primary btn-sm" data-i18n="nav.start">Commencer</a>
+      </div>
+
+      <button class="navbar-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-menu-close" id="mobileMenuClose">✕</button>
+  <nav class="mobile-menu-links">
+    <a href="#comment" class="mobile-menu-link" data-i18n="nav.how">Comment ça marche</a>
+    <a href="#plans" class="mobile-menu-link" data-i18n="nav.plans">Nos plans</a>
+    <a href="#faq" class="mobile-menu-link" data-i18n="nav.faq">FAQ</a>
+  </nav>
+  <div class="mobile-menu-actions">
+    <a href="login.html" class="btn btn-outline btn-lg btn-full" data-i18n="nav.login">Connexion</a>
+    <a href="questionnaire.html" class="btn btn-primary btn-lg btn-full" data-i18n="nav.start">Commencer gratuitement</a>
+  </div>
+</div>
+
+<!-- ========== HERO ========== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-floats">
+    <span class="hero-float">🥦</span>
+    <span class="hero-float">🍎</span>
+    <span class="hero-float">🥕</span>
+    <span class="hero-float">🍇</span>
+  </div>
+
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-pill fade-up">
+        <span>✨</span>
+        <span data-i18n="hero.pill">Propulsé par l'IA · Validé scientifiquement</span>
+      </div>
+
+      <h1 class="hero-title fade-up">
+        <span data-i18n="hero.title1">La nutrition</span><br>
+        <em data-i18n="hero.title2">sur-mesure</em>
+        <span data-i18n="hero.title3"> pour</span><br>
+        <span class="hl" data-i18n="hero.title4">vos enfants</span>
+      </h1>
+
+      <p class="hero-sub fade-up" data-i18n="hero.sub">
+        Notre IA analyse le profil de votre enfant et génère un programme nutritionnel personnalisé, basé sur les recommandations PNNS/ANSES — adapté à son âge, ses goûts et sa santé.
+      </p>
+
+      <div class="hero-actions fade-up">
+        <a href="questionnaire.html" class="btn btn-primary btn-xl">
+          <span>🥦</span>
+          <span data-i18n="hero.cta1">Créer mon programme gratuit</span>
+        </a>
+        <a href="#comment" class="btn btn-outline btn-lg" data-i18n="hero.cta2">Voir comment ça marche</a>
+      </div>
+
+      <div class="hero-trust fade-up">
+        <div class="trust-item"><span>✅</span><span data-i18n="trust.free">Gratuit pour commencer</span></div>
+        <div class="trust-item"><span>🔒</span><span data-i18n="trust.gdpr">Données protégées RGPD</span></div>
+        <div class="trust-item"><span>🏥</span><span data-i18n="trust.science">Basé sur la science</span></div>
+        <div class="trust-item"><span>👶</span><span data-i18n="trust.ages">0 à 16 ans</span></div>
+      </div>
+
+      <!-- Preview card -->
+      <div class="hero-preview fade-up">
+        <div class="preview-card">
+          <div class="preview-head">
+            <div class="preview-avatar">👦</div>
+            <div>
+              <div class="preview-name">Lucas, 8 ans</div>
+              <div class="preview-meta">Plan personnalisé · Semaine 1</div>
+            </div>
+            <span class="badge badge-green" style="margin-left:auto;font-size:.6rem">✓ Actif</span>
+          </div>
+          <div class="preview-plan" data-i18n="preview.monday">LUNDI — 1 650 kcal</div>
+          <div class="preview-meals">
+            <div class="preview-meal">
+              <div class="preview-meal-l">🥣 <span data-i18n="preview.breakfast">Petit-déjeuner</span></div>
+              <div class="preview-meal-r">380 kcal</div>
+            </div>
+            <div class="preview-meal">
+              <div class="preview-meal-l">🍱 <span data-i18n="preview.lunch">Déjeuner</span></div>
+              <div class="preview-meal-r">620 kcal</div>
+            </div>
+            <div class="preview-meal">
+              <div class="preview-meal-l">🍎 <span data-i18n="preview.snack">Goûter</span></div>
+              <div class="preview-meal-r">190 kcal</div>
+            </div>
+            <div class="preview-meal">
+              <div class="preview-meal-l">🍽️ <span data-i18n="preview.dinner">Dîner</span></div>
+              <div class="preview-meal-r">460 kcal</div>
+            </div>
+          </div>
+          <div class="preview-ai-bar">
+            <span>🤖</span>
+            <span data-i18n="preview.ai">Plan adapté · Sans gluten · Riche en fer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PROOF STRIP ========== -->
+<div class="proof-strip">
+  <div class="proof-scroll" id="proofScroll">
+    <span class="proof-item">✅ <span data-i18n="proof.1">Recommandations PNNS officielles</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">🔬 <span data-i18n="proof.2">Guidelines ANSES respectées</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">👨‍⚕️ <span data-i18n="proof.3">Validé par des diététiciens</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">🌍 <span data-i18n="proof.4">4 pays · 4 cultures alimentaires</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">🤖 <span data-i18n="proof.5">IA Gemini 2.5 Flash</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">📊 <span data-i18n="proof.6">Suivi hebdomadaire intelligent</span></span>
+    <span class="proof-dot"></span>
+    <!-- duplicate for seamless loop -->
+    <span class="proof-item">✅ <span data-i18n="proof.1">Recommandations PNNS officielles</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">🔬 <span data-i18n="proof.2">Guidelines ANSES respectées</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">👨‍⚕️ <span data-i18n="proof.3">Validé par des diététiciens</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">🌍 <span data-i18n="proof.4">4 pays · 4 cultures alimentaires</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">🤖 <span data-i18n="proof.5">IA Gemini 2.5 Flash</span></span>
+    <span class="proof-dot"></span>
+    <span class="proof-item">📊 <span data-i18n="proof.6">Suivi hebdomadaire intelligent</span></span>
+    <span class="proof-dot"></span>
+  </div>
+</div>
+
+<!-- ========== FOR WHO ========== -->
+<section class="section" style="background:#fff">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-eyebrow" data-i18n="forWho.eyebrow">Pour qui ?</span>
+      <h2 class="section-title" data-i18n="forWho.title">Un programme pour chaque âge</h2>
+      <p class="section-desc" data-i18n="forWho.desc">De la diversification alimentaire du nourrisson aux besoins du sportif adolescent, notre IA s'adapte à chaque profil.</p>
+    </div>
+    <div class="profiles-grid fade-up">
+      <a href="questionnaire.html?profil=bebe" class="profile-card">
+        <span class="profile-emoji">🍼</span>
+        <div>
+          <div class="profile-title" data-i18n="profile.baby">Bébé (4 mois – 2 ans)</div>
+          <div class="profile-desc" data-i18n="profile.baby.desc">Diversification alimentaire, textures, apports essentiels</div>
+        </div>
+        <span class="profile-arrow">→</span>
+      </a>
+      <a href="questionnaire.html?profil=enfant" class="profile-card">
+        <span class="profile-emoji">🎒</span>
+        <div>
+          <div class="profile-title" data-i18n="profile.child">Enfant (2 – 10 ans)</div>
+          <div class="profile-desc" data-i18n="profile.child.desc">Croissance, énergie scolaire, néophobie alimentaire</div>
+        </div>
+        <span class="profile-arrow">→</span>
+      </a>
+      <a href="questionnaire.html?profil=ado" class="profile-card">
+        <span class="profile-emoji">🎧</span>
+        <div>
+          <div class="profile-title" data-i18n="profile.teen">Adolescent (10 – 16 ans)</div>
+          <div class="profile-desc" data-i18n="profile.teen.desc">Puberté, sport, image corporelle, autonomie</div>
+        </div>
+        <span class="profile-arrow">→</span>
+      </a>
+      <a href="questionnaire.html?profil=famille" class="profile-card">
+        <span class="profile-emoji">🏡</span>
+        <div>
+          <div class="profile-title" data-i18n="profile.family">Famille entière</div>
+          <div class="profile-desc" data-i18n="profile.family.desc">Plan commun adapté à tous les âges du foyer</div>
+        </div>
+        <span class="profile-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== HOW IT WORKS ========== -->
+<section class="section how-section" id="comment">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-eyebrow" data-i18n="how.eyebrow">Processus</span>
+      <h2 class="section-title" data-i18n="how.title">De zéro à un plan en 5 minutes</h2>
+      <p class="section-desc" data-i18n="how.desc">Notre IA fait tout le travail — vous n'avez qu'à remplir le questionnaire.</p>
+    </div>
+
+    <!-- Step tabs -->
+    <div class="how-tabs fade-up">
+      <button class="how-tab active" data-step="1">
+        <span class="how-tab-num">1</span>
+        <span class="how-tab-label" data-i18n="step1.tab">Questionnaire</span>
+      </button>
+      <div class="how-tab-line"></div>
+      <button class="how-tab" data-step="2">
+        <span class="how-tab-num">2</span>
+        <span class="how-tab-label" data-i18n="step2.tab">Analyse IA</span>
+      </button>
+      <div class="how-tab-line"></div>
+      <button class="how-tab" data-step="3">
+        <span class="how-tab-num">3</span>
+        <span class="how-tab-label" data-i18n="step3.tab">Programme</span>
+      </button>
+      <div class="how-tab-line"></div>
+      <button class="how-tab" data-step="4">
+        <span class="how-tab-num">4</span>
+        <span class="how-tab-label" data-i18n="step4.tab">Suivi IA</span>
+      </button>
+    </div>
+
+    <!-- Step panels -->
+    <div class="how-panels fade-up">
+
+      <!-- Step 1 -->
+      <div class="how-panel active" data-panel="1">
+        <div class="how-panel-content">
+          <div class="how-panel-badge" style="background:linear-gradient(135deg,#4CAF72,#2E7D4F)">📝</div>
+          <div class="how-panel-step-label">Étape <strong>1</strong> / 4</div>
+          <h3 class="how-panel-title" data-i18n="step1.title">Remplissez le questionnaire</h3>
+          <p class="how-panel-desc" data-i18n="step1.desc">Âge, poids, taille, objectifs, allergènes, aliments aimés et détestés, conditions de santé, budget et temps disponible. 7 étapes guidées, moins de 5 minutes.</p>
+          <ul class="how-panel-checklist">
+            <li><span class="how-check">✓</span> <span data-i18n="step1.c1">Profil complet en 8 étapes guidées</span></li>
+            <li><span class="how-check">✓</span> <span data-i18n="step1.c2">Allergènes &amp; restrictions alimentaires</span></li>
+            <li><span class="how-check">✓</span> <span data-i18n="step1.c3">Budget &amp; temps de cuisine</span></li>
+          </ul>
+          <a href="questionnaire.html" class="btn btn-primary how-cta" data-i18n="how.cta">Commencer maintenant →</a>
+        </div>
+        <div class="how-panel-visual" style="--ghue1:#EDF7F1;--ghue2:#C6E8D3">
+          <div class="how-visual-card">
+            <div class="how-vis-dots"><span class="hvd active"></span><span class="hvd"></span><span class="hvd"></span></div>
+            <div class="how-vis-label">👤 Profil enfant</div>
+            <div class="how-vis-input">Lucas · 8 ans</div>
+            <div class="how-vis-label" style="margin-top:.625rem">⚖️ Poids / Taille</div>
+            <div style="display:flex;gap:.5rem">
+              <div class="how-vis-input" style="flex:1">28 kg</div>
+              <div class="how-vis-input" style="flex:1">128 cm</div>
+            </div>
+            <div class="how-vis-chips">
+              <span class="hvc green">🥦 Brocoli</span>
+              <span class="hvc green">🍗 Poulet</span>
+              <span class="hvc red">🐟 Poisson</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="how-panel" data-panel="2">
+        <div class="how-panel-content">
+          <div class="how-panel-badge" style="background:linear-gradient(135deg,#FF8C42,#e67d35)">🧠</div>
+          <div class="how-panel-step-label">Étape <strong>2</strong> / 4</div>
+          <h3 class="how-panel-title" data-i18n="step2.title">L'IA analyse le profil</h3>
+          <p class="how-panel-desc" data-i18n="step2.desc">L'IA croise les données avec les recommandations nutritionnelles officielles (PNNS, ANSES) et les spécificités culturelles de votre pays.</p>
+          <ul class="how-panel-checklist">
+            <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c1">20+ paramètres analysés en temps réel</span></li>
+            <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c2">Recommandations PNNS, ANSES, NHS…</span></li>
+            <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c3">Adaptation culturelle automatique</span></li>
+          </ul>
+        </div>
+        <div class="how-panel-visual" style="--ghue1:#FFF4EC;--ghue2:#FFE0C2">
+          <div class="how-visual-card">
+            <div style="font-size:.7rem;font-weight:900;color:#e67d35;margin-bottom:.875rem">🧠 Analyse nutritionnelle…</div>
+            <div class="how-vis-bar-row"><span>Calories</span><div class="how-vis-bar"><div style="width:78%;background:linear-gradient(90deg,#FF8C42,#e67d35)"></div></div><span>1820</span></div>
+            <div class="how-vis-bar-row"><span>Protéines</span><div class="how-vis-bar"><div style="width:55%;background:linear-gradient(90deg,#4CAF72,#2E7D4F)"></div></div><span>18%</span></div>
+            <div class="how-vis-bar-row"><span>Glucides</span><div class="how-vis-bar"><div style="width:85%;background:linear-gradient(90deg,#5B8DEF,#3B6DE0)"></div></div><span>52%</span></div>
+            <div class="how-vis-bar-row"><span>Lipides</span><div class="how-vis-bar"><div style="width:65%;background:linear-gradient(90deg,#A78BFA,#7C3AED)"></div></div><span>30%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="how-panel" data-panel="3">
+        <div class="how-panel-content">
+          <div class="how-panel-badge" style="background:linear-gradient(135deg,#5B8DEF,#3B6DE0)">📅</div>
+          <div class="how-panel-step-label">Étape <strong>3</strong> / 4</div>
+          <h3 class="how-panel-title" data-i18n="step3.title">Recevez votre programme</h3>
+          <p class="how-panel-desc" data-i18n="step3.desc">Plan sur 4 semaines avec repas détaillés, quantités précises, calories et allergènes. Les plans Premium incluent recettes et liste de courses.</p>
+          <ul class="how-panel-checklist">
+            <li><span class="how-check" style="color:#3B6DE0">✓</span> <span data-i18n="step3.c1">7 jours × 4 repas entièrement détaillés</span></li>
+            <li><span class="how-check" style="color:#3B6DE0">✓</span> <span data-i18n="step3.c2">Quantités en grammes &amp; calories précises</span></li>
+            <li><span class="how-check" style="color:#3B6DE0">✓</span> <span data-i18n="step3.c3">Recettes &amp; liste de courses (Premium)</span></li>
+          </ul>
+        </div>
+        <div class="how-panel-visual" style="--ghue1:#EEF2FF;--ghue2:#D8E4FF">
+          <div class="how-visual-card">
+            <div style="font-size:.7rem;font-weight:900;color:#3B6DE0;margin-bottom:.875rem">📅 Plan · Lundi</div>
+            <div class="how-vis-meal"><span>🥣</span><div><div class="how-vis-meal-name">Petit-déjeuner · 7h30</div><div class="how-vis-meal-desc">Porridge avoine + banane</div></div><span class="how-vis-kcal" style="color:#3B6DE0">380 kcal</span></div>
+            <div class="how-vis-meal"><span>🥗</span><div><div class="how-vis-meal-name">Déjeuner · 12h00</div><div class="how-vis-meal-desc">Poulet rôti, riz, haricots</div></div><span class="how-vis-kcal" style="color:#3B6DE0">550 kcal</span></div>
+            <div class="how-vis-meal"><span>🍎</span><div><div class="how-vis-meal-name">Goûter · 16h30</div><div class="how-vis-meal-desc">Yaourt + pomme</div></div><span class="how-vis-kcal" style="color:#3B6DE0">210 kcal</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="how-panel" data-panel="4">
+        <div class="how-panel-content">
+          <div class="how-panel-badge" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">📊</div>
+          <div class="how-panel-step-label">Étape <strong>4</strong> / 4</div>
+          <h3 class="how-panel-title" data-i18n="step4.title">Suivi hebdomadaire intelligent</h3>
+          <p class="how-panel-desc" data-i18n="step4.desc">Chaque semaine, renseignez les évolutions. L'IA analyse les progrès et réajuste automatiquement le plan pour la semaine suivante.</p>
+          <ul class="how-panel-checklist">
+            <li><span class="how-check" style="color:#7C3AED">✓</span> <span data-i18n="step4.c1">Check-in hebdomadaire rapide</span></li>
+            <li><span class="how-check" style="color:#7C3AED">✓</span> <span data-i18n="step4.c2">Réajustement IA automatique du plan</span></li>
+            <li><span class="how-check" style="color:#7C3AED">✓</span> <span data-i18n="step4.c3">Historique &amp; évolution sur 4 semaines</span></li>
+          </ul>
+          <a href="questionnaire.html" class="btn btn-primary how-cta" data-i18n="how.cta">Commencer maintenant →</a>
+        </div>
+        <div class="how-panel-visual" style="--ghue1:#F5F0FF;--ghue2:#E8DEFF">
+          <div class="how-visual-card">
+            <div style="font-size:.7rem;font-weight:900;color:#7C3AED;margin-bottom:.875rem">📊 Semaine 3 — Progrès</div>
+            <div class="how-vis-stat"><span style="font-size:1.1rem">😄</span><div class="how-vis-stat-wrap"><div class="how-vis-stat-label">Humeur · Excellent</div><div class="how-vis-bar"><div style="width:90%;background:linear-gradient(90deg,#A78BFA,#7C3AED)"></div></div></div></div>
+            <div class="how-vis-stat" style="margin-top:.5rem"><span style="font-size:1.1rem">⚖️</span><div class="how-vis-stat-wrap"><div class="how-vis-stat-label">Adhésion au plan · <strong style="color:#2E7D4F">85%</strong></div><div class="how-vis-bar"><div style="width:85%;background:linear-gradient(90deg,#4CAF72,#2E7D4F)"></div></div></div></div>
+            <div class="how-vis-ai-badge">🧠 Plan ajusté pour la semaine 4 !</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Autoplay progress bar -->
+    <div class="how-autoplay fade-up">
+      <div class="how-autoplay-bar">
+        <div class="how-autoplay-fill" id="howAutoFill"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+// How it works — interactive tabs with autoplay
+(function() {
+  const tabs   = document.querySelectorAll('.how-tab');
+  const panels = document.querySelectorAll('.how-panel');
+  let current  = 1;
+  let autoTimer;
+
+  function show(n) {
+    current = n;
+    tabs.forEach(t   => t.classList.toggle('active', +t.dataset.step  === n));
+    panels.forEach(p => p.classList.toggle('active', +p.dataset.panel === n));
+    restartFill();
+  }
+
+  function restartFill() {
+    const fill = document.getElementById('howAutoFill');
+    if (fill) { fill.classList.remove('running'); void fill.offsetWidth; fill.classList.add('running'); }
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => show(current >= 4 ? 1 : current + 1), 5000);
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => show(+t.dataset.step)));
+
+  // Start when section is visible
+  const section = document.getElementById('comment');
+  if (section && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { restartFill(); }
+    }, { threshold: 0.25 }).observe(section);
+  } else {
+    restartFill();
+  }
+})();
+</script>
+
+<!-- ========== FEATURES ========== -->
+<section class="section" style="background:#fff">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-eyebrow" data-i18n="feat.eyebrow">Fonctionnalités</span>
+      <h2 class="section-title" data-i18n="feat.title">Tout ce qu'il faut, rien de superflu</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🧠</div>
+        <div class="feature-title" data-i18n="feat1.title">IA ultra-personnalisée</div>
+        <div class="feature-desc" data-i18n="feat1.desc">Chaque plan est unique. L'IA tient compte de 20+ paramètres : âge, taille, poids, allergènes, préférences, santé, culture alimentaire.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title" data-i18n="feat2.title">Adaptation culturelle</div>
+        <div class="feature-desc" data-i18n="feat2.desc">Chaque culture a ses horaires et structures de repas. Notre IA s'adapte : goûter français, Abendbrot allemand, pranzo italien, snacks britanniques.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🔬</div>
+        <div class="feature-title" data-i18n="feat3.title">Bases scientifiques</div>
+        <div class="feature-desc" data-i18n="feat3.desc">Recommandations alignées PNNS, ANSES, Société Française de Pédiatrie, DGE (Allemagne), INRAN (Italie), NHS (UK).</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title" data-i18n="feat4.title">Suivi & réévaluation</div>
+        <div class="feature-desc" data-i18n="feat4.desc">L'espace famille permet de noter l'humeur, le poids et l'adhésion chaque semaine. L'IA corrige et améliore le plan en continu.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🛒</div>
+        <div class="feature-title" data-i18n="feat5.title">Listes de courses intelligentes</div>
+        <div class="feature-desc" data-i18n="feat5.desc">Générez en un clic la liste de courses complète pour la semaine, ajustée au nombre de personnes et avec suggestions de substitution.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">💬</div>
+        <div class="feature-title" data-i18n="feat6.title">Chatbot nutritionnel</div>
+        <div class="feature-desc" data-i18n="feat6.desc">Posez vos questions à NutriBot, notre assistant IA entraîné sur la nutrition pédiatrique. Disponible 24h/24 dans votre langue.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== PRICING ========== -->
+<section class="section" id="plans">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-eyebrow" data-i18n="pricing.eyebrow">Tarifs</span>
+      <h2 class="section-title" data-i18n="pricing.title">Choisissez votre plan</h2>
+      <p class="section-desc" data-i18n="pricing.desc">Commencez gratuitement. Évoluez quand vous êtes prêt. Aucun engagement.</p>
+    </div>
+    <div class="pricing-grid fade-up">
+      <!-- Free -->
+      <div class="plan-card">
+        <div class="plan-name" data-i18n="plan.free.name">Découverte</div>
+        <div class="plan-price-wrap">
+          <span class="plan-free" data-i18n="plan.free.price">Gratuit</span>
+        </div>
+        <p class="plan-tagline" data-i18n="plan.free.tagline">Pour comprendre les besoins nutritionnels de votre enfant.</p>
+        <div class="plan-feats">
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.free.f1">Questionnaire complet</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.free.f2">Analyse du profil nutritionnel</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.free.f3">3 conseils personnalisés par l'IA</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.free.f4">IMC et besoins caloriques estimés</span></div>
+          <div class="plan-feat"><span class="pf-cross">✗</span><span style="opacity:.5" data-i18n="plan.free.f5">Plan de repas complet</span></div>
+          <div class="plan-feat"><span class="pf-cross">✗</span><span style="opacity:.5" data-i18n="plan.free.f6">Recettes & liste de courses</span></div>
+        </div>
+        <a href="questionnaire.html" class="btn btn-outline btn-full btn-lg" data-i18n="plan.free.cta">Commencer gratuitement</a>
+      </div>
+
+      <!-- Essential — featured -->
+      <div class="plan-card featured">
+        <div class="plan-popular" data-i18n="plan.popular">⭐ Le plus populaire</div>
+        <div class="plan-name" data-i18n="plan.ess.name">Essentiel</div>
+        <div class="plan-price-wrap">
+          <span class="plan-amount">9</span>
+          <span style="font-size:1.5rem;font-weight:900;color:#fff">,90€</span>
+          <span class="plan-period" data-i18n="plan.month">/mois</span>
+        </div>
+        <p class="plan-tagline" data-i18n="plan.ess.tagline">Un programme nutritionnel complet avec repas détaillés semaine après semaine.</p>
+        <div class="plan-feats">
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.ess.f1">Tout le plan Découverte</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.ess.f2">Plan 4 semaines complet</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.ess.f3">Repas détaillés + quantités + calories</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.ess.f4">Allergènes identifiés sur chaque repas</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.ess.f5">Suivi hebdomadaire IA</span></div>
+          <div class="plan-feat"><span class="pf-cross">✗</span><span style="opacity:.6" data-i18n="plan.ess.f6">Recettes détaillées & courses</span></div>
+        </div>
+        <a href="questionnaire.html?plan=essential" class="btn btn-white btn-full btn-lg" data-i18n="plan.ess.cta">Choisir Essentiel</a>
+      </div>
+
+      <!-- Premium -->
+      <div class="plan-card">
+        <div class="plan-name" data-i18n="plan.prem.name">Premium</div>
+        <div class="plan-price-wrap">
+          <span class="plan-amount">19</span>
+          <span style="font-size:1.5rem;font-weight:900;color:var(--green-dark)">,90€</span>
+          <span class="plan-period" data-i18n="plan.month">/mois</span>
+        </div>
+        <p class="plan-tagline" data-i18n="plan.prem.tagline">L'expérience complète : recettes pas à pas, courses automatiques et substitutions intelligentes.</p>
+        <div class="plan-feats">
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.prem.f1">Tout le plan Essentiel</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.prem.f2">Fiches recettes détaillées (étapes + photos)</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.prem.f3">Liste de courses auto par nb de personnes</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.prem.f4">Aliments de substitution intelligents</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.prem.f5">Chatbot NutriBot illimité</span></div>
+          <div class="plan-feat"><span class="pf-check">✓</span><span data-i18n="plan.prem.f6">Support prioritaire</span></div>
+        </div>
+        <a href="questionnaire.html?plan=premium" class="btn btn-primary btn-full btn-lg" data-i18n="plan.prem.cta">Choisir Premium</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== TESTIMONIALS ========== -->
+<section class="section" style="background:#fff">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-eyebrow" data-i18n="testi.eyebrow">Témoignages</span>
+      <h2 class="section-title" data-i18n="testi.title">Des familles nous font confiance</h2>
+    </div>
+    <div class="testimonials-grid fade-up">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote" data-i18n="testi1.quote">« Ma fille de 9 ans refusait les légumes. En 3 semaines de plan adapté, elle mange maintenant des courgettes et des carottes sans se plaindre. L'IA a vraiment su contourner sa néophobie ! »</p>
+        <div class="testi-author">
+          <div class="testi-av">👩</div>
+          <div>
+            <div class="testi-name">Sophie M.</div>
+            <div class="testi-meta" data-i18n="testi1.meta">Maman de Léa, 9 ans · Paris</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote" data-i18n="testi2.quote">« Notre fils est diabétique de type 1. Le plan généré tient vraiment compte des index glycémiques, ça facilite tellement notre quotidien. Merci Brocoli.fit ! »</p>
+        <div class="testi-author">
+          <div class="testi-av">👨</div>
+          <div>
+            <div class="testi-name">Thomas K.</div>
+            <div class="testi-meta" data-i18n="testi2.meta">Papa de Noah, 12 ans · Lyon</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★☆</div>
+        <p class="testi-quote" data-i18n="testi3.quote">« La liste de courses générée chaque semaine est un gain de temps énorme. Je cuisine pour 5 personnes dont 2 ados sportifs. Le plan Premium vaut vraiment son prix. »</p>
+        <div class="testi-author">
+          <div class="testi-av">👩</div>
+          <div>
+            <div class="testi-name">Marie-Claire D.</div>
+            <div class="testi-meta" data-i18n="testi3.meta">Maman de 3 enfants · Bordeaux</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FAQ ========== -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-header fade-up">
+      <span class="section-eyebrow" data-i18n="faq.eyebrow">FAQ</span>
+      <h2 class="section-title" data-i18n="faq.title">Questions fréquentes</h2>
+    </div>
+    <div class="faq-list fade-up">
+      <div class="faq-item">
+        <div class="faq-q"><span data-i18n="faq1.q">Est-ce que Brocoli.fit remplace un médecin ou diététicien ?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq1.a">Non. Brocoli.fit est un outil d'information et d'aide à l'alimentation. Il ne remplace pas un avis médical. Pour tout problème de santé, consultez votre pédiatre ou un diététicien diplômé. Nos plans sont basés sur les recommandations officielles mais ne constituent pas un suivi médical.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span data-i18n="faq2.q">Comment l'IA adapte-t-elle le plan à la culture de mon pays ?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq2.a">Chaque culture a des habitudes alimentaires différentes : le goûter en France (4 repas/j), l'Abendbrot froid en Allemagne, le pranzo à 13h en Italie, ou les snacks du soir au Royaume-Uni. Notre IA est configurée avec des profils culturels spécifiques pour respecter ces habitudes tout en les optimisant nutritionnellement.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span data-i18n="faq3.q">Les données de mon enfant sont-elles protégées ?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq3.a">Oui. Nous sommes conformes au RGPD. Les données personnelles (nom, poids, santé) sont chiffrées et ne sont jamais vendues à des tiers. Vous pouvez demander la suppression de vos données à tout moment depuis votre espace compte.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span data-i18n="faq4.q">Peut-on utiliser Brocoli.fit pour un bébé ?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq4.a">Oui, dès 4 mois. Le plan pour bébé se concentre sur la diversification alimentaire, les textures adaptées à l'âge et l'introduction progressive des aliments selon les recommandations pédiatriques. Les allergènes sont gérés avec une attention particulière.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span data-i18n="faq5.q">Comment fonctionne le suivi hebdomadaire ?</span><span class="faq-icon">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq5.a">Chaque semaine, dans votre espace personnel, vous renseignez le poids, l'humeur, l'adhésion au plan et quelques notes. L'IA analyse ces données et génère une version ajustée du plan pour la semaine suivante — plus de légumes si bien acceptés, menus adaptés si faible appétit, etc.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CTA FINAL ========== -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-title fade-up" data-i18n="cta.title">Prêt à bien nourrir votre famille ?</h2>
+    <p class="cta-desc fade-up" data-i18n="cta.desc">Rejoignez des milliers de familles qui font confiance à Brocoli.fit. Commencez gratuitement en moins de 5 minutes.</p>
+    <div class="fade-up" style="display:flex;flex-direction:column;align-items:center;gap:1rem">
+      <a href="questionnaire.html" class="btn btn-white btn-xl">
+        <span>🥦</span>
+        <span data-i18n="cta.btn">Créer mon programme maintenant</span>
+      </a>
+      <div class="cta-badges">
+        <span class="badge badge-white">✅ <span data-i18n="cta.b1">100% gratuit pour commencer</span></span>
+        <span class="badge badge-white">🔒 <span data-i18n="cta.b2">Sans carte bancaire</span></span>
+        <span class="badge badge-white">⚡ <span data-i18n="cta.b3">Résultats en 2 minutes</span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo-wrap">
+          <span class="footer-brand-name">Brocoli</span>
+          <span class="footer-brand-fit">.fit</span>
+        </div>
+        <p class="footer-brand-desc" data-i18n="footer.desc">Nutrition pédiatrique personnalisée par intelligence artificielle. Pour les enfants de 0 à 16 ans et les familles.</p>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.col.product">Produit</div>
+        <div class="footer-links">
+          <a href="#comment" class="footer-link" data-i18n="nav.how">Comment ça marche</a>
+          <a href="#plans" class="footer-link" data-i18n="nav.plans">Nos plans</a>
+          <a href="questionnaire.html" class="footer-link" data-i18n="footer.questionnaire">Questionnaire</a>
+          <a href="dashboard.html" class="footer-link" data-i18n="footer.dashboard">Mon espace</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.col.legal">Légal</div>
+        <div class="footer-links">
+          <a href="#" class="footer-link" data-i18n="footer.privacy">Politique de confidentialité</a>
+          <a href="#" class="footer-link" data-i18n="footer.terms">Conditions d'utilisation</a>
+          <a href="#" class="footer-link" data-i18n="footer.cookies">Gestion des cookies</a>
+          <a href="#" class="footer-link" data-i18n="footer.disclaimer">Mentions légales</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title" data-i18n="footer.col.support">Support</div>
+        <div class="footer-links">
+          <a href="#faq" class="footer-link" data-i18n="nav.faq">FAQ</a>
+          <a href="#" class="footer-link" data-i18n="footer.contact">Contact</a>
+          <a href="#" class="footer-link" data-i18n="footer.blog">Blog nutrition</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy" data-i18n="footer.copy">© 2025 Brocoli.fit — Tous droits réservés</span>
+      <div class="footer-legal">
+        <a href="#" data-i18n="footer.privacy">Confidentialité</a>
+        <a href="#" data-i18n="footer.terms">CGU</a>
+        <a href="#" data-i18n="footer.cookies">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ========== CHATBOT ========== -->
+<div class="chatbot-widget" id="chatbotWidget">
+  <div class="chatbot-win" id="chatbotWin">
+    <div class="chatbot-head">
+      <div class="chatbot-av">🥦</div>
+      <div class="chatbot-hinfo">
+        <div class="chatbot-hname">NutriBot</div>
+        <div class="chatbot-hstatus" data-i18n="chat.online">En ligne · IA Gemini</div>
+      </div>
+      <button class="chatbot-hclose" id="chatClose">✕</button>
+    </div>
+    <div class="chatbot-msgs" id="chatMsgs">
+      <div class="chat-msg bot">
+        <div class="chat-av">🥦</div>
+        <div class="chat-bubble" data-i18n="chat.welcome">Bonjour ! Je suis NutriBot, votre assistant nutrition. Comment puis-je vous aider aujourd'hui ?</div>
+      </div>
+    </div>
+    <div class="chatbot-input-wrap">
+      <input type="text" class="chatbot-inp" id="chatInput" placeholder="Posez votre question..." data-i18n-placeholder="chat.placeholder">
+      <button class="chatbot-send" id="chatSend">➤</button>
+    </div>
+  </div>
+  <button class="chatbot-btn" id="chatToggle" aria-label="Chat">
+    <span id="chatIcon">🥦</span>
+    <div class="chatbot-dot"></div>
+  </button>
+</div>
+
+<!-- ========== COOKIE BANNER ========== -->
+<div class="cookie-banner" id="cookieBanner">
+  <p class="cookie-text" data-i18n="cookie.text">🍪 Nous utilisons des cookies pour améliorer votre expérience et analyser le trafic. Aucune donnée n'est vendue à des tiers.</p>
+  <div class="cookie-actions">
+    <button class="btn btn-ghost btn-sm" id="cookieDecline" data-i18n="cookie.decline">Refuser</button>
+    <button class="btn btn-primary btn-sm" id="cookieAccept" data-i18n="cookie.accept">Accepter</button>
+  </div>
+</div>
+
+<!-- ========== TOASTS ========== -->
+<div class="toasts" id="toasts"></div>
+
+<!-- ========== SCRIPTS ========== -->
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/chatbot.js"></script>
+</body>
+</html>
