@@ -1,0 +1,12 @@
+{
+  "buildCommand": "node build.js",
+  "outputDirectory": ".",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/plan",          "destination": "/plan.html" },
+    { "source": "/dashboard",     "destination": "/dashboard.html" },
+    { "source": "/questionnaire", "destination": "/questionnaire.html" },
+    { "source": "/login",         "destination": "/login.html" },
+    { "source": "/analyse",       "destination": "/analyse.html" }
+  ]
+}

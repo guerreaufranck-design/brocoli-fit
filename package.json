@@ -1,0 +1,12 @@
+{
+  "name": "brocoli-fit",
+  "version": "1.0.0",
+  "description": "Nutrition IA personnalisée pour enfants 0-16 ans",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "npx serve -l 3456 ."
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
