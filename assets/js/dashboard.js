@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable button, show loading
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = '⏳ <span>Analyse IA en cours…</span>';
+      btn.innerHTML = '⏳ <span>Analyse en cours…</span>';
     }
 
     try {
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (err) {
       console.error('Checkin AI error:', err);
-      showToast('Suivi enregistré. Ajustement IA non disponible.', 'info');
+      showToast('Suivi enregistré. Ajustement non disponible.', 'info');
     }
 
     // Reset form
@@ -336,7 +336,7 @@ function renderHistory(history) {
           </div>
           ${entry.aiAdvice ? `
           <div style="margin-top:.75rem;padding:.625rem;background:var(--green-pale);border-radius:var(--r-md)">
-            <div style="font-size:var(--text-xs);font-weight:900;color:var(--green-dark);margin-bottom:.25rem">🧠 Conseil IA</div>
+            <div style="font-size:var(--text-xs);font-weight:900;color:var(--green-dark);margin-bottom:.25rem">💚 Conseil personnalisé</div>
             <div style="font-size:var(--text-sm);color:var(--text-mid)">${escHtml(entry.aiAdvice)}</div>
           </div>` : ''}
         </div>

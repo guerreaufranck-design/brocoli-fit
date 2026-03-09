@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroName = document.getElementById('planHeroName');
   const heroMeta = document.getElementById('planHeroMeta');
   if (heroName) heroName.textContent = `Plan de ${a.name || profile.name || 'votre enfant'}`;
-  if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 semaines · Généré par IA`;
+  if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 semaines · Généré par nos experts`;
 
   // Show upgrade bar for free users
   if (userPlan === 'free') {
