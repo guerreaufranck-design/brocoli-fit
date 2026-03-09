@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Nutrition Enfant — Conseils d'experts · Brocoli.fit</title>
+  <meta name="description" content="Articles de nutrition pédiatrique rédigés par nos experts : diversification, légumes, ado sportif, mangeurs difficiles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    body { background: var(--bg, #F7F9F4); }
+    .blog-nav { background: #fff; border-bottom: 1px solid var(--border, #DDE8E1); padding: .875rem 1.25rem; }
+    .blog-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+    .blog-hero { background: var(--green-pale, #EEF7F1); padding: 4.5rem 1.5rem 3.5rem; text-align: center; }
+    .blog-hero-eyebrow { font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: var(--green-dark, #2E7D4F); margin-bottom: .875rem; }
+    .blog-hero-title { font-family: 'Lora', serif; font-size: clamp(1.85rem, 4vw, 2.75rem); font-weight: 600; color: #1C2B1F; max-width: 640px; margin: 0 auto .875rem; line-height: 1.2; }
+    .blog-hero-sub { font-size: 1rem; color: #6B8070; max-width: 520px; margin: 0 auto; line-height: 1.65; }
+
+    .blog-grid-section { max-width: 1060px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+    .blog-grid { display: grid; grid-template-columns: 1fr; gap: 1.75rem; }
+    @media(min-width: 640px) { .blog-grid { grid-template-columns: 1fr 1fr; } }
+
+    .article-card {
+      background: #fff;
+      border: 1px solid var(--border, #DDE8E1);
+      border-radius: 1.25rem;
+      overflow: hidden;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .article-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(46,125,79,.12);
+    }
+    .article-card-top {
+      padding: 2rem 1.75rem 1.5rem;
+      flex: 1;
+    }
+    .article-emoji { font-size: 2.5rem; margin-bottom: .875rem; display: block; }
+    .article-cat {
+      font-size: .65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--green-dark, #2E7D4F); margin-bottom: .5rem;
+    }
+    .article-title {
+      font-family: 'Lora', serif;
+      font-size: 1.2rem; font-weight: 600; color: #1C2B1F;
+      line-height: 1.3; margin-bottom: .625rem;
+    }
+    .article-excerpt {
+      font-size: .875rem; color: #6B8070; line-height: 1.6;
+    }
+    .article-card-footer {
+      padding: 1rem 1.75rem;
+      border-top: 1px solid var(--border, #DDE8E1);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .article-meta { font-size: .75rem; color: #6B8070; font-weight: 700; }
+    .article-cta { font-size: .8rem; font-weight: 900; color: var(--green-dark, #2E7D4F); }
+
+    .blog-footer-cta { background: var(--green-dark, #2E7D4F); color: #fff; text-align: center; padding: 3.5rem 1.5rem; }
+    .blog-footer-cta h2 { font-family: 'Lora', serif; font-size: 1.75rem; font-weight: 600; color: #fff; margin-bottom: .625rem; }
+    .blog-footer-cta p { color: rgba(255,255,255,.8); margin-bottom: 1.5rem; font-size: .95rem; }
+  </style>
+</head>
+<body>
+
+<nav class="blog-nav">
+  <div class="blog-nav-inner">
+    <a href="../index.html" class="logo" style="font-size:1.1rem;text-decoration:none">
+      <span style="font-family:'Lora',serif;font-style:italic;font-weight:600;color:#2E7D4F">Brocoli</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:.65rem;color:#E8701A">.fit</span>
+    </a>
+    <a href="../questionnaire.html" class="btn btn-primary btn-sm" style="font-size:.8rem;padding:.5rem 1.1rem;text-decoration:none;border-radius:3rem;background:#2E7D4F;color:#fff;font-weight:900">Créer mon programme</a>
+  </div>
+</nav>
+
+<section class="blog-hero">
+  <div class="blog-hero-eyebrow">📖 BLOG NUTRITION</div>
+  <h1 class="blog-hero-title">Conseils d'experts pour nourrir vos enfants</h1>
+  <p class="blog-hero-sub">Articles rédigés par notre équipe spécialisée en nutrition pédiatrique — pour vous aider au quotidien.</p>
+</section>
+
+<section class="blog-grid-section">
+  <div class="blog-grid">
+
+    <a href="legumes-enfants.html" class="article-card">
+      <div class="article-card-top">
+        <span class="article-emoji">🥦</span>
+        <div class="article-cat">CROISSANCE</div>
+        <div class="article-title">Pourquoi les légumes sont essentiels pour les enfants</div>
+        <p class="article-excerpt">Vitamines, fibres, micronutriments : tout ce que vous devez savoir sur l'importance des légumes dans l'alimentation de vos enfants.</p>
+      </div>
+      <div class="article-card-footer">
+        <span class="article-meta">📅 Mars 2025 · ⏱ 5 min</span>
+        <span class="article-cta">Lire l'article →</span>
+      </div>
+    </a>
+
+    <a href="diversification-nourrisson.html" class="article-card">
+      <div class="article-card-top">
+        <span class="article-emoji">🍼</span>
+        <div class="article-cat">BÉBÉ</div>
+        <div class="article-title">Guide complet de la diversification alimentaire</div>
+        <p class="article-excerpt">De 4 à 24 mois, comment introduire les aliments, les textures et construire de bonnes habitudes dès le départ.</p>
+      </div>
+      <div class="article-card-footer">
+        <span class="article-meta">📅 Fév 2025 · ⏱ 7 min</span>
+        <span class="article-cta">Lire l'article →</span>
+      </div>
+    </a>
+
+    <a href="alimentation-ado-sportif.html" class="article-card">
+      <div class="article-card-top">
+        <span class="article-emoji">🏃</span>
+        <div class="article-cat">ADOLESCENT</div>
+        <div class="article-title">Alimentation et performance pour l'ado sportif</div>
+        <p class="article-excerpt">Un adolescent qui fait du sport a des besoins spécifiques en énergie, protéines et micronutriments. Nos experts vous guident.</p>
+      </div>
+      <div class="article-card-footer">
+        <span class="article-meta">📅 Avr 2025 · ⏱ 6 min</span>
+        <span class="article-cta">Lire l'article →</span>
+      </div>
+    </a>
+
+    <a href="gerer-mangeurs-difficiles.html" class="article-card">
+      <div class="article-card-top">
+        <span class="article-emoji">😕</span>
+        <div class="article-cat">COMPORTEMENT</div>
+        <div class="article-title">Comment gérer les mangeurs difficiles</div>
+        <p class="article-excerpt">Néophobie, refus de légumes, rituels alimentaires : des stratégies bienveillantes et efficaces pour élargir l'alimentation.</p>
+      </div>
+      <div class="article-card-footer">
+        <span class="article-meta">📅 Jan 2025 · ⏱ 5 min</span>
+        <span class="article-cta">Lire l'article →</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<section class="blog-footer-cta">
+  <h2>Prêt à passer à l'action ?</h2>
+  <p>Créez un programme nutritionnel personnalisé pour votre enfant en 5 minutes.</p>
+  <a href="../questionnaire.html" style="background:#fff;color:#2E7D4F;border-radius:3rem;padding:.875rem 2rem;font-weight:900;font-size:.95rem;text-decoration:none;display:inline-block">🥦 Créer mon programme gratuit</a>
+</section>
+
+</body>
+</html>

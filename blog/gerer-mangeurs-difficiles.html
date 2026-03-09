@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comment gérer les mangeurs difficiles — Brocoli.fit Blog</title>
+  <meta name="description" content="Néophobie, refus de légumes, rituels alimentaires : stratégies bienveillantes et efficaces pour élargir l'alimentation des enfants difficiles.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    body { background: #fff; }
+    .blog-nav { background: #fff; border-bottom: 1px solid #DDE8E1; padding: .875rem 1.25rem; }
+    .blog-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .blog-back { font-size: .85rem; color: #6B8070; text-decoration: none; font-weight: 700; }
+    .blog-back:hover { color: #2E7D4F; }
+    .blog-hero { background: #FFF3F0; padding: 4rem 1.5rem 3rem; text-align: center; }
+    .blog-hero-eyebrow { font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #c96520; margin-bottom: .75rem; }
+    .blog-hero-title { font-family: 'Lora', serif; font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 600; color: #1C2B1F; max-width: 700px; margin: 0 auto 1rem; line-height: 1.2; }
+    .blog-hero-meta { font-size: .8rem; color: #6B8070; display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; font-weight: 700; }
+    .blog-content { max-width: 740px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    .blog-content h2 { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: #1C2B1F; margin: 2.5rem 0 .875rem; line-height: 1.3; }
+    .blog-content h3 { font-size: 1.05rem; font-weight: 900; color: #2E7D4F; margin: 1.75rem 0 .5rem; }
+    .blog-content p { font-size: 1rem; line-height: 1.8; color: #2C3A2F; margin-bottom: 1.25rem; }
+    .blog-content ul, .blog-content ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .blog-content li { font-size: 1rem; line-height: 1.75; color: #2C3A2F; margin-bottom: .5rem; }
+    .blog-callout { background: #EEF7F1; border-left: 4px solid #2E7D4F; border-radius: 0 10px 10px 0; padding: 1.1rem 1.4rem; margin: 2rem 0; font-size: .95rem; color: #1C2B1F; line-height: 1.7; }
+    .blog-callout strong { color: #2E7D4F; }
+    .blog-tip { background: #FFF8F0; border-left: 4px solid #E8701A; border-radius: 0 10px 10px 0; padding: 1.1rem 1.4rem; margin: 2rem 0; font-size: .95rem; color: #1C2B1F; line-height: 1.7; }
+    .blog-tip strong { color: #c96520; }
+    .blog-warning { background: #FFF3F3; border-left: 4px solid #c0392b; border-radius: 0 10px 10px 0; padding: 1.1rem 1.4rem; margin: 2rem 0; font-size: .95rem; color: #1C2B1F; line-height: 1.7; }
+    .blog-warning strong { color: #c0392b; }
+    .blog-cta { background: #2E7D4F; color: #fff; border-radius: 1.5rem; padding: 2.5rem 2rem; text-align: center; margin: 3.5rem 0 1rem; }
+    .blog-cta h3 { color: #fff; font-family: 'Lora', serif; font-size: 1.3rem; margin: 0 0 .625rem; }
+    .blog-cta p { color: rgba(255,255,255,.85); font-size: .9rem; margin-bottom: 1.25rem; }
+    .blog-cta a { background: #fff; color: #2E7D4F; border-radius: 3rem; padding: .75rem 1.75rem; font-weight: 900; font-size: .9rem; text-decoration: none; display: inline-block; }
+    .strategy-card { background: #F7F9F4; border-radius: 1rem; padding: 1.25rem 1.4rem; margin: .875rem 0; border: 1px solid #DDE8E1; }
+    .strategy-num { font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; color: #E8701A; margin-bottom: .375rem; }
+    .strategy-title { font-size: 1rem; font-weight: 900; color: #1C2B1F; margin-bottom: .5rem; }
+    .strategy-text { font-size: .9rem; color: #6B8070; line-height: 1.65; }
+    .dont-list { background: #FFF3F0; border-radius: 1rem; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+    .dont-list h4 { color: #c96520; font-size: .95rem; margin: 0 0 .75rem; }
+    .dont-item { display: flex; gap: .625rem; margin-bottom: .5rem; font-size: .9rem; color: #2C3A2F; line-height: 1.5; }
+    .dont-icon { color: #c0392b; font-size: 1rem; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<nav class="blog-nav">
+  <div class="blog-nav-inner">
+    <a href="../index.html" style="font-size:1.1rem;text-decoration:none">
+      <span style="font-family:'Lora',serif;font-style:italic;font-weight:600;color:#2E7D4F">Brocoli</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:.65rem;color:#E8701A">.fit</span>
+    </a>
+    <a href="index.html" class="blog-back">← Blog</a>
+    <a href="../questionnaire.html" style="background:#2E7D4F;color:#fff;border-radius:3rem;padding:.5rem 1.1rem;font-weight:900;font-size:.8rem;text-decoration:none">Créer mon programme</a>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="blog-hero-eyebrow">😕 COMPORTEMENT · 5 MIN DE LECTURE</div>
+  <h1 class="blog-hero-title">Comment gérer les mangeurs difficiles</h1>
+  <div class="blog-hero-meta">
+    <span>✍️ Par l'équipe Brocoli.fit</span>
+    <span>📅 Janvier 2025</span>
+    <span>🔬 Psychologie alimentaire</span>
+  </div>
+</div>
+
+<article class="blog-content">
+
+  <p>Votre enfant refuse systématiquement les légumes, ne mange que 5 aliments différents, inspecte chaque plat avec méfiance ou fond en larmes si les aliments se touchent dans l'assiette ? Vous n'êtes pas seul·e — et vous ne faites pas mal votre rôle de parent. Ce comportement a un nom : la <strong>néophobie alimentaire</strong>, et c'est une étape tout à fait normale du développement de l'enfant.</p>
+
+  <h2>Comprendre la néophobie alimentaire</h2>
+
+  <p>La néophobie alimentaire est le refus ou la forte méfiance envers les aliments nouveaux ou inconnus. Elle touche environ <strong>50 à 80% des enfants</strong> entre 2 et 6 ans, avec un pic vers 3-4 ans. Elle diminue naturellement ensuite, mais peut persister chez certains enfants jusqu'à l'adolescence.</p>
+
+  <p>D'un point de vue évolutif, cette méfiance est une protection : les petits enfants, une fois mobiles, auraient pu ingérer des plantes toxiques. La prudence face aux aliments nouveaux était donc adaptative. Aujourd'hui, elle se manifeste par des refus qui exaspèrent les parents, mais qui ne sont pas une "mauvaise volonté" de l'enfant.</p>
+
+  <p>La néophobie peut aller du simple "je n'aime pas ça" à une restriction alimentaire très marquée qui impacte la vie familiale et sociale. Dans ce dernier cas — appelé ARFID (Avoidant/Restrictive Food Intake Disorder) — une consultation spécialisée est recommandée.</p>
+
+  <div class="blog-callout">
+    <strong>💚 Bonne nouvelle :</strong> Les recherches montrent qu'un enfant néophobe ne le restera pas forcément. Avec les bonnes approches et la patience, la quasi-totalité des enfants élargissent progressivement leur alimentation. Le temps et la sérénité parentale sont vos meilleurs alliés.
+  </div>
+
+  <h2>Ce qui ne fonctionne pas (et pourquoi)</h2>
+
+  <div class="dont-list">
+    <h4>❌ Stratégies à éviter</h4>
+    <div class="dont-item"><span class="dont-icon">✗</span><span><strong>Forcer à finir l'assiette :</strong> crée une association négative avec l'aliment et le repas. L'aversion augmente au lieu de diminuer.</span></div>
+    <div class="dont-item"><span class="dont-icon">✗</span><span><strong>Récompenser avec le dessert :</strong> "si tu manges tes carottes, tu auras un dessert" — augmente le statut du dessert et diminue la valeur perçue des légumes.</span></div>
+    <div class="dont-item"><span class="dont-icon">✗</span><span><strong>Cacher les légumes :</strong> ne résout pas la néophobie et peut casser la confiance quand l'enfant s'en aperçoit.</span></div>
+    <div class="dont-item"><span class="dont-icon">✗</span><span><strong>Préparer un repas séparé :</strong> renforce l'idée que l'enfant a le droit de dicter les menus. À long terme, cela s'autoalimente.</span></div>
+    <div class="dont-item"><span class="dont-icon">✗</span><span><strong>Commenter à table :</strong> "tu ne manges rien", "encore ce cirque"... Les commentaires négatifs chargent l'ambiance et ancrent davantage le comportement.</span></div>
+  </div>
+
+  <h2>Stratégies bienveillantes qui fonctionnent</h2>
+
+  <h3>La règle du « goûter sans obligation »</h3>
+  <div class="strategy-card">
+    <div class="strategy-num">STRATÉGIE 1 · Exposition sans pression</div>
+    <div class="strategy-title">« Tu n'es pas obligé d'aimer, mais on goûte »</div>
+    <div class="strategy-text">Proposez systématiquement les légumes refusés en petite quantité, sans pression pour les finir. L'enfant peut goûter, cracher discrètement, ou juste regarder. L'important est l'exposition répétée. Il faut en moyenne 10 à 15 expositions avant qu'un enfant accepte un aliment nouveau — patience absolue requise.</div>
+  </div>
+
+  <h3>Impliquer l'enfant dans la cuisine</h3>
+  <div class="strategy-card">
+    <div class="strategy-num">STRATÉGIE 2 · Autonomie et appartenance</div>
+    <div class="strategy-title">De la préparation à l'assiette</div>
+    <div class="strategy-text">Les enfants qui participent à la préparation — laver des légumes, couper avec un couteau adapté, mélanger une salade — développent un sentiment de fierté et de propriété qui diminue significativement leur résistance. Même à 3 ans, on peut confier des petites tâches. Le jardinage a le même effet : un enfant qui a cultivé une tomate la mangera plus facilement.</div>
+  </div>
+
+  <h3>Le principe du « Food Chaining »</h3>
+  <div class="strategy-card">
+    <div class="strategy-num">STRATÉGIE 3 · Progression par étapes</div>
+    <div class="strategy-title">Partir de ce que l'enfant aime</div>
+    <div class="strategy-text">Le food chaining consiste à introduire de nouveaux aliments par petits pas à partir d'aliments déjà acceptés. Votre enfant aime les pâtes natures ? → Pâtes avec huile d'olive → Pâtes avec pesto → Pâtes pesto et courgettes → Courgettes grillées seules. Chaque maillon de la chaîne est une petite victoire.</div>
+  </div>
+
+  <h3>Le modèle de Satter : la division de responsabilité</h3>
+  <div class="strategy-card">
+    <div class="strategy-num">STRATÉGIE 4 · Clarté des rôles</div>
+    <div class="strategy-title">Parent décide du quoi, enfant décide du combien</div>
+    <div class="strategy-text">La nutritionniste Ellyn Satter propose un modèle simple : <strong>le parent est responsable de ce qui est proposé, quand et où.</strong> <strong>L'enfant est responsable de combien il mange (et s'il mange).</strong> Ce cadre clair supprime les batailles de pouvoir, restaure l'écoute des signaux de faim/satiété et réduit l'anxiété des deux côtés.</div>
+  </div>
+
+  <h3>Manger ensemble, sans mettre en scène</h3>
+  <div class="strategy-card">
+    <div class="strategy-num">STRATÉGIE 5 · L'apprentissage par l'observation</div>
+    <div class="strategy-title">L'exemple silencieux</div>
+    <div class="strategy-text">Les enfants apprennent par imitation. Manger en famille, avec des adultes qui consomment les légumes refusés avec appétit et sans commentaires, est l'un des leviers les plus efficaces sur le long terme. Évitez de demander « tu vas goûter cette fois ? » — cela met une pression contre-productive. Simplement servir et manger ensemble suffit.</div>
+  </div>
+
+  <h2>Quand consulter un professionnel ?</h2>
+
+  <p>La plupart des néophobies alimentaires se résolvent avec du temps et les bonnes approches. Cependant, certains signaux méritent une consultation pédiatrique ou chez un diététicien spécialisé :</p>
+
+  <ul>
+    <li>Moins de 10-15 aliments acceptés, avec liste qui rétrécit</li>
+    <li>Refus liés à la texture, odeur, couleur ou forme (et non au goût)</li>
+    <li>Anxiété intense à l'idée de manger, crises importantes au moment des repas</li>
+    <li>Perte de poids ou courbe de croissance insuffisante</li>
+    <li>Impact important sur la vie sociale (refus d'anniversaires, restaurants, sorties scolaires)</li>
+  </ul>
+
+  <div class="blog-warning">
+    <strong>⚠️ ARFID :</strong> Dans les cas les plus sévères, on parle de trouble d'évitement/restriction alimentaire (ARFID). Ce n'est pas une question de volonté ni d'éducation — c'est un trouble qui bénéficie d'une prise en charge spécialisée (thérapie d'exposition, TCC alimentaire). Consultez votre pédiatre.
+  </div>
+
+  <div class="blog-tip">
+    <strong>🥦 Avec Brocoli.fit</strong> — Notre programme est spécialement conçu pour les mangeurs difficiles. Vous renseignez les aliments refusés par votre enfant, et nos menus les excluent tout en proposant progressivement des alternatives acceptables. Le food chaining est intégré au programme.
+  </div>
+
+  <div class="blog-cta">
+    <h3>Un programme adapté aux mangeurs difficiles</h3>
+    <p>Indiquez les refus alimentaires de votre enfant, nous les respectons et construisons un plan qui élargi progressivement son répertoire.</p>
+    <a href="../questionnaire.html">😊 Créer le programme de mon enfant</a>
+  </div>
+
+</article>
+
+</body>
+</html>

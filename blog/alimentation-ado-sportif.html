@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alimentation et performance pour l'ado sportif — Brocoli.fit Blog</title>
+  <meta name="description" content="Besoins en protéines, glucides, micronutriments et timing nutritionnel : tout savoir sur l'alimentation des adolescents sportifs.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    body { background: #fff; }
+    .blog-nav { background: #fff; border-bottom: 1px solid #DDE8E1; padding: .875rem 1.25rem; }
+    .blog-nav-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .blog-back { font-size: .85rem; color: #6B8070; text-decoration: none; font-weight: 700; }
+    .blog-back:hover { color: #2E7D4F; }
+    .blog-hero { background: #F0F4FF; padding: 4rem 1.5rem 3rem; text-align: center; }
+    .blog-hero-eyebrow { font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px; color: #3563B9; margin-bottom: .75rem; }
+    .blog-hero-title { font-family: 'Lora', serif; font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 600; color: #1C2B1F; max-width: 700px; margin: 0 auto 1rem; line-height: 1.2; }
+    .blog-hero-meta { font-size: .8rem; color: #6B8070; display: flex; gap: 1.25rem; justify-content: center; flex-wrap: wrap; font-weight: 700; }
+    .blog-content { max-width: 740px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+    .blog-content h2 { font-family: 'Lora', serif; font-size: 1.5rem; font-weight: 600; color: #1C2B1F; margin: 2.5rem 0 .875rem; line-height: 1.3; }
+    .blog-content h3 { font-size: 1.05rem; font-weight: 900; color: #2E7D4F; margin: 1.75rem 0 .5rem; }
+    .blog-content p { font-size: 1rem; line-height: 1.8; color: #2C3A2F; margin-bottom: 1.25rem; }
+    .blog-content ul, .blog-content ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+    .blog-content li { font-size: 1rem; line-height: 1.75; color: #2C3A2F; margin-bottom: .5rem; }
+    .blog-callout { background: #EEF7F1; border-left: 4px solid #2E7D4F; border-radius: 0 10px 10px 0; padding: 1.1rem 1.4rem; margin: 2rem 0; font-size: .95rem; color: #1C2B1F; line-height: 1.7; }
+    .blog-callout strong { color: #2E7D4F; }
+    .blog-tip { background: #FFF8F0; border-left: 4px solid #E8701A; border-radius: 0 10px 10px 0; padding: 1.1rem 1.4rem; margin: 2rem 0; font-size: .95rem; color: #1C2B1F; line-height: 1.7; }
+    .blog-tip strong { color: #c96520; }
+    .blog-warning { background: #FFF3F3; border-left: 4px solid #c0392b; border-radius: 0 10px 10px 0; padding: 1.1rem 1.4rem; margin: 2rem 0; font-size: .95rem; color: #1C2B1F; line-height: 1.7; }
+    .blog-warning strong { color: #c0392b; }
+    .blog-cta { background: #2E7D4F; color: #fff; border-radius: 1.5rem; padding: 2.5rem 2rem; text-align: center; margin: 3.5rem 0 1rem; }
+    .blog-cta h3 { color: #fff; font-family: 'Lora', serif; font-size: 1.3rem; margin: 0 0 .625rem; }
+    .blog-cta p { color: rgba(255,255,255,.85); font-size: .9rem; margin-bottom: 1.25rem; }
+    .blog-cta a { background: #fff; color: #2E7D4F; border-radius: 3rem; padding: .75rem 1.75rem; font-weight: 900; font-size: .9rem; text-decoration: none; display: inline-block; }
+    .meal-cards { display: grid; grid-template-columns: 1fr; gap: 1rem; margin: 1.25rem 0; }
+    @media(min-width:540px){ .meal-cards { grid-template-columns: 1fr 1fr 1fr; } }
+    .meal-card { background: #F7F9F4; border-radius: .875rem; padding: 1.1rem; border: 1px solid #DDE8E1; }
+    .meal-card-time { font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #E8701A; margin-bottom: .375rem; }
+    .meal-card-title { font-size: .9rem; font-weight: 900; color: #1C2B1F; margin-bottom: .375rem; }
+    .meal-card-text { font-size: .8rem; color: #6B8070; line-height: 1.5; }
+    .macro-row { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+    .macro-pill { background: #EEF7F1; border-radius: 2rem; padding: .5rem 1rem; font-size: .85rem; font-weight: 800; color: #2E7D4F; }
+  </style>
+</head>
+<body>
+
+<nav class="blog-nav">
+  <div class="blog-nav-inner">
+    <a href="../index.html" style="font-size:1.1rem;text-decoration:none">
+      <span style="font-family:'Lora',serif;font-style:italic;font-weight:600;color:#2E7D4F">Brocoli</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:.65rem;color:#E8701A">.fit</span>
+    </a>
+    <a href="index.html" class="blog-back">← Blog</a>
+    <a href="../questionnaire.html" style="background:#2E7D4F;color:#fff;border-radius:3rem;padding:.5rem 1.1rem;font-weight:900;font-size:.8rem;text-decoration:none">Créer mon programme</a>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="blog-hero-eyebrow">🏃 ADOLESCENT · 6 MIN DE LECTURE</div>
+  <h1 class="blog-hero-title">Alimentation et performance pour l'ado sportif</h1>
+  <div class="blog-hero-meta">
+    <span>✍️ Par l'équipe Brocoli.fit</span>
+    <span>📅 Avril 2025</span>
+    <span>🔬 Nutrition sportive pédiatrique</span>
+  </div>
+</div>
+
+<article class="blog-content">
+
+  <p>L'adolescence est une période de transformation intense : croissance osseuse, développement musculaire, équilibres hormonaux, maturation cognitive. Lorsqu'on y ajoute une activité sportive régulière, les besoins nutritionnels deviennent nettement plus élevés que ceux d'un ado sédentaire. Malheureusement, de nombreux jeunes sportifs sont en déficit calorique ou en carence de micronutriments clés — avec des conséquences sur la performance, la récupération et la croissance.</p>
+
+  <h2>Les besoins énergétiques de l'ado sportif</h2>
+
+  <p>Un adolescent de 14 ans sédentaire a besoin d'environ 1 800 à 2 100 kcal par jour. Ce même adolescent pratiquant 5 à 8 heures de sport hebdomadaire peut avoir besoin de <strong>2 500 à 3 200 kcal</strong> — parfois plus pour les sports d'endurance comme la natation ou le cyclisme.</p>
+
+  <p>Ce surplus énergétique doit provenir d'une alimentation équilibrée, et non de produits ultra-transformés ou de suppléments non nécessaires. La règle fondamentale : <strong>manger plus, mais mieux</strong>.</p>
+
+  <div class="blog-callout">
+    <strong>📊 Repères OMS pour les ados sportifs :</strong> Un adolescent de 12-18 ans pratiquant 5h+ de sport/semaine doit couvrir ses besoins par 3 repas principaux substantiels + 1-2 collations ciblées autour de l'effort. Aucun repas ne doit être sauté, notamment le petit-déjeuner.
+  </div>
+
+  <h2>Les macronutriments essentiels</h2>
+
+  <h3>Protéines — reconstruire et développer les muscles</h3>
+  <p>Les protéines sont indispensables à la réparation et au développement musculaire. Pour un ado sportif, les recommandations sont de <strong>1,2 à 1,8 g de protéines par kg de poids corporel</strong> par jour (contre 0,9 g/kg pour un ado sédentaire). Pour un adolescent de 60 kg faisant du football 4x/semaine, c'est environ 72 à 108 g de protéines quotidiennes.</p>
+  <p>Bonnes sources : œufs, volaille, poisson, légumineuses (lentilles, pois chiches), produits laitiers, tofu. Les protéines en poudre ne sont généralement pas nécessaires si l'alimentation est équilibrée.</p>
+
+  <div class="macro-row">
+    <span class="macro-pill">🥚 Œufs : 6g/100g</span>
+    <span class="macro-pill">🍗 Poulet : 23g/100g</span>
+    <span class="macro-pill">🐟 Thon : 25g/100g</span>
+    <span class="macro-pill">🫘 Lentilles : 9g/100g cuit</span>
+    <span class="macro-pill">🧀 Fromage blanc : 8g/100g</span>
+  </div>
+
+  <h3>Glucides — le carburant de l'effort</h3>
+  <p>Contrairement aux idées reçues, les glucides sont le carburant principal de l'effort physique — surtout pour les sports à haute intensité. Pour un ado sportif, ils doivent représenter <strong>50 à 60% des apports caloriques</strong>.</p>
+  <p>La qualité importe : on privilégie les glucides complexes à index glycémique modéré (pâtes complètes, riz semi-complet, quinoa, patate douce, pain complet) qui fournissent une énergie stable. Les glucides simples (fruits, miel, confiture) sont utiles juste avant ou pendant l'effort pour un apport rapide.</p>
+
+  <h3>Lipides — les graisses indispensables</h3>
+  <p>Souvent négligés, les lipides représentent <strong>25 à 35% des apports</strong> d'un ado sportif. Les acides gras essentiels (omega-3) jouent un rôle anti-inflammatoire crucial, réduisent les courbatures et favorisent la récupération. Sources : poissons gras (saumon, sardine, maquereau), noix, graines de chia et de lin, huile de colza.</p>
+
+  <h2>Micronutriments à surveiller</h2>
+
+  <h3>🩸 Fer — particulièrement les adolescentes</h3>
+  <p>Le fer est le micronutriment le plus à risque de carence chez les adolescentes sportives, en raison des pertes menstruelles combinées aux besoins accrus par le sport. Une carence en fer entraîne fatigue, baisse des performances et vulnérabilité aux infections. Sources : viande rouge (2x/semaine), légumineuses, céréales enrichies, épinards (absorption améliorée avec vitamine C).</p>
+
+  <h3>🦴 Calcium et Vitamine D — les alliés des os</h3>
+  <p>L'adolescence est la période critique de constitution du capital osseux : 90% de la densité osseuse finale se construit avant 20 ans. Les sports à impact (course, foot, basket) stimulent la densité osseuse — mais seulement si l'apport en calcium est suffisant (1 200 mg/jour chez les ados). La vitamine D, souvent déficiente en Europe, est indispensable à l'absorption du calcium.</p>
+
+  <h3>⚡ Zinc et magnésium</h3>
+  <p>Le zinc est impliqué dans la synthèse protéique et la réparation musculaire. Le magnésium réduit les crampes et participe à la contraction musculaire. Les fruits à coque, les légumineuses et les céréales complètes en sont de bonnes sources.</p>
+
+  <h2>La nutrition avant, pendant et après l'effort</h2>
+
+  <div class="meal-cards">
+    <div class="meal-card">
+      <div class="meal-card-time">⏰ Avant l'effort (2-3h)</div>
+      <div class="meal-card-title">Repas complet pré-sport</div>
+      <div class="meal-card-text">Pâtes ou riz + protéine légère (poulet, œuf) + légumes. Éviter les aliments très gras ou très fibreux qui alourdissent la digestion.</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-time">🏃 Pendant l'effort (+60 min)</div>
+      <div class="meal-card-title">Hydratation et énergie rapide</div>
+      <div class="meal-card-text">Eau en priorité (500ml/h minimum). Pour les efforts >90 min : banane, dattes, barre céréales simple. Pas de boisson énergisante.</div>
+    </div>
+    <div class="meal-card">
+      <div class="meal-card-time">🔄 Après l'effort (dans les 30 min)</div>
+      <div class="meal-card-title">Fenêtre de récupération</div>
+      <div class="meal-card-text">Collation glucides + protéines : yaourt + fruit, lait chocolaté maison, pain complet + fromage. Reconstitue les réserves et répare les muscles.</div>
+    </div>
+  </div>
+
+  <h2>Idées de repas pratiques pour l'ado sportif</h2>
+
+  <h3>Petit-déjeuner pré-entraînement matin</h3>
+  <p>Flocons d'avoine (60g) + lait demi-écrémé + 1 banane + 1 cuil. de beurre de cacahuète + quelques noix. Riche en glucides complexes, protéines et bons lipides pour une énergie durable.</p>
+
+  <h3>Déjeuner récupération après entraînement midi</h3>
+  <p>Quinoa (150g cuit) + 100g de saumon grillé + brocoli vapeur + filet d'huile d'olive + 1 yaourt nature. Protéines, omega-3 anti-inflammatoires, calcium.</p>
+
+  <h3>Dîner équilibre croissance</h3>
+  <p>Lentilles corail (200g cuites) + 1 œuf poché + carottes rôties + pain complet + 1 kiwi. Fer, protéines végétales, vitamine C pour absorption du fer.</p>
+
+  <div class="blog-warning">
+    <strong>⚠️ Vigilance :</strong> Certains adolescents, notamment dans les sports à catégories de poids (judo, lutte, aviron) ou esthétiques (danse, gymnastique), peuvent développer des comportements restrictifs dangereux. Une restriction calorique sévère chez un ado sportif entraîne une triade : troubles menstruels, perte osseuse, blessures à répétition. En cas de doute, consultez un pédiatre ou un diététicien du sport.
+  </div>
+
+  <div class="blog-cta">
+    <h3>Programme nutritionnel sport pour votre ado</h3>
+    <p>Adapté au sport pratiqué, au niveau d'activité et à l'âge. Recettes, planning semaine et liste de courses.</p>
+    <a href="../questionnaire.html">🏃 Créer le programme de mon ado</a>
+  </div>
+
+</article>
+
+</body>
+</html>

@@ -6,11 +6,12 @@ const TRANSLATIONS = {
 
   fr: {
     // Meta
-    tagline: 'Nutrition · Enfants · Experts',
+    tagline: 'Nutrition · Enfants · Famille',
     // Nav
-    'nav.how': 'Comment ça marche',
-    'nav.plans': 'Nos plans',
+    'nav.how': 'Notre méthode',
+    'nav.plans': 'Nos offres',
     'nav.faq': 'FAQ',
+    'nav.blog': 'Blog',
     'nav.login': 'Connexion',
     'nav.start': 'Commencer',
     // Hero
@@ -26,7 +27,7 @@ const TRANSLATIONS = {
     'trust.free': 'Gratuit pour commencer',
     'trust.gdpr': 'Données protégées RGPD',
     'trust.science': 'Basé sur la science',
-    'trust.ages': '0 à 16 ans',
+    'trust.ages': '4 mois à 18 ans',
     // Preview
     'preview.monday': 'LUNDI — 1 650 kcal',
     'preview.breakfast': 'Petit-déjeuner',
@@ -335,10 +336,11 @@ const TRANSLATIONS = {
   },
 
   en: {
-    tagline: 'Nutrition · Children · Experts',
-    'nav.how': 'How it works',
-    'nav.plans': 'Our plans',
+    tagline: 'Nutrition · Children · Family',
+    'nav.how': 'Our method',
+    'nav.plans': 'Our offers',
     'nav.faq': 'FAQ',
+    'nav.blog': 'Blog',
     'nav.login': 'Login',
     'nav.start': 'Get started',
     'hero.pill': 'Expert-crafted · Scientifically validated',
@@ -352,7 +354,7 @@ const TRANSLATIONS = {
     'trust.free': 'Free to start',
     'trust.gdpr': 'GDPR-compliant',
     'trust.science': 'Science-based',
-    'trust.ages': '0 to 16 years',
+    'trust.ages': '4 months to 18 years',
     'preview.monday': 'MONDAY — 1,650 kcal',
     'preview.breakfast': 'Breakfast',
     'preview.lunch': 'Lunch',
@@ -577,10 +579,11 @@ const TRANSLATIONS = {
   },
 
   de: {
-    tagline: 'Ernährung · Kinder · KI',
-    'nav.how': 'Wie es funktioniert',
-    'nav.plans': 'Unsere Pläne',
+    tagline: 'Ernährung · Kinder · Familie',
+    'nav.how': 'Unsere Methode',
+    'nav.plans': 'Unsere Angebote',
     'nav.faq': 'FAQ',
+    'nav.blog': 'Blog',
     'nav.login': 'Anmelden',
     'nav.start': 'Loslegen',
     'hero.pill': 'KI-gestützt · Wissenschaftlich validiert',
@@ -594,7 +597,7 @@ const TRANSLATIONS = {
     'trust.free': 'Kostenlos starten',
     'trust.gdpr': 'DSGVO-konform',
     'trust.science': 'Wissenschaftlich fundiert',
-    'trust.ages': '0 bis 16 Jahre',
+    'trust.ages': '4 Monate bis 18 Jahre',
     'preview.monday': 'MONTAG — 1.650 kcal',
     'preview.breakfast': 'Frühstück',
     'preview.lunch': 'Mittagessen',
@@ -811,10 +814,11 @@ const TRANSLATIONS = {
   },
 
   it: {
-    tagline: 'Nutrizione · Bambini · Esperti',
-    'nav.how': 'Come funziona',
-    'nav.plans': 'I nostri piani',
+    tagline: 'Nutrizione · Bambini · Famiglia',
+    'nav.how': 'Il nostro metodo',
+    'nav.plans': 'Le nostre offerte',
     'nav.faq': 'FAQ',
+    'nav.blog': 'Blog',
     'nav.login': 'Accedi',
     'nav.start': 'Inizia',
     'hero.pill': 'Consigliato dai nostri esperti · Validato scientificamente',
@@ -828,7 +832,7 @@ const TRANSLATIONS = {
     'trust.free': 'Gratis per iniziare',
     'trust.gdpr': 'Dati protetti GDPR',
     'trust.science': 'Basato sulla scienza',
-    'trust.ages': '0 a 16 anni',
+    'trust.ages': '4 mesi a 18 anni',
     'preview.monday': 'LUNEDÌ — 1.650 kcal',
     'preview.breakfast': 'Colazione',
     'preview.lunch': 'Pranzo',

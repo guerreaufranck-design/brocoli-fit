@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Suivi &amp; Progrès</title>
+  <meta name="description" content="Suivez vos progrès et l'évolution de votre programme nutritionnel Brocoli.fit semaine après semaine.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ====================================================
+       SUIVI PAGE — Dedicated Styles
+       ==================================================== */
+    .suivi-page { background: var(--bg, #FDFAF5); min-height: 100vh; font-family: var(--font-sans); }
+
+    /* ---- Top Nav -------------------------------------- */
+    .suivi-nav {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: .875rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 200; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .suivi-nav-logo { font-family: var(--font-serif, 'Lora',serif); font-style: italic; font-weight: 600; font-size: 1.5rem; color: var(--green-dark, #2E7D4F); text-decoration: none; flex-shrink: 0; }
+    .suivi-nav-logo span { font-family: var(--font-sans, 'Nunito',sans-serif); font-weight: 900; font-size: .65rem; color: var(--orange, #E8701A); font-style: normal; }
+    .suivi-nav-title { font-family: var(--font-serif); font-style: italic; font-size: 1.15rem; color: var(--green-dark); font-weight: 600; position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none; }
+    @media(max-width:600px){ .suivi-nav-title { display: none; } }
+
+    /* ---- Content wrapper ----------------------------- */
+    .suivi-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+
+    /* ---- Hero stats ---------------------------------- */
+    .hero-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: .875rem; margin-bottom: 2rem; }
+    @media(max-width:680px){ .hero-stats { grid-template-columns: repeat(2,1fr); } }
+    .hero-stat {
+      background: #fff; border: 1px solid var(--border); border-radius: 1.25rem;
+      padding: 1.25rem 1rem; text-align: center;
+      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .hero-stat:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,79,.1); }
+    .hero-stat-icon { font-size: 1.5rem; margin-bottom: .375rem; }
+    .hero-stat-val  { font-size: 1.75rem; font-weight: 900; color: var(--green-dark); line-height: 1; margin-bottom: .25rem; }
+    .hero-stat-lbl  { font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+
+    /* ---- Progress columns ---------------------------- */
+    .progress-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+    @media(max-width:680px){ .progress-cols { grid-template-columns: 1fr; } }
+
+    /* ---- Ring card ----------------------------------- */
+    .ring-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 1.25rem;
+      padding: 1.75rem 1.25rem; box-shadow: 0 1px 6px rgba(0,0,0,.06);
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .ring-wrap { position: relative; width: 140px; height: 140px; margin-bottom: 1.25rem; }
+    .ring-wrap svg { transform: rotate(-90deg); width: 140px; height: 140px; }
+    .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .ring-pct { font-size: 2.1rem; font-weight: 900; color: var(--green-dark); line-height: 1; }
+    .ring-sub { font-size: .58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-top: .25rem; }
+    .ring-goal-lbl  { font-size: .875rem; font-weight: 700; color: var(--text); margin-bottom: .375rem; }
+    .ring-goal-desc { font-size: .75rem; color: var(--text-muted); line-height: 1.55; }
+    .ring-weight-row { display: flex; gap: 1rem; margin-top: .875rem; align-items: center; }
+    .ring-weight-item { text-align: center; }
+    .ring-weight-val  { font-size: 1.05rem; font-weight: 900; color: var(--green-dark); }
+    .ring-weight-lbl  { font-size: .58rem; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: var(--text-muted); }
+    .ring-arrow { color: var(--border); font-size: 1.25rem; }
+    .ring-update-note { font-size: .6rem; color: var(--text-muted); margin-top: .875rem; font-style: italic; }
+    #progressRingFill { transition: stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1); }
+
+    /* ---- Sparkline card ------------------------------ */
+    .sparkline-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 1.25rem;
+      padding: 1.75rem 1.25rem; box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    }
+    .sparkline-title { font-size: .875rem; font-weight: 900; color: var(--text); margin-bottom: 1.25rem; display: flex; align-items: center; gap: .5rem; }
+    .sparkline-empty { text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: .875rem; line-height: 1.6; }
+
+    /* ---- Check-in card ------------------------------- */
+    .checkin-card { background: #fff; border: 1px solid var(--border); border-radius: 1.25rem; padding: 1.75rem; box-shadow: 0 1px 6px rgba(0,0,0,.06); margin-bottom: 2rem; }
+    .checkin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: .75rem; }
+    .checkin-header-title { font-family: var(--font-serif); font-style: italic; font-size: 1.4rem; color: var(--green-dark); font-weight: 600; }
+    .week-badge { background: #EEF7F1; color: var(--green-dark); font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; padding: .35rem .875rem; border-radius: 2rem; border: 1px solid #c8e6d3; }
+
+    /* Step dots */
+    .step-indicator { display: flex; gap: 4px; margin-bottom: 1.75rem; }
+    .step-dot { flex: 1; height: 5px; border-radius: 2rem; background: #e8f0eb; transition: background .25s; }
+    .step-dot.done   { background: var(--green, #4CAF72); }
+    .step-dot.active { background: var(--green-dark, #2E7D4F); }
+
+    /* Form sections */
+    .form-section { display: none; }
+    .form-section.active { display: block; animation: fsIn .28s ease; }
+    @keyframes fsIn { from { opacity:0; transform:translateX(14px); } to { opacity:1; transform:translateX(0); } }
+
+    .section-label { font-size: .68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 1.1rem; }
+    .form-lbl { display: block; font-size: .68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: .5rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width:480px){ .form-row { grid-template-columns: 1fr; } }
+
+    .suivi-input {
+      width: 100%; padding: .75rem 1rem;
+      border: 1.5px solid var(--border); border-radius: .75rem;
+      font-family: var(--font-sans); font-size: .875rem; color: var(--text);
+      background: #fff; outline: none; box-sizing: border-box;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .suivi-input:focus { border-color: var(--green-dark); box-shadow: 0 0 0 3px rgba(46,125,79,.12); }
+    .suivi-input::placeholder { color: #b0c4ba; }
+
+    /* Mood */
+    .mood-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: .625rem; margin-bottom: 1.25rem; }
+    @media(max-width:480px){ .mood-grid { grid-template-columns: repeat(2,1fr); } }
+    .mood-btn {
+      display: flex; flex-direction: column; align-items: center; gap: .375rem;
+      padding: .875rem .5rem; background: #EEF7F1;
+      border: 2px solid transparent; border-radius: .75rem;
+      cursor: pointer; font-size: .75rem; font-weight: 700; color: var(--text-muted);
+      transition: all .2s; user-select: none;
+    }
+    .mood-btn:hover  { border-color: var(--green); background: #E4F3EA; }
+    .mood-btn.selected { border-color: var(--green-dark); background: #E4F3EA; color: var(--green-dark); box-shadow: 0 0 0 3px rgba(46,125,79,.14); }
+    .mood-emoji { font-size: 1.75rem; line-height: 1; }
+
+    /* Appetite */
+    .appetite-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: .625rem; }
+    @media(min-width:480px){ .appetite-grid { grid-template-columns: repeat(4,1fr); } }
+    .appetite-btn {
+      display: flex; flex-direction: column; align-items: center; gap: .3rem;
+      padding: .75rem .5rem; background: #fff;
+      border: 2px solid var(--border); border-radius: .75rem;
+      cursor: pointer; font-size: .75rem; font-weight: 700; color: var(--text-muted);
+      transition: all .2s; user-select: none;
+    }
+    .appetite-btn:hover    { border-color: var(--green); }
+    .appetite-btn.selected { border-color: var(--green-dark); background: #EEF7F1; color: var(--green-dark); }
+    .appetite-emoji { font-size: 1.4rem; }
+
+    /* Range slider */
+    .range-wrap { display: flex; align-items: center; gap: 1rem; margin-top: .75rem; }
+    .range-wrap input[type=range] {
+      flex: 1; -webkit-appearance: none; appearance: none;
+      height: 6px; border-radius: 2rem;
+      background: linear-gradient(to right, var(--green-dark) 0%, var(--green-dark) var(--range-fill, 70%), #DDE8E1 var(--range-fill, 70%), #DDE8E1 100%);
+      outline: none; cursor: pointer;
+    }
+    .range-wrap input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 22px; height: 22px;
+      border-radius: 50%; background: var(--green-dark);
+      border: 3px solid #fff; box-shadow: 0 2px 8px rgba(46,125,79,.38);
+      cursor: pointer; transition: transform .2s;
+    }
+    .range-wrap input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .range-val { font-size: 1.4rem; font-weight: 900; color: var(--green-dark); min-width: 3.5rem; text-align: right; }
+    .adherence-feedback { font-size: .75rem; font-weight: 700; margin-top: .5rem; min-height: 1.2em; transition: color .2s; }
+
+    /* Step nav */
+    .step-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid #EFF5F1; }
+    .step-count { font-size: .75rem; font-weight: 700; color: var(--text-muted); }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: .625rem;
+      background: linear-gradient(135deg, var(--green-dark), #3a9460);
+      color: #fff; border: none; border-radius: 3rem;
+      padding: 1.05rem 2rem; font-family: var(--font-sans);
+      font-size: 1rem; font-weight: 900; cursor: pointer;
+      transition: all .2s; box-shadow: 0 4px 18px rgba(46,125,79,.3);
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(46,125,79,.4); }
+    .btn-submit:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    /* Recap */
+    #recapContent { background: #EEF7F1; border-radius: .875rem; padding: 1.25rem; margin-bottom: 1.25rem; }
+    .recap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .625rem 1.5rem; }
+    @media(max-width:400px){ .recap-grid { grid-template-columns: 1fr; } }
+    .recap-lbl { font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); display: block; margin-bottom: .15rem; }
+    .recap-val { font-weight: 700; font-size: .875rem; }
+
+    /* Success banner */
+    .submit-success {
+      background: linear-gradient(135deg,#e8f5e9,#f1f8e9);
+      border: 1.5px solid #a5d6a7; border-radius: 1.25rem;
+      padding: 1.1rem 1.5rem; display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem; animation: fsIn .4s ease;
+    }
+    .submit-success-icon { font-size: 2rem; flex-shrink: 0; }
+    .submit-success-msg  { font-size: .875rem; font-weight: 700; color: var(--green-dark); }
+    .submit-success-sub  { font-size: .75rem; color: var(--text-muted); margin-top: .15rem; }
+
+    /* AI adaptation */
+    .ai-adapt-section {
+      background: linear-gradient(135deg,#f0faf4,#fff);
+      border: 1.5px solid #a5d6a7; border-radius: 1.25rem;
+      padding: 1.75rem; margin-bottom: 2rem;
+      box-shadow: 0 2px 12px rgba(46,125,79,.1); animation: fsIn .4s ease;
+    }
+    .ai-adapt-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+    .ai-adapt-icon { width: 42px; height: 42px; border-radius: 50%; background: var(--green-dark); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+    .ai-adapt-title { font-family: var(--font-serif); font-style: italic; font-size: 1.15rem; color: var(--green-dark); font-weight: 600; }
+    .ai-adapt-subtitle { font-size: .75rem; color: var(--text-muted); }
+    .ai-adapt-body { font-size: .875rem; color: var(--text); line-height: 1.75; }
+    .ai-loading { display: flex; align-items: center; gap: .875rem; color: var(--text-muted); font-size: .875rem; font-weight: 700; }
+    .ai-dots { display: flex; gap: .35rem; }
+    .ai-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: dotB 1.2s infinite ease-in-out; }
+    .ai-dots span:nth-child(2) { animation-delay: .2s; }
+    .ai-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes dotB { 0%,80%,100%{transform:scale(.65);opacity:.45;} 40%{transform:scale(1.1);opacity:1;} }
+
+    /* History */
+    .history-section { margin-bottom: 2rem; }
+    .history-section-title { font-family: var(--font-serif); font-style: italic; font-size: 1.6rem; color: var(--green-dark); margin-bottom: 1.25rem; font-weight: 600; }
+    .history-empty { text-align: center; padding: 3rem 2rem; color: var(--text-muted); }
+    .history-empty-icon  { font-size: 3.5rem; margin-bottom: 1rem; }
+    .history-empty-title { font-family: var(--font-serif); font-style: italic; font-size: 1.3rem; color: var(--text); margin-bottom: .625rem; }
+    .history-empty-desc  { font-size: .875rem; line-height: 1.65; }
+    .history-list  { display: flex; flex-direction: column; gap: 1rem; }
+    .history-item  { display: flex; gap: 1rem; align-items: flex-start; }
+    .history-line  { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+    .history-dot   { width: 14px; height: 14px; border-radius: 50%; background: var(--green); border: 2.5px solid #fff; box-shadow: 0 0 0 2px var(--green); flex-shrink: 0; margin-top: .4rem; }
+    .history-connector { width: 2px; flex: 1; background: var(--border); margin-top: .3rem; min-height: 20px; }
+    .history-card {
+      flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 1.25rem;
+      padding: 1.125rem 1.25rem; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .history-card:hover { box-shadow: 0 6px 20px rgba(46,125,79,.1); transform: translateX(3px); }
+    .history-card-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: .75rem; flex-wrap: wrap; gap: .5rem; }
+    .history-week-lbl  { font-size: .63rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); }
+    .history-date      { font-size: .75rem; color: var(--text-muted); font-weight: 700; }
+    .history-chips     { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: .625rem; }
+    .history-chip      { display: flex; align-items: center; gap: .35rem; font-size: .75rem; font-weight: 700; color: var(--text); }
+    .chip-label        { color: var(--text-muted); font-weight: 600; }
+    .history-notes     { font-size: .75rem; color: var(--text-muted); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .badge-ai          { display: inline-flex; align-items: center; gap: .3rem; background: linear-gradient(135deg,#e8f5e9,#f1f8e9); border: 1px solid #a5d6a7; color: var(--green-dark); font-size: .58rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: .25rem .625rem; border-radius: 2rem; }
+    .dislikes-tag      { margin-top: .5rem; font-size: .75rem; color: #c96520; font-weight: 700; }
+
+    /* No-profile CTA */
+    .no-profile-cta   { text-align: center; padding: 5rem 2rem; max-width: 480px; margin: 0 auto; }
+    .no-profile-icon  { font-size: 4rem; margin-bottom: 1.25rem; }
+    .no-profile-title { font-family: var(--font-serif); font-style: italic; font-size: 1.7rem; color: var(--green-dark); margin-bottom: .75rem; }
+    .no-profile-desc  { font-size: .875rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.5rem; }
+
+    /* Utils */
+    .mt-1 { margin-top: .5rem; }
+    .mt-2 { margin-top: 1rem; }
+    .mt-3 { margin-top: 1.5rem; }
+    .hidden { display: none !important; }
+    .fade-up { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+
+<body class="suivi-page">
+
+<!-- NAV -->
+<nav class="suivi-nav">
+  <a href="index.html" class="suivi-nav-logo">Brocoli<span>.fit</span></a>
+  <div class="suivi-nav-title">Suivi &amp; Progrès</div>
+  <a href="dashboard.html" class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:.8rem">← Tableau de bord</a>
+</nav>
+
+<div class="suivi-content">
+
+  <!-- NO PROFILE STATE -->
+  <div class="no-profile-cta hidden" id="noProfileState">
+    <div class="no-profile-icon">🌱</div>
+    <h2 class="no-profile-title">Commençons par votre profil</h2>
+    <p class="no-profile-desc">Le suivi de progrès est disponible une fois votre profil créé et votre programme nutritionnel généré. C'est rapide — moins de 3 minutes.</p>
+    <a href="questionnaire.html" class="btn btn-primary" style="display:inline-flex;gap:.5rem">Créer mon profil &amp; mon programme →</a>
+  </div>
+
+  <!-- MAIN APP STATE -->
+  <div id="appState">
+
+    <!-- HERO STATS -->
+    <div class="hero-stats">
+      <div class="hero-stat fade-up">
+        <div class="hero-stat-icon">📅</div>
+        <div class="hero-stat-val" id="statWeek">—</div>
+        <div class="hero-stat-lbl">Semaine en cours</div>
+      </div>
+      <div class="hero-stat fade-up">
+        <div class="hero-stat-icon">⚖️</div>
+        <div class="hero-stat-val" id="statWeight">—</div>
+        <div class="hero-stat-lbl">Poids actuel (kg)</div>
+      </div>
+      <div class="hero-stat fade-up">
+        <div class="hero-stat-icon">🎯</div>
+        <div class="hero-stat-val" id="statAdherence">—</div>
+        <div class="hero-stat-lbl">Adhésion moy.</div>
+      </div>
+      <div class="hero-stat fade-up">
+        <div class="hero-stat-icon">✅</div>
+        <div class="hero-stat-val" id="statCheckins">0</div>
+        <div class="hero-stat-lbl">Suivis complétés</div>
+      </div>
+    </div>
+
+    <!-- PROGRESS COLUMNS -->
+    <div class="progress-cols">
+      <!-- Ring -->
+      <div class="ring-card fade-up">
+        <div class="ring-wrap">
+          <svg viewBox="0 0 140 140" fill="none" aria-hidden="true">
+            <circle cx="70" cy="70" r="56" stroke="#DDE8E1" stroke-width="10"/>
+            <circle id="progressRingFill" cx="70" cy="70" r="56"
+              stroke="#2E7D4F" stroke-width="10" stroke-linecap="round" fill="none"
+              style="stroke-dasharray:351.86;stroke-dashoffset:351.86"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-pct" id="progressRingVal">0%</div>
+            <div class="ring-sub">Objectif</div>
+          </div>
+        </div>
+        <div class="ring-goal-lbl"  id="ringGoalLabel">Adhérence au plan</div>
+        <div class="ring-goal-desc" id="ringGoalDesc">Moyenne des 4 derniers suivis</div>
+        <div class="ring-weight-row hidden" id="ringWeightRow">
+          <div class="ring-weight-item"><div class="ring-weight-val" id="ringStartWeight">—</div><div class="ring-weight-lbl">Départ</div></div>
+          <div class="ring-arrow">→</div>
+          <div class="ring-weight-item"><div class="ring-weight-val" id="ringCurrentWeight">—</div><div class="ring-weight-lbl">Actuel</div></div>
+          <div class="ring-arrow">→</div>
+          <div class="ring-weight-item"><div class="ring-weight-val" id="ringTargetWeight">—</div><div class="ring-weight-lbl">Objectif</div></div>
+        </div>
+        <div class="ring-update-note">Mise à jour automatique selon vos suivis</div>
+      </div>
+
+      <!-- Sparkline -->
+      <div class="sparkline-card fade-up">
+        <div class="sparkline-title"><span>📈</span><span>Évolution du poids</span></div>
+        <div id="sparklineEmpty" class="sparkline-empty">
+          <div style="font-size:2.5rem;margin-bottom:.75rem">📊</div>
+          <p>Deux suivis avec poids renseigné sont nécessaires pour afficher la courbe.</p>
+        </div>
+        <svg id="weightSparklineSvg" viewBox="0 0 280 114" style="display:none;width:100%;height:auto;overflow:visible" aria-label="Courbe évolution poids"></svg>
+      </div>
+    </div>
+
+    <!-- SUCCESS BANNER -->
+    <div class="submit-success hidden" id="submitSuccessBanner">
+      <div class="submit-success-icon">🎉</div>
+      <div>
+        <div class="submit-success-msg">Suivi enregistré avec succès !</div>
+        <div class="submit-success-sub">Vos statistiques et graphiques ont été mis à jour.</div>
+      </div>
+    </div>
+
+    <!-- AI ADAPT SECTION -->
+    <div class="ai-adapt-section hidden" id="aiAdaptSection">
+      <div class="ai-adapt-header">
+        <div class="ai-adapt-icon">🤖</div>
+        <div>
+          <div class="ai-adapt-title">Adaptation de votre programme</div>
+          <div class="ai-adapt-subtitle">Analyse basée sur votre suivi de cette semaine</div>
+        </div>
+      </div>
+      <div class="ai-adapt-body">
+        <div class="ai-loading" id="aiLoadingState">
+          <div class="ai-dots"><span></span><span></span><span></span></div>
+          <span>Analyse en cours, veuillez patienter…</span>
+        </div>
+        <div id="aiAdaptText" class="hidden"></div>
+      </div>
+      <div class="mt-3">
+        <a href="plan.html" class="btn btn-primary btn-sm">Voir le plan adapté →</a>
+      </div>
+    </div>
+
+    <!-- CHECK-IN FORM -->
+    <div class="checkin-card" id="checkinSection">
+      <div class="checkin-header">
+        <div class="checkin-header-title" id="checkinTitle">📝 Suivi de la semaine</div>
+        <div class="week-badge" id="checkinWeekBadge">Semaine 1</div>
+      </div>
+      <div class="step-indicator" id="stepIndicator">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <form id="checkinForm" novalidate>
+
+        <!-- Step 0 : Mesures -->
+        <div class="form-section active" data-step="0">
+          <div class="section-label">📏 Étape 1 / 5 — Mesures</div>
+          <div class="form-row">
+            <div>
+              <label class="form-lbl" for="ci_weight">Poids actuel (kg) <span style="color:#e53935">*</span></label>
+              <input type="number" id="ci_weight" class="suivi-input" placeholder="Ex : 28.5" step="0.1" min="1" max="300" inputmode="decimal">
+            </div>
+            <div>
+              <label class="form-lbl" for="ci_height">Taille (cm) — optionnel</label>
+              <input type="number" id="ci_height" class="suivi-input" placeholder="Ex : 128" step="1" min="30" max="250" inputmode="numeric">
+            </div>
+          </div>
+          <div class="step-nav">
+            <span class="step-count">1 / 5</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(1)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- Step 1 : Humeur & Appétit -->
+        <div class="form-section" data-step="1">
+          <div class="section-label">😊 Étape 2 / 5 — Humeur &amp; Appétit</div>
+          <label class="form-lbl">Humeur générale cette semaine <span style="color:#e53935">*</span></label>
+          <div class="mood-grid" id="moodGrid">
+            <div class="mood-btn" data-val="great" role="button" tabindex="0"><span class="mood-emoji">😄</span><span>Super</span></div>
+            <div class="mood-btn" data-val="ok"    role="button" tabindex="0"><span class="mood-emoji">🙂</span><span>Bien</span></div>
+            <div class="mood-btn" data-val="meh"   role="button" tabindex="0"><span class="mood-emoji">😐</span><span>Moyen</span></div>
+            <div class="mood-btn" data-val="bad"   role="button" tabindex="0"><span class="mood-emoji">😔</span><span>Difficile</span></div>
+          </div>
+          <label class="form-lbl mt-2">Appétit cette semaine <span style="color:#e53935">*</span></label>
+          <div class="appetite-grid" id="appetiteGrid">
+            <div class="appetite-btn" data-val="great"  role="button" tabindex="0"><span class="appetite-emoji">😋</span><span>Très bon</span></div>
+            <div class="appetite-btn" data-val="normal" role="button" tabindex="0"><span class="appetite-emoji">👍</span><span>Normal</span></div>
+            <div class="appetite-btn" data-val="low"    role="button" tabindex="0"><span class="appetite-emoji">😕</span><span>Peu d'appétit</span></div>
+            <div class="appetite-btn" data-val="none"   role="button" tabindex="0"><span class="appetite-emoji">🙅</span><span>Pas mangé</span></div>
+          </div>
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(0)">← Retour</button>
+            <span class="step-count">2 / 5</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(2)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- Step 2 : Adhésion -->
+        <div class="form-section" data-step="2">
+          <div class="section-label">📋 Étape 3 / 5 — Adhésion au plan</div>
+          <label class="form-lbl" for="ci_adherence">Quelle part du plan avez-vous respectée cette semaine ?</label>
+          <div class="range-wrap">
+            <input type="range" id="ci_adherence" min="0" max="100" value="70" step="5">
+            <span class="range-val" id="adherenceVal">70%</span>
+          </div>
+          <div class="adherence-feedback" id="adherenceFeedback" style="color:#2E7D4F">Très bien ! Continuez sur cette lancée.</div>
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(1)">← Retour</button>
+            <span class="step-count">3 / 5</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(3)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 : Notes -->
+        <div class="form-section" data-step="3">
+          <div class="section-label">📝 Étape 4 / 5 — Notes &amp; Observations</div>
+          <label class="form-lbl" for="ci_notes">Notes libres</label>
+          <textarea id="ci_notes" class="suivi-input" rows="4" style="resize:vertical" placeholder="Ex : a bien accepté les courgettes, fatigue après l'école, repas du weekend difficiles…"></textarea>
+          <label class="form-lbl mt-2" for="ci_newDislikes">Nouveaux aliments refusés cette semaine</label>
+          <input type="text" id="ci_newDislikes" class="suivi-input" placeholder="Ex : brocoli, purée de pois…">
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(2)">← Retour</button>
+            <span class="step-count">4 / 5</span>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(4)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- Step 4 : Récap + Submit -->
+        <div class="form-section" data-step="4">
+          <div class="section-label">✅ Étape 5 / 5 — Récapitulatif</div>
+          <div id="recapContent"></div>
+          <button type="button" class="btn-submit" id="submitCheckinBtn" onclick="submitCheckin()">
+            <span>💚</span><span>Enregistrer et analyser →</span>
+          </button>
+          <p style="font-size:.63rem;text-align:center;color:var(--text-muted);margin-top:.625rem">
+            Brocoli.fit analysera vos données et proposera des ajustements pour la semaine prochaine.
+          </p>
+          <div class="step-nav">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(3)">← Modifier</button>
+            <span class="step-count">5 / 5</span>
+          </div>
+        </div>
+
+      </form>
+    </div><!-- /checkin-card -->
+
+    <!-- HISTORY -->
+    <div class="history-section">
+      <h2 class="history-section-title">📅 Historique des suivis</h2>
+      <div id="historyContainer"></div>
+    </div>
+
+  </div><!-- /appState -->
+</div><!-- /suivi-content -->
+
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/gemini.js"></script>
+<script>
+/* ============================================================
+   SUIVI.HTML — Page Logic
+   ============================================================ */
+
+var profile      = {};
+var plan         = null;
+var checkins     = [];
+var subscription = { plan: 'free' };
+var currentStep  = 0;
+var selectedMood     = '';
+var selectedAppetite = '';
+
+document.addEventListener('DOMContentLoaded', function () {
+  loadData();
+  var hasProfile = profile && (profile.name || profile.age || profile.weight || profile.objectif || profile.profil);
+  if (!hasProfile) {
+    document.getElementById('noProfileState').classList.remove('hidden');
+    document.getElementById('appState').classList.add('hidden');
+    return;
+  }
+  initPage();
+  initRangeSlider();
+  initMoodButtons();
+  initAppetiteButtons();
+  initScrollAnimations();
+  if (checkins.length === 0) {
+    setTimeout(function () {
+      var el = document.getElementById('checkinSection');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 1000);
+  }
+});
+
+/* ── Data I/O ───────────────────────────────────────────────*/
+function loadData() {
+  try { profile      = JSON.parse(localStorage.getItem('brocoliProfile')      || '{}');         } catch(e){ profile = {}; }
+  try { plan         = JSON.parse(localStorage.getItem('brocoliPlan')         || 'null');        } catch(e){ plan = null; }
+  try { checkins     = JSON.parse(localStorage.getItem('brocoliCheckins')     || '[]');          } catch(e){ checkins = []; }
+  try { subscription = JSON.parse(localStorage.getItem('brocoliSubscription') || '{"plan":"free"}'); } catch(e){ subscription = {plan:'free'}; }
+}
+function saveData() { localStorage.setItem('brocoliCheckins', JSON.stringify(checkins)); }
+
+/* ── Week & date helpers ────────────────────────────────────*/
+function getCurrentWeek() {
+  var pd = localStorage.getItem('brocoliPlanDate');
+  if (!pd) return checkins.length + 1;
+  var diff = new Date() - new Date(pd);
+  return Math.max(1, Math.ceil(diff / (7*24*60*60*1000)));
+}
+function formatDate(s) {
+  try { return new Date(s).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'}); }
+  catch(e){ return s; }
+}
+
+/* ── Computations ───────────────────────────────────────────*/
+function calcAvgAdherence() {
+  if (!checkins.length) return 0;
+  var sl = checkins.slice(-4), sum = 0;
+  for (var i = 0; i < sl.length; i++) sum += (Number(sl[i].adherence) || 0);
+  return Math.round(sum / sl.length);
+}
+function getWeightData() {
+  var r = [];
+  for (var i = 0; i < checkins.length; i++) {
+    var w = parseFloat(checkins[i].weight);
+    if (!isNaN(w) && w > 0) r.push({ week: checkins[i].week, weight: w });
+  }
+  return r;
+}
+function getLatestWeight() {
+  var wd = getWeightData();
+  return wd.length ? wd[wd.length - 1].weight : null;
+}
+function calcRingProgress() {
+  var obj = (profile.objectif || '').toLowerCase();
+  var isW = /poids|mince|perd|maigr|grossi|kilos/.test(obj);
+  if (isW && profile.weight && profile.targetWeight) {
+    var s = parseFloat(profile.weight), t = parseFloat(profile.targetWeight);
+    var c = getLatestWeight(); if (c === null) c = s;
+    var tot = Math.abs(t - s); if (!tot) return 100;
+    return Math.min(100, Math.round(Math.abs(c - s) / tot * 100));
+  }
+  return calcAvgAdherence();
+}
+
+/* ── SVG: Progress Ring ────────────────────────────────────*/
+function drawProgressRing(pct) {
+  var circ = 2 * Math.PI * 56;
+  var off  = circ - (Math.min(pct, 100) / 100) * circ;
+  var ring = document.getElementById('progressRingFill');
+  var val  = document.getElementById('progressRingVal');
+  if (ring) {
+    ring.style.strokeDasharray  = circ;
+    ring.style.strokeDashoffset = circ;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { ring.style.strokeDashoffset = off; });
+    });
+  }
+  if (val) val.textContent = pct + '%';
+}
+function updateRingLabels() {
+  var obj = (profile.objectif || '').toLowerCase();
+  var isW = /poids|mince|perd|maigr|grossi|kilos/.test(obj);
+  var lbl = document.getElementById('ringGoalLabel');
+  var desc= document.getElementById('ringGoalDesc');
+  var row = document.getElementById('ringWeightRow');
+  if (lbl) lbl.textContent = profile.objectif ? 'Objectif : ' + profile.objectif : 'Adhérence au plan';
+  if (isW && profile.weight) {
+    if (desc) desc.textContent = 'Progression vers votre objectif poids';
+    if (row)  row.classList.remove('hidden');
+    var lw = getLatestWeight();
+    var sw = document.getElementById('ringStartWeight');
+    var cw = document.getElementById('ringCurrentWeight');
+    var tw = document.getElementById('ringTargetWeight');
+    if (sw) sw.textContent = parseFloat(profile.weight).toFixed(1) + ' kg';
+    if (cw) cw.textContent = (lw !== null ? lw : parseFloat(profile.weight)).toFixed(1) + ' kg';
+    if (tw) tw.textContent = profile.targetWeight ? parseFloat(profile.targetWeight).toFixed(1) + ' kg' : '?';
+  } else {
+    if (desc) desc.textContent = 'Moyenne des 4 derniers suivis';
+    if (row)  row.classList.add('hidden');
+  }
+}
+
+/* ── SVG: Weight Sparkline ──────────────────────────────────*/
+function drawSparkline(data) {
+  var svg   = document.getElementById('weightSparklineSvg');
+  var empty = document.getElementById('sparklineEmpty');
+  if (!svg) return;
+  if (data.length < 2) {
+    svg.style.display = 'none';
+    if (empty) empty.style.display = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  svg.style.display = '';
+
+  var W = 280, H = 90, P = 18, n = data.length;
+  var weights = data.map(function(d){ return d.weight; });
+  var minW = Math.min.apply(null, weights) - 1;
+  var maxW = Math.max.apply(null, weights) + 1;
+  var wR   = maxW - minW || 1;
+
+  function xS(i){ return P + (i / (n - 1)) * (W - 2*P); }
+  function yS(v){ return H - P - ((v - minW) / wR) * (H - 2*P); }
+
+  var pts = data.map(function(d, i){ return xS(i).toFixed(1) + ',' + yS(d.weight).toFixed(1); });
+  var aD  = 'M ' + xS(0).toFixed(1) + ',' + (H - P + 6) + ' L ' + pts.join(' L ') + ' L ' + xS(n-1).toFixed(1) + ',' + (H - P + 6) + ' Z';
+
+  var delta = weights[n-1] - weights[0];
+  var tc    = delta < 0 ? '#2E7D4F' : delta > 0 ? '#FF8C42' : '#2E7D4F';
+  var tt    = delta !== 0 ? (delta < 0 ? '↓ ' : '↑ ') + Math.abs(delta).toFixed(1) + ' kg' : '→ Stable';
+
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + (H + 16));
+  svg.innerHTML =
+    '<defs><linearGradient id="sGrad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="#2E7D4F" stop-opacity=".18"/>' +
+      '<stop offset="100%" stop-color="#2E7D4F" stop-opacity=".02"/>' +
+    '</linearGradient></defs>' +
+    '<path d="' + aD + '" fill="url(#sGrad)"/>' +
+    '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#2E7D4F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    data.map(function(d, i){
+      return '<circle cx="' + xS(i).toFixed(1) + '" cy="' + yS(d.weight).toFixed(1) + '" r="4.5" fill="#fff" stroke="#2E7D4F" stroke-width="2.5"/>' +
+        '<text x="' + xS(i).toFixed(1) + '" y="' + (yS(d.weight) - 9).toFixed(1) + '" text-anchor="middle" font-size="9" fill="#2E7D4F" font-family="Nunito" font-weight="800">' + d.weight + 'kg</text>' +
+        '<text x="' + xS(i).toFixed(1) + '" y="' + (H + 13) + '" text-anchor="middle" font-size="9" fill="#6B8070" font-family="Nunito" font-weight="700">S' + d.week + '</text>';
+    }).join('') +
+    '<text x="' + (W - P) + '" y="12" text-anchor="end" font-size="10" fill="' + tc + '" font-family="Nunito" font-weight="900">' + tt + '</text>';
+}
+
+/* ── Stats update ───────────────────────────────────────────*/
+function updateStats() {
+  var w   = getCurrentWeek();
+  var lw  = getLatestWeight();
+  var adh = calcAvgAdherence();
+  var eW  = document.getElementById('statWeek');
+  var eWt = document.getElementById('statWeight');
+  var eA  = document.getElementById('statAdherence');
+  var eC  = document.getElementById('statCheckins');
+  if (eW)  eW.textContent  = 'S' + w;
+  if (eWt) eWt.textContent = lw !== null ? lw.toFixed(1) : (profile.weight ? parseFloat(profile.weight).toFixed(1) : '—');
+  if (eA)  eA.textContent  = checkins.length ? adh + '%' : '—';
+  if (eC)  eC.textContent  = checkins.length;
+  drawProgressRing(calcRingProgress());
+  updateRingLabels();
+  drawSparkline(getWeightData());
+}
+
+/* ── Step form ──────────────────────────────────────────────*/
+function goStep(step) {
+  if (step > currentStep && !validateStep(currentStep)) return;
+  var secs = document.querySelectorAll('.form-section');
+  secs.forEach(function(s){ s.classList.remove('active'); });
+  var tgt = secs[step];
+  if (tgt) tgt.classList.add('active');
+  var dots = document.querySelectorAll('#stepIndicator .step-dot');
+  dots.forEach(function(d, i){
+    d.classList.remove('active','done');
+    if (i < step)  d.classList.add('done');
+    if (i === step) d.classList.add('active');
+  });
+  currentStep = step;
+  if (step === 4) buildRecap();
+  var card = document.getElementById('checkinSection');
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function validateStep(step) {
+  if (step === 0) {
+    var w = parseFloat(document.getElementById('ci_weight').value);
+    if (!w || w < 1 || w > 300) {
+      if (window.showToast) showToast('Veuillez entrer un poids valide (ex : 28.5 kg)', 'warning');
+      return false;
+    }
+  }
+  if (step === 1) {
+    if (!selectedMood)     { if (window.showToast) showToast('Sélectionnez votre humeur pour cette semaine', 'warning'); return false; }
+    if (!selectedAppetite) { if (window.showToast) showToast("Sélectionnez l'appétit pour cette semaine", 'warning'); return false; }
+  }
+  return true;
+}
+
+function buildRecap() {
+  var ml  = { great:'😄 Super', ok:'🙂 Bien', meh:'😐 Moyen', bad:'😔 Difficile' };
+  var al  = { great:'😋 Très bon', normal:'👍 Normal', low:'😕 Peu', none:'🙅 Pas mangé' };
+  var w   = document.getElementById('ci_weight').value;
+  var h   = document.getElementById('ci_height').value;
+  var a   = document.getElementById('ci_adherence').value;
+  var n   = document.getElementById('ci_notes').value.trim();
+  var d   = document.getElementById('ci_newDislikes').value.trim();
+
+  var rows = [
+    ['Poids', w ? w + ' kg' : '—'],
+    h ? ['Taille', h + ' cm'] : null,
+    ['Humeur', ml[selectedMood] || '—'],
+    ['Appétit', al[selectedAppetite] || '—'],
+    ['Adhésion', a + '%'],
+    n ? ['Notes', n] : null,
+    d ? ['Aliments refusés', d] : null,
+  ].filter(Boolean);
+
+  var rc   = document.getElementById('recapContent');
+  if (!rc) return;
+  var html = '<div class="recap-grid">';
+  rows.forEach(function(row){
+    var fw = (row[0] === 'Notes' || row[0] === 'Aliments refusés');
+    html += '<div style="' + (fw ? 'grid-column:1/-1' : '') + '">' +
+      '<span class="recap-lbl">' + escHtml(row[0]) + '</span>' +
+      '<span class="recap-val">' + escHtml(row[1]) + '</span></div>';
+  });
+  html += '</div>';
+  rc.innerHTML = html;
+}
+
+/* ── Save & submit ──────────────────────────────────────────*/
+function saveCheckin(data) {
+  checkins.push(Object.assign({ week: getCurrentWeek(), date: new Date().toISOString() }, data));
+  saveData();
+}
+
+async function submitCheckin() {
+  var btn = document.getElementById('submitCheckinBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span><span>Enregistrement…</span>'; }
+
+  var data = {
+    weight     : parseFloat(document.getElementById('ci_weight').value) || null,
+    height     : parseFloat(document.getElementById('ci_height').value) || null,
+    mood       : selectedMood,
+    appetite   : selectedAppetite,
+    adherence  : parseInt(document.getElementById('ci_adherence').value, 10),
+    notes      : document.getElementById('ci_notes').value.trim(),
+    newDislikes: document.getElementById('ci_newDislikes').value.trim(),
+  };
+
+  saveCheckin(data);
+  loadData();
+  updateStats();
+  renderHistory();
+  resetForm();
+
+  var banner = document.getElementById('submitSuccessBanner');
+  if (banner) { banner.classList.remove('hidden'); setTimeout(function(){ banner.classList.add('hidden'); }, 5500); }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (window.showToast) showToast('Suivi enregistré ! 🎉', 'success');
+
+  var isPremium = subscription && subscription.plan === 'premium';
+  if (isPremium && window.GEMINI && plan) showAiAdaptation(data);
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '<span>💚</span><span>Enregistrer et analyser →</span>'; }
+}
+
+function resetForm() {
+  document.getElementById('ci_weight').value      = '';
+  document.getElementById('ci_height').value      = '';
+  document.getElementById('ci_notes').value       = '';
+  document.getElementById('ci_newDislikes').value = '';
+  document.getElementById('ci_adherence').value   = 70;
+  updateRangeUI(70);
+  selectedMood = ''; selectedAppetite = '';
+  document.querySelectorAll('.mood-btn').forEach(function(b){ b.classList.remove('selected'); });
+  document.querySelectorAll('.appetite-btn').forEach(function(b){ b.classList.remove('selected'); });
+  goStep(0);
+}
+
+/* ── AI adaptation ──────────────────────────────────────────*/
+async function showAiAdaptation(checkinData) {
+  var sec = document.getElementById('aiAdaptSection');
+  if (!sec) return;
+  sec.classList.remove('hidden');
+  var ld = document.getElementById('aiLoadingState');
+  var tx = document.getElementById('aiAdaptText');
+  if (ld) ld.style.display = 'flex';
+  if (tx) tx.classList.add('hidden');
+  setTimeout(function(){ sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 400);
+  try {
+    var prompt  = GEMINI.buildCheckinPrompt(profile, checkinData, JSON.stringify((plan && plan.analysis) || {}));
+    var adapted = await GEMINI.call(prompt, false);
+    if (ld) ld.style.display = 'none';
+    if (tx) { tx.innerHTML = adapted.replace(/\n/g, '<br>'); tx.classList.remove('hidden'); }
+    // Try to save an adapted plan JSON
+    try {
+      var ap = await GEMINI.call(prompt, true);
+      if (ap && ap.week) {
+        localStorage.setItem('brocoliPlan', JSON.stringify(ap));
+        localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+      }
+    } catch(e2){}
+  } catch(err) {
+    if (ld) ld.style.display = 'none';
+    if (tx) {
+      tx.innerHTML = '<span style="color:var(--text-muted)">Analyse disponible — rechargez la page pour générer vos recommandations personnalisées.</span>';
+      tx.classList.remove('hidden');
+    }
+  }
+}
+
+/* ── History render ─────────────────────────────────────────*/
+function renderHistory() {
+  var con = document.getElementById('historyContainer');
+  if (!con) return;
+  if (!checkins || !checkins.length) {
+    con.innerHTML = '<div class="history-empty">' +
+      '<div class="history-empty-icon">📅</div>' +
+      '<div class="history-empty-title">Aucun suivi pour l\'instant</div>' +
+      '<p class="history-empty-desc">Complétez votre premier suivi hebdomadaire ci-dessus pour commencer à suivre vos progrès.<br>Chaque semaine enregistrée vous rapproche de votre objectif !</p>' +
+      '<button class="btn btn-outline btn-sm" style="margin-top:1.25rem" onclick="document.getElementById(\'checkinSection\').scrollIntoView({behavior:\'smooth\'})">Faire mon premier suivi →</button>' +
+    '</div>';
+    return;
+  }
+
+  var me = { great:'😄', ok:'🙂', meh:'😐', bad:'😔' };
+  var ml = { great:'Super', ok:'Bien', meh:'Moyen', bad:'Difficile' };
+  var al = { great:'Très bon', normal:'Normal', low:"Peu d'appétit", none:'Pas mangé' };
+  var ip = subscription && subscription.plan === 'premium';
+  var sorted = checkins.slice().reverse();
+
+  var html = '<div class="history-list">';
+  for (var i = 0; i < sorted.length; i++) {
+    var c    = sorted[i];
+    var last = (i === sorted.length - 1);
+    var adh  = Number(c.adherence);
+    var ac   = adh < 40 ? '#e53935' : adh < 70 ? '#E8701A' : '#2E7D4F';
+    html +=
+      '<div class="history-item">' +
+        '<div class="history-line">' +
+          '<div class="history-dot"></div>' +
+          (last ? '' : '<div class="history-connector"></div>') +
+        '</div>' +
+        '<div class="history-card">' +
+          '<div class="history-card-head">' +
+            '<div>' +
+              '<div class="history-week-lbl">Semaine ' + c.week + '</div>' +
+              '<div class="history-date">' + formatDate(c.date) + '</div>' +
+            '</div>' +
+            '<div>' + (ip ? '<span class="badge-ai">✨ Ajustement IA disponible</span>' : '') + '</div>' +
+          '</div>' +
+          '<div class="history-chips">' +
+            (c.weight ? '<div class="history-chip"><span>⚖️</span><span>' + parseFloat(c.weight).toFixed(1) + ' kg</span></div>' : '') +
+            (c.mood   ? '<div class="history-chip"><span>' + (me[c.mood]||'🙂') + '</span><span class="chip-label">' + (ml[c.mood]||c.mood) + '</span></div>' : '') +
+            (c.appetite ? '<div class="history-chip"><span class="chip-label">' + (al[c.appetite]||c.appetite) + '</span></div>' : '') +
+            ((c.adherence !== undefined && c.adherence !== null) ? '<div class="history-chip"><span>🎯</span><span style="color:' + ac + ';font-weight:900">' + c.adherence + '%</span><span class="chip-label"> adhésion</span></div>' : '') +
+          '</div>' +
+          (c.notes ? '<div class="history-notes">' + escHtml(c.notes) + '</div>' : '') +
+          (c.newDislikes ? '<div class="dislikes-tag">🚫 Refusés : ' + escHtml(c.newDislikes) + '</div>' : '') +
+        '</div>' +
+      '</div>';
+  }
+  html += '</div>';
+  con.innerHTML = html;
+}
+
+/* ── Mood / Appetite buttons ────────────────────────────────*/
+function initMoodButtons() {
+  document.querySelectorAll('#moodGrid .mood-btn').forEach(function(btn){
+    function sel(){
+      document.querySelectorAll('#moodGrid .mood-btn').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      selectedMood = btn.getAttribute('data-val');
+    }
+    btn.addEventListener('click', sel);
+    btn.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); sel(); } });
+  });
+}
+function initAppetiteButtons() {
+  document.querySelectorAll('#appetiteGrid .appetite-btn').forEach(function(btn){
+    function sel(){
+      document.querySelectorAll('#appetiteGrid .appetite-btn').forEach(function(b){ b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      selectedAppetite = btn.getAttribute('data-val');
+    }
+    btn.addEventListener('click', sel);
+    btn.addEventListener('keydown', function(e){ if (e.key==='Enter'||e.key===' '){ e.preventDefault(); sel(); } });
+  });
+}
+
+/* ── Range slider ───────────────────────────────────────────*/
+function initRangeSlider() {
+  var s = document.getElementById('ci_adherence');
+  if (!s) return;
+  s.addEventListener('input', function(){ updateRangeUI(parseInt(this.value, 10)); });
+  updateRangeUI(70);
+}
+function updateRangeUI(v) {
+  var ve = document.getElementById('adherenceVal');
+  var fe = document.getElementById('adherenceFeedback');
+  var s  = document.getElementById('ci_adherence');
+  if (ve) ve.textContent = v + '%';
+  if (s)  s.style.setProperty('--range-fill', v + '%');
+  var msg, col;
+  if      (v >= 80){ msg = 'Excellent ! Vous suivez parfaitement le plan.';      col = '#2E7D4F'; }
+  else if (v >= 60){ msg = 'Très bien ! Continuez sur cette lancée.';            col = '#2E7D4F'; }
+  else if (v >= 40){ msg = 'Passable — essayons de simplifier le plan ensemble.';col = '#E8701A'; }
+  else if (v >= 20){ msg = "Difficile cette semaine — ne vous découragez pas.";  col = '#c96520'; }
+  else             { msg = "Semaine très difficile — analysons ensemble.";       col = '#e53935'; }
+  if (fe){ fe.textContent = msg; fe.style.color = col; }
+}
+
+/* ── Page init ──────────────────────────────────────────────*/
+function initPage() {
+  var w = getCurrentWeek();
+  var t = document.getElementById('checkinTitle');
+  var b = document.getElementById('checkinWeekBadge');
+  if (t) t.textContent = '📝 Suivi de la semaine ' + w;
+  if (b) b.textContent = 'Semaine ' + w;
+  updateStats();
+  renderHistory();
+}
+
+function initScrollAnimations() {
+  if (!('IntersectionObserver' in window)){
+    document.querySelectorAll('.fade-up').forEach(function(el){ el.classList.add('visible'); });
+    return;
+  }
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(function(el, i){
+    el.style.transitionDelay = (i * 0.07) + 's';
+    obs.observe(el);
+  });
+}
+
+/* ── Utils ──────────────────────────────────────────────────*/
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 
 const GEMINI = {
 
-  async call(prompt, jsonMode = true) {
+  async call(prompt, jsonMode = true, timeoutMs = 300000) {
     const cfg = window.BROCOLI_CONFIG;
     const url = `${cfg.GEMINI_API_URL}${cfg.GEMINI_MODEL}:generateContent?key=${cfg.GEMINI_API_KEY}`;
 
@@ -17,11 +17,25 @@ const GEMINI = {
       }
     };
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    let res;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+    } catch (fetchErr) {
+      clearTimeout(timeoutId);
+      if (fetchErr.name === 'AbortError') {
+        throw new Error('La génération a pris trop de temps. Réessayez ou simplifiez le profil.');
+      }
+      throw fetchErr;
+    }
+    clearTimeout(timeoutId);
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -246,10 +260,43 @@ async function runGeminiAnalysis(profile) {
     if (label) label.textContent = `${Math.round(pct)}%`;
   }
 
+  function setSubtitle(text) {
+    const el = document.getElementById('anaSubtitle');
+    if (el) el.textContent = text;
+  }
+
   function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+  // Heartbeat: slowly creeps from startPct toward 99 while the promise is pending
+  function startHeartbeat(startPct) {
+    let pct = startPct;
+    let stopped = false;
+    const messages = [
+      'Génération de votre plan sur 7 jours… ✨',
+      'Calcul des portions adaptées à l\'âge…',
+      'Adaptation aux préférences culturelles…',
+      'Vérification des allergènes…',
+      'Création de la liste de courses…',
+      'Presque terminé, encore un instant… 🥦',
+    ];
+    let msgIdx = 0;
+    const iv = setInterval(() => {
+      if (stopped) { clearInterval(iv); return; }
+      // Slow logarithmic creep toward 99
+      pct = pct + (99 - pct) * 0.04;
+      setProgress(pct);
+      // Cycle through patience messages every ~5s
+      msgIdx++;
+      if (msgIdx % 5 === 0) {
+        const mIdx = Math.floor(msgIdx / 5) % messages.length;
+        setSubtitle(messages[mIdx]);
+      }
+    }, 1000);
+    return () => { stopped = true; clearInterval(iv); };
+  }
+
   try {
-    // Animate steps with progress
+    // Animate steps 1-4 quickly (intro animation)
     const stepProgress = [15, 30, 50, 65, 90];
     for (let i = 0; i < 4; i++) {
       setStep(i, 'active');
@@ -259,12 +306,30 @@ async function runGeminiAnalysis(profile) {
     }
     setStep(4, 'active');
     setProgress(stepProgress[4]);
+    setSubtitle('Génération de votre plan personnalisé… Cela peut prendre 1 à 2 minutes.');
+
+    // Start heartbeat animation while Gemini works
+    const stopHeartbeat = startHeartbeat(stepProgress[4]);
 
     // Build prompt
     const prompt = GEMINI.buildNutritionPrompt(profile);
 
-    // Call Gemini
-    const result = await GEMINI.call(prompt, true);
+    let result;
+    try {
+      // Call Gemini (up to 5 minutes timeout)
+      result = await GEMINI.call(prompt, true, 300000);
+    } catch (firstErr) {
+      // Retry once on network/timeout error
+      if (firstErr.name === 'AbortError' || firstErr.message.includes('trop de temps') || firstErr.message.includes('fetch')) {
+        setSubtitle('Nouvelle tentative en cours…');
+        await delay(2000);
+        result = await GEMINI.call(prompt, true, 300000);
+      } else {
+        throw firstErr;
+      }
+    } finally {
+      stopHeartbeat();
+    }
 
     setStep(4, 'done');
     setProgress(100);
