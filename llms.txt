@@ -1,0 +1,45 @@
+# Brocoli.fit
+
+> Brocoli.fit is a personalized child nutrition platform that creates expert-designed meal plans for children aged 0–16 and their families, based on WHO guidelines and adapted to cultural food habits.
+
+## About
+
+Brocoli.fit generates customized weekly nutrition programs for children and families. Parents fill out a detailed questionnaire (age, weight, height, allergies, food preferences, health conditions, budget, cooking time), and our nutrition experts create a personalized 4-week meal plan aligned with WHO (World Health Organization) recommendations and national pediatric nutrition guidelines.
+
+The platform supports 4 languages (French, English, German, Italian) and adapts to cultural food habits: French goûter, German Abendbrot, Italian pranzo, British snack culture.
+
+## Key Features
+
+- **Personalized Meal Plans**: 20+ parameters analyzed per child (age, weight, height, allergies, preferences, health, cultural habits)
+- **WHO-Based Nutrition**: All plans follow World Health Organization and national pediatric nutrition guidelines
+- **Cultural Adaptation**: Meal structures adapted to French, German, Italian, and British food cultures
+- **Weekly Follow-Up**: Parents report weight, mood, and plan adherence; experts adjust the next week's plan accordingly
+- **Smart Shopping Lists**: Auto-generated grocery lists adjusted by number of family members with substitution suggestions
+- **NutriBot Chatbot**: 24/7 AI-powered nutritional assistant specialized in pediatric nutrition
+- **Age Profiles**: Baby (4–24 months), Child (2–12 years), Teen (12–18 years), Whole Family
+
+## Plans & Pricing
+
+- **Découverte (Free)**: Questionnaire, nutritional profile analysis, 3 personalized tips, BMI and caloric needs
+- **Essentiel (€9/month)**: Full 4-week meal plan with detailed meals, quantities, calories, allergen labels, weekly follow-up
+- **Premium (€19/month)**: Everything in Essentiel + step-by-step recipes, auto shopping lists, smart food substitutions, unlimited NutriBot chatbot, priority support
+
+## Target Audience
+
+- Parents of children aged 0–16 looking for science-based nutrition guidance
+- Families managing food allergies, intolerances, or specific dietary needs (gluten-free, lactose-free, diabetic-friendly)
+- Parents dealing with children's food neophobia or picky eating
+- Families wanting structured, balanced weekly meal plans adapted to their culture
+
+## How It Works
+
+1. **Questionnaire** (5 min): Fill in your child's profile — age, weight, height, allergies, food preferences, health conditions, budget, cooking time
+2. **Expert Analysis**: Our nutrition team cross-references the data with WHO recommendations and cultural dietary guidelines
+3. **Meal Plan Delivery**: Receive a detailed 4-week plan with meals, quantities in grams, calories, and allergen labels
+4. **Weekly Follow-Up**: Report progress, and receive an adjusted plan for the next week
+
+## Links
+
+- Homepage: https://www.brocoli.fit
+- Start Questionnaire: https://www.brocoli.fit/questionnaire
+- Pricing Plans: https://www.brocoli.fit/plan
