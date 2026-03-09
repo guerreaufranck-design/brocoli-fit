@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /dashboard
+Disallow: /questionnaire
+Disallow: /analyse
+Disallow: /success
+Disallow: /cancel
+Disallow: /api/
+
+Sitemap: https://www.brocoli.fit/sitemap.xml
