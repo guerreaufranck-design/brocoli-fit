@@ -128,19 +128,19 @@
         <input type="radio" name="profil" value="bebe">
         <span class="option-icon">🍼</span>
         <span class="option-title" data-i18n="p.bebe">Bébé</span>
-        <span class="option-desc" data-i18n="p.bebe.d">4 mois – 2 ans · Diversification</span>
+        <span class="option-desc" data-i18n="p.bebe.d">4 – 24 mois · Diversification</span>
       </label>
       <label class="option-card" data-value="enfant">
         <input type="radio" name="profil" value="enfant">
         <span class="option-icon">🎒</span>
         <span class="option-title" data-i18n="p.enfant">Enfant</span>
-        <span class="option-desc" data-i18n="p.enfant.d">2 – 10 ans · Croissance & école</span>
+        <span class="option-desc" data-i18n="p.enfant.d">2 – 12 ans · Croissance & école</span>
       </label>
       <label class="option-card" data-value="ado">
         <input type="radio" name="profil" value="ado">
         <span class="option-icon">🎧</span>
         <span class="option-title" data-i18n="p.ado">Adolescent</span>
-        <span class="option-desc" data-i18n="p.ado.d">10 – 16 ans · Puberté & sport</span>
+        <span class="option-desc" data-i18n="p.ado.d">12 – 18 ans · Puberté & sport</span>
       </label>
       <label class="option-card" data-value="famille">
         <input type="radio" name="profil" value="famille">
@@ -182,8 +182,8 @@
         <div class="form-group">
           <label class="form-label" data-i18n="q2.age">Âge</label>
           <div class="num-input-wrap">
-            <input type="number" class="num-input" id="ageVal" value="7" min="0" max="18">
-            <span class="num-input-unit" data-i18n="q2.years">ans</span>
+            <input type="number" class="num-input" id="ageVal" value="7" min="1" max="18">
+            <span class="num-input-unit" id="ageUnit" data-i18n="q2.years">ans</span>
           </div>
         </div>
       </div>
@@ -255,6 +255,10 @@
         <button class="sub-opt" data-val="halal">☪️ <span data-i18n="diet.halal">Halal</span></button>
         <button class="sub-opt" data-val="casher">✡️ <span data-i18n="diet.kosher">Casher</span></button>
         <button class="sub-opt" data-val="sansporc">🐷 <span data-i18n="diet.nopork">Sans porc</span></button>
+        <button class="sub-opt" data-val="autre" id="dietAutreBtn">✏️ <span data-i18n="diet.other">Autre</span></button>
+      </div>
+      <div id="dietOtherWrap" style="display:none;margin-top:.75rem">
+        <input type="text" class="form-input" id="dietOther" data-i18n-placeholder="diet.other.ph" placeholder="Ex: flexitarien, pescétarien…">
       </div>
     </div>
     <div class="form-group" style="margin-top:1.5rem">
@@ -343,7 +347,7 @@
     </div>
     <div class="medical-notice">
       <span>ℹ️</span>
-      <span data-i18n="q6.notice">Les menus générés s'appuient sur les recommandations nutritionnelles officielles (ANSES, PNNS) et ne remplacent pas un suivi médical. Si votre enfant est suivi, partagez les menus avec son professionnel de santé.</span>
+      <span data-i18n="q6.notice">Les menus générés s'appuient sur les recommandations nutritionnelles officielles de l'OMS et ne remplacent pas un suivi médical. Si votre enfant est suivi, partagez les menus avec son professionnel de santé.</span>
     </div>
     <div class="q-sub-label" data-i18n="q6.conditions">Condition(s) à prendre en compte</div>
     <div class="health-grid" id="healthGrid">
@@ -356,7 +360,7 @@
       <div class="health-card" data-val="anxiete"><span class="health-icon">😰</span><span class="health-name" data-i18n="h.anxiety">Anxiété / Stress</span><span class="health-desc" data-i18n="h.anxietyd">Magnésium, tryptophane renforcés</span></div>
       <div class="health-card" data-val="sommeil"><span class="health-icon">😴</span><span class="health-name" data-i18n="h.sleep">Troubles du sommeil</span><span class="health-desc" data-i18n="h.sleepd">Aliments favorisant la sérotonine</span></div>
       <div class="health-card" data-val="anemie"><span class="health-icon">💉</span><span class="health-name" data-i18n="h.anemia">Anémie / Carence fer</span><span class="health-desc" data-i18n="h.anemiad">Fer & vitamine C renforcés</span></div>
-      <div class="health-card" data-val="neophobie"><span class="health-icon">😤</span><span class="health-name" data-i18n="h.neo">Mangeur difficile</span><span class="health-desc" data-i18n="h.neod">Néophobie alimentaire</span></div>
+      <div class="health-card" data-val="neophobie"><span class="health-icon">😕</span><span class="health-name" data-i18n="h.neo">Mangeur difficile</span><span class="health-desc" data-i18n="h.neod">Néophobie alimentaire</span></div>
       <div class="health-card" data-val="surpoids"><span class="health-icon">⚖️</span><span class="health-name" data-i18n="h.overw">Surpoids</span><span class="health-desc" data-i18n="h.overwId">Gestion du poids adaptée</span></div>
       <div class="health-card" data-val="insuffisance"><span class="health-icon">📊</span><span class="health-name" data-i18n="h.underw">Insuffisance pondérale</span><span class="health-desc" data-i18n="h.underwId">Menus plus caloriques</span></div>
     </div>
@@ -391,9 +395,9 @@
 
     <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.budget">Budget alimentaire hebdomadaire</div>
     <div class="budget-grid" id="budgetGrid">
-      <div class="budget-card" data-val="<50"><span class="budget-amount">&lt; 50€</span><span class="budget-label" data-i18n="b.small">Petit budget</span><span class="budget-desc" data-i18n="b.smalld">Légumes de saison, économique</span></div>
-      <div class="budget-card" data-val="50-100"><span class="budget-amount">50-100€</span><span class="budget-label" data-i18n="b.mid">Budget moyen</span><span class="budget-desc" data-i18n="b.midd">Bon équilibre qualité/prix</span></div>
-      <div class="budget-card" data-val=">100"><span class="budget-amount">&gt; 100€</span><span class="budget-label" data-i18n="b.high">Budget confort</span><span class="budget-desc" data-i18n="b.highd">Bio, produits de qualité</span></div>
+      <div class="budget-card" data-val="<50"><span class="budget-amount">&lt; 50€</span></div>
+      <div class="budget-card" data-val="50-100"><span class="budget-amount">50-100€</span></div>
+      <div class="budget-card" data-val=">100"><span class="budget-amount">&gt; 100€</span></div>
     </div>
 
     <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.time">Temps disponible pour cuisiner / repas</div>
@@ -425,17 +429,13 @@
       <button class="sub-opt" data-val="actif">🏃 <span data-i18n="act.active">Actif</span></button>
       <button class="sub-opt" data-val="tres_actif">🏆 <span data-i18n="act.very">Très actif / Sportif</span></button>
     </div>
-    <div style="margin-top:1rem">
+    <div style="margin-top:1rem" id="sportsSectionWrap">
       <div class="q-sub-label" data-i18n="q7.sports">Sports pratiqués</div>
       <div class="sub-options" id="sportsOptions">
-        <button class="sub-opt" data-val="foot">⚽ <span data-i18n="sp.football">Football</span></button>
-        <button class="sub-opt" data-val="natation">🏊 <span data-i18n="sp.swim">Natation</span></button>
-        <button class="sub-opt" data-val="danse">💃 <span data-i18n="sp.dance">Danse</span></button>
-        <button class="sub-opt" data-val="gym">🤸 <span data-i18n="sp.gym">Gym / Athlé</span></button>
-        <button class="sub-opt" data-val="arts_martiaux">🥋 <span data-i18n="sp.martial">Arts martiaux</span></button>
-        <button class="sub-opt" data-val="velo">🚴 <span data-i18n="sp.bike">Vélo</span></button>
-        <button class="sub-opt" data-val="basket">🏀 <span data-i18n="sp.basket">Basket</span></button>
-        <button class="sub-opt" data-val="rugby">🏉 <span data-i18n="sp.rugby">Rugby</span></button>
+        <!-- Rendered dynamically by questionnaire.js based on selected profile -->
+      </div>
+      <div style="margin-top:.75rem">
+        <input type="text" class="form-input" id="sportsOther" data-i18n-placeholder="sp.freetext" placeholder="Ex: tennis, escalade, équitation…">
       </div>
     </div>
   </div>
@@ -508,7 +508,7 @@
       <div class="plan-sel-card featured-plan" data-plan="essential">
         <div class="plan-sel-top">
           <span class="plan-sel-name" data-i18n="plan.ess.name">Essentiel</span>
-          <span class="plan-sel-price">9,90€</span>
+          <span class="plan-sel-price">9€</span>
         </div>
         <p class="plan-sel-desc" data-i18n="ps.ess.desc">Plan 4 semaines complet + suivi</p>
         <div class="plan-sel-feats">
@@ -520,7 +520,7 @@
       <div class="plan-sel-card" data-plan="premium">
         <div class="plan-sel-top">
           <span class="plan-sel-name" data-i18n="plan.prem.name">Premium</span>
-          <span class="plan-sel-price">19,90€</span>
+          <span class="plan-sel-price">19€</span>
         </div>
         <p class="plan-sel-desc" data-i18n="ps.prem.desc">Recettes + liste de courses + substitutions</p>
         <div class="plan-sel-feats">

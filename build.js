@@ -16,7 +16,7 @@ if (!supabaseKey) console.warn('⚠️  SUPABASE_ANON_KEY non défini');
 const content = `// Auto-généré au build — ne pas modifier manuellement
 window.BROCOLI_CONFIG = {
   GEMINI_API_KEY:   '${apiKey}',
-  GEMINI_MODEL:     'gemini-2.5-flash',
+  GEMINI_MODEL:     'gemini-2.0-flash',
   GEMINI_API_URL:   'https://generativelanguage.googleapis.com/v1beta/models/',
   SUPABASE_URL:     '${supabaseUrl}',
   SUPABASE_ANON_KEY:'${supabaseKey}',
@@ -24,9 +24,9 @@ window.BROCOLI_CONFIG = {
   DEFAULT_LANG: 'fr',
   LANGUAGES: ['fr', 'en', 'de', 'it'],
   PLANS: {
-    free:      { price: 0,     name: 'Découverte' },
-    essential: { price: 9.90,  name: 'Essentiel'  },
-    premium:   { price: 19.90, name: 'Premium'    }
+    free:      { price: 0,  name: 'Découverte' },
+    essential: { price: 9,  name: 'Essentiel'  },
+    premium:   { price: 19, name: 'Premium'    }
   }
 };
 `;

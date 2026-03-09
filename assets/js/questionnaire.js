@@ -6,21 +6,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const TOTAL_STEPS = 8;
   let currentStep = 1;
 
+  // Helper: get i18n string or fallback
+  function t(key, fallback) {
+    return (window.I18N && window.I18N.t(key)) || fallback || key;
+  }
+
   // State
   const data = {
-    profil: null, name: '', genre: null, age: 7, weight: 28, height: 128,
-    objectif: null, diet: 'omnivore', favorites: [], cuisines: [],
+    profil: null, name: '', genre: null, age: 7, ageUnit: 'years', weight: 28, height: 128,
+    objectif: null, diet: 'omnivore', dietOther: '', favorites: [], cuisines: [],
     dislikeVeg: [], dislikeMeat: [], dislikeOther: [],
     allergens: [], otherAllergy: '',
     healthConditions: [], healthNote: '',
-    people: '4', budget: null, cookTime: null, activity: null, sports: [],
+    people: '4', budget: null, cookTime: null, activity: null, sports: [], sportsOther: '',
     selectedPlan: 'free'
   };
 
   // ---- Number inputs (age, weight, height) ----
-  document.getElementById('ageVal')?.addEventListener('input',    e => { data.age    = parseFloat(e.target.value) || 7; });
+  document.getElementById('ageVal')?.addEventListener('input',    e => { data.age    = parseFloat(e.target.value) || (data.profil === 'bebe' ? 9 : 7); });
   document.getElementById('weightVal')?.addEventListener('input', e => { data.weight = parseFloat(e.target.value) || 28; });
   document.getElementById('heightVal')?.addEventListener('input', e => { data.height = parseFloat(e.target.value) || 128; });
+
+  // Diet other text
+  document.getElementById('dietOther')?.addEventListener('input', e => { data.dietOther = e.target.value; });
+  document.getElementById('sportsOther')?.addEventListener('input', e => { data.sportsOther = e.target.value; });
 
   // ---- Init tag inputs ----
   const favInput  = initTagInput('favWrap',         'favInput',         data.favorites);
@@ -60,8 +69,108 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSuggestions('dislikeMeatSugg',   sugg.meatDis,  dmeatInput);
   }
   updateSuggestions();
-  // Update suggestions when language changes
-  document.querySelectorAll('.lang-option').forEach(o => o.addEventListener('click', () => setTimeout(updateSuggestions, 100)));
+  document.querySelectorAll('.lang-option').forEach(o => o.addEventListener('click', () => setTimeout(() => { updateSuggestions(); updateNav(); }, 100)));
+
+  // ---- Age unit switching (bebe = months, others = years) ----
+  function switchAgeUnit(profil) {
+    const ageInput = document.getElementById('ageVal');
+    const ageUnit  = document.getElementById('ageUnit');
+    if (!ageInput || !ageUnit) return;
+
+    if (profil === 'bebe') {
+      ageInput.min   = '4';
+      ageInput.max   = '24';
+      ageInput.step  = '1';
+      ageInput.value = data.age >= 4 && data.age <= 24 ? data.age : 9;
+      data.age       = parseFloat(ageInput.value);
+      data.ageUnit   = 'months';
+      ageUnit.setAttribute('data-i18n', 'q2.months');
+      ageUnit.textContent = t('q2.months', 'mois');
+    } else {
+      ageInput.min   = '1';
+      ageInput.max   = '18';
+      ageInput.step  = '1';
+      ageInput.value = data.age >= 1 && data.age <= 18 ? data.age : 7;
+      data.age       = parseFloat(ageInput.value);
+      data.ageUnit   = 'years';
+      ageUnit.setAttribute('data-i18n', 'q2.years');
+      ageUnit.textContent = t('q2.years', 'ans');
+    }
+  }
+
+  // ---- Sports by profile ----
+  const sportsByProfile = {
+    bebe: [],
+    enfant: [
+      { val: 'foot',         emoji: '⚽', i18n: 'sp.football' },
+      { val: 'natation',     emoji: '🏊', i18n: 'sp.swim'    },
+      { val: 'danse',        emoji: '💃', i18n: 'sp.dance'   },
+      { val: 'gym',          emoji: '🤸', i18n: 'sp.gym'     },
+      { val: 'arts_martiaux',emoji: '🥋', i18n: 'sp.martial' },
+      { val: 'velo',         emoji: '🚴', i18n: 'sp.bike'    },
+      { val: 'basket',       emoji: '🏀', i18n: 'sp.basket'  },
+      { val: 'tennis',       emoji: '🎾', i18n: 'sp.tennis'  },
+      { val: 'judo',         emoji: '🥋', i18n: 'sp.judo'    },
+      { val: 'equitation',   emoji: '🐴', i18n: 'sp.equitation'},
+      { val: 'patinage',     emoji: '⛸️', i18n: 'sp.patinage'},
+      { val: 'escalade',     emoji: '🧗', i18n: 'sp.escalade'},
+    ],
+    ado: [
+      { val: 'foot',         emoji: '⚽', i18n: 'sp.football'   },
+      { val: 'natation',     emoji: '🏊', i18n: 'sp.swim'       },
+      { val: 'danse',        emoji: '💃', i18n: 'sp.dance'      },
+      { val: 'gym',          emoji: '🤸', i18n: 'sp.gym'        },
+      { val: 'arts_martiaux',emoji: '🥋', i18n: 'sp.martial'   },
+      { val: 'velo',         emoji: '🚴', i18n: 'sp.bike'       },
+      { val: 'basket',       emoji: '🏀', i18n: 'sp.basket'     },
+      { val: 'rugby',        emoji: '🏉', i18n: 'sp.rugby'      },
+      { val: 'tennis',       emoji: '🎾', i18n: 'sp.tennis'     },
+      { val: 'escalade',     emoji: '🧗', i18n: 'sp.escalade'   },
+      { val: 'athletisme',   emoji: '🏃', i18n: 'sp.athletisme' },
+      { val: 'handball',     emoji: '🤾', i18n: 'sp.handball'   },
+      { val: 'volleyball',   emoji: '🏐', i18n: 'sp.volleyball' },
+    ],
+    famille: [
+      { val: 'foot',         emoji: '⚽', i18n: 'sp.football'  },
+      { val: 'natation',     emoji: '🏊', i18n: 'sp.swim'      },
+      { val: 'danse',        emoji: '💃', i18n: 'sp.dance'     },
+      { val: 'gym',          emoji: '🤸', i18n: 'sp.gym'       },
+      { val: 'velo',         emoji: '🚴', i18n: 'sp.bike'      },
+      { val: 'basket',       emoji: '🏀', i18n: 'sp.basket'    },
+      { val: 'tennis',       emoji: '🎾', i18n: 'sp.tennis'    },
+      { val: 'escalade',     emoji: '🧗', i18n: 'sp.escalade'  },
+      { val: 'arts_martiaux',emoji: '🥋', i18n: 'sp.martial'   },
+      { val: 'rugby',        emoji: '🏉', i18n: 'sp.rugby'     },
+    ]
+  };
+
+  function renderSports(profil) {
+    const container = document.getElementById('sportsOptions');
+    const wrap      = document.getElementById('sportsSectionWrap');
+    if (!container) return;
+
+    const sports = sportsByProfile[profil] || sportsByProfile.enfant;
+
+    // Hide sports section for babies
+    if (wrap) wrap.style.display = profil === 'bebe' ? 'none' : '';
+
+    // Clear and re-render
+    container.innerHTML = '';
+    data.sports = [];
+
+    sports.forEach(s => {
+      const btn = document.createElement('button');
+      btn.className   = 'sub-opt';
+      btn.dataset.val = s.val;
+      const label = t(s.i18n, s.val);
+      btn.innerHTML = `${s.emoji} <span>${label}</span>`;
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+        data.sports = [...container.querySelectorAll('.sub-opt.selected')].map(b => b.dataset.val);
+      });
+      container.appendChild(btn);
+    });
+  }
 
   // ---- Option card selection ----
   function initOptionCards(containerId, key, multi = false) {
@@ -73,6 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
         card.classList.toggle('selected', !multi || !card.classList.contains('selected'));
         if (!multi) {
           data[key] = card.dataset.value;
+          // When profil changes, update age unit and sports list
+          if (key === 'profil') {
+            switchAgeUnit(data.profil);
+            renderSports(data.profil);
+          }
         } else {
           const vals = [];
           container.querySelectorAll('.option-card.selected').forEach(c => vals.push(c.dataset.value));
@@ -125,13 +239,16 @@ document.addEventListener('DOMContentLoaded', () => {
           container.querySelectorAll('.sub-opt').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           data.diet = btn.dataset.val;
+          // Show/hide "autre" free text
+          const otherWrap = document.getElementById('dietOtherWrap');
+          if (otherWrap) otherWrap.style.display = btn.dataset.val === 'autre' ? '' : 'none';
         });
       });
     }
   }
   initSubOptions('dietOptions',     'diet');
   initSubOptions('activityOptions', 'activity');
-  initSubOptions('sportsOptions',   'sports');
+  // Note: sportsOptions is rendered dynamically, click handlers added in renderSports()
 
   // ---- Cuisine cards ----
   document.querySelectorAll('.cuisine-card').forEach(card => {
@@ -190,10 +307,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const urlProfil = new URLSearchParams(window.location.search).get('profil');
   if (urlProfil) {
     const card = document.querySelector(`.option-card[data-value="${urlProfil}"]`);
-    if (card) { card.classList.add('selected'); data.profil = urlProfil; }
+    if (card) {
+      card.classList.add('selected');
+      data.profil = urlProfil;
+      switchAgeUnit(data.profil);
+      renderSports(data.profil);
+    }
   }
 
-  // ---- Name input ----
+  // ---- Name & notes inputs ----
   document.getElementById('q_name')?.addEventListener('input', e => data.name = e.target.value);
   document.getElementById('q_healthNote')?.addEventListener('input', e => data.healthNote = e.target.value);
   document.getElementById('q_otherAllergy')?.addEventListener('input', e => data.otherAllergy = e.target.value);
@@ -207,23 +329,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const stepCount = document.getElementById('qStepCountText');
   const progress  = document.getElementById('qProgressFill');
 
+  // Step dot definitions using i18n keys
+  const STEP_DEFS = [
+    { emoji:'👤', i18n:'step.profil',    fb:'Profil'     },
+    { emoji:'📋', i18n:'step.infos',     fb:'Infos'      },
+    { emoji:'😋', i18n:'step.gouts',     fb:'Goûts'      },
+    { emoji:'🚫', i18n:'step.refus',     fb:'Refus'      },
+    { emoji:'⚠️', i18n:'step.allergies', fb:'Allergies'  },
+    { emoji:'🏥', i18n:'step.sante',     fb:'Santé'      },
+    { emoji:'🗂️', i18n:'step.pratique',  fb:'Pratique'   },
+    { emoji:'✅', i18n:'step.resume',    fb:'Résumé'     },
+  ];
+
   function buildStepsNav() {
     const nav = document.getElementById('qStepsNav');
     if (!nav) return;
 
-    const stepDefs = [
-      { emoji:'👤', label:'Profil' },
-      { emoji:'📋', label:'Infos'  },
-      { emoji:'😋', label:'Goûts'  },
-      { emoji:'🚫', label:'Refus'  },
-      { emoji:'⚠️', label:'Allergies'},
-      { emoji:'🏥', label:'Santé'  },
-      { emoji:'🗂️', label:'Pratique'},
-      { emoji:'✅', label:'Résumé' },
-    ];
-
     nav.innerHTML = '';
-    stepDefs.forEach((s, i) => {
+    STEP_DEFS.forEach((s, i) => {
       if (i > 0) {
         const line = document.createElement('div');
         line.className = `q-step-line ${i < currentStep ? 'done' : ''}`;
@@ -233,7 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const dot = document.createElement('div');
       dot.className = `q-step-dot ${i + 1 < currentStep ? 'done' : i + 1 === currentStep ? 'active' : ''}`;
       dot.id = `dot-${i+1}`;
-      dot.innerHTML = `<div class="q-step-dot-circle">${i + 1 < currentStep ? '✓' : s.emoji}</div><span class="q-step-dot-label">${s.label}</span>`;
+      const label = t(s.i18n, s.fb);
+      dot.innerHTML = `<div class="q-step-dot-circle">${i + 1 < currentStep ? '✓' : s.emoji}</div><span class="q-step-dot-label">${label}</span>`;
       dot.addEventListener('click', () => { if (i + 1 < currentStep) goToStep(i + 1); });
       nav.appendChild(dot);
     });
@@ -247,7 +371,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.q-step-dot').forEach((d, i) => {
       d.className = `q-step-dot ${i + 1 < currentStep ? 'done' : i + 1 === currentStep ? 'active' : ''}`;
       const circle = d.querySelector('.q-step-dot-circle');
-      if (circle) circle.textContent = i + 1 < currentStep ? '✓' : ['👤','📋','😋','🚫','⚠️','🏥','🗂️','✅'][i];
+      if (circle) circle.textContent = i + 1 < currentStep ? '✓' : STEP_DEFS[i]?.emoji || (i+1);
+      const lbl = d.querySelector('.q-step-dot-label');
+      if (lbl && STEP_DEFS[i]) lbl.textContent = t(STEP_DEFS[i].i18n, STEP_DEFS[i].fb);
     });
     document.querySelectorAll('.q-step-line').forEach((l, i) => {
       l.className = `q-step-line ${i + 1 < currentStep ? 'done' : ''}`;
@@ -256,19 +382,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Progress
     const pct = (currentStep / TOTAL_STEPS) * 100;
     if (progress) progress.style.width = `${pct}%`;
-    if (stepLabel) stepLabel.textContent = `Étape ${currentStep} sur ${TOTAL_STEPS}`;
-    if (stepCount) stepCount.textContent = `Étape ${currentStep} sur ${TOTAL_STEPS} · Presque fini ! 🎉`;
+    const stepWord = t('q.step', 'Étape');
+    const ofWord   = t('q.of',   'sur');
+    if (stepLabel) stepLabel.textContent = `${stepWord} ${currentStep} ${ofWord} ${TOTAL_STEPS}`;
+    if (stepCount) stepCount.textContent = `${stepWord} ${currentStep} ${ofWord} ${TOTAL_STEPS} · ${t('q.almost', 'Presque fini ! 🎉')}`;
 
     // Buttons
     if (prevBtn) prevBtn.style.display = currentStep > 1 ? '' : 'none';
 
     if (nextLabel) {
       if (currentStep === TOTAL_STEPS) {
-        nextLabel.textContent = '🥦 Générer mon plan — 4 semaines !';
+        nextLabel.textContent = t('q.generate', '🥦 Générer mon plan — 4 semaines !');
         nextBtn?.classList.add('btn-secondary');
         nextBtn?.classList.remove('btn-primary');
       } else {
-        nextLabel.textContent = 'Continuer →';
+        nextLabel.textContent = t('q.continue', 'Continuer →');
         nextBtn?.classList.add('btn-primary');
         nextBtn?.classList.remove('btn-secondary');
       }
@@ -290,7 +418,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!validateStep(currentStep)) return;
 
     if (currentStep === TOTAL_STEPS) {
-      // Submit
       submitQuestionnaire();
     } else {
       currentStep++;
@@ -302,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function validateStep(step) {
     switch(step) {
       case 1:
-        if (!data.profil) { showToast?.('Sélectionnez un type de profil', 'warning'); return false; }
+        if (!data.profil) { showToast?.(t('q.select.profil', 'Sélectionnez un type de profil'), 'warning'); return false; }
         break;
       case 2:
         // Age/weight/height are always set via stepper
@@ -312,23 +439,42 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function buildSummary() {
-    data.favorites  = favInput.getTags();
-    data.dislikeVeg = dvegInput.getTags();
-    data.dislikeMeat= dmeatInput.getTags();
-    data.dislikeOther = dotherInput.getTags();
+    data.favorites   = favInput.getTags();
+    data.dislikeVeg  = dvegInput.getTags();
+    data.dislikeMeat = dmeatInput.getTags();
+    data.dislikeOther= dotherInput.getTags();
 
-    const profilLabels = {bebe:'Bébé (4m-2ans)',enfant:'Enfant (2-10ans)',ado:'Adolescent (10-16ans)',famille:'Famille entière'};
-    const goalLabels   = {sante:'Manger sainement',maintien:'Maintenir le poids',prise:'Prendre du poids',perte:'Perdre du poids'};
+    // Profil labels from i18n
+    const profilLabels = {
+      bebe:    t('s.profil.bebe',    'Bébé (4-24 mois)'),
+      enfant:  t('s.profil.enfant',  'Enfant (2-12 ans)'),
+      ado:     t('s.profil.ado',     'Adolescent (12-18 ans)'),
+      famille: t('s.profil.famille', 'Famille entière'),
+    };
+    // Goal labels from i18n (existing keys)
+    const goalLabels = {
+      sante:    t('goal.sante',    'Manger sainement'),
+      maintien: t('goal.maintien', 'Maintenir le poids'),
+      prise:    t('goal.prise',    'Prendre du poids'),
+      perte:    t('goal.perte',    'Perdre du poids'),
+    };
 
-    setText('sType',    profilLabels[data.profil] || '—');
-    setText('sName',    data.name || 'votre enfant');
-    setText('sAge',     `${data.age} ans`);
+    setText('sType', profilLabels[data.profil] || '—');
+    setText('sName', data.name || t('s.yourChild', 'votre enfant'));
+
+    // Age display: months for baby, years for others
+    if (data.profil === 'bebe') {
+      setText('sAge', `${data.age} ${t('q2.months', 'mois')}`);
+    } else {
+      setText('sAge', `${data.age} ${t('q2.years', 'ans')}`);
+    }
+
     setText('sBody',    `${data.weight} kg · ${data.height} cm (IMC: ${calcBMI(data.weight, data.height)})`);
     setText('sGoal',    goalLabels[data.objectif] || '—');
-    setText('sAllergens', data.allergens.length ? data.allergens.join(', ') : 'Aucune allergie renseignée');
+    setText('sAllergens', data.allergens.length ? data.allergens.join(', ') : t('s.noAllergen', 'Aucune allergie renseignée'));
     const allDislikes = [...data.dislikeVeg, ...data.dislikeMeat, ...data.dislikeOther];
-    setText('sDislikes', allDislikes.length ? allDislikes.join(', ') : 'Aucun');
-    setText('sHealth',  data.healthConditions.length ? data.healthConditions.join(', ') : 'Aucune condition particulière');
+    setText('sDislikes', allDislikes.length ? allDislikes.join(', ') : t('s.noDislikes', 'Aucun'));
+    setText('sHealth',  data.healthConditions.length ? data.healthConditions.join(', ') : t('s.noHealth', 'Aucune condition particulière'));
   }
 
   function setText(id, val) {
@@ -338,31 +484,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function submitQuestionnaire() {
     // Gather all data
-    data.favorites   = favInput.getTags();
-    data.dislikeVeg  = dvegInput.getTags();
-    data.dislikeMeat = dmeatInput.getTags();
-    data.dislikeOther= dotherInput.getTags();
-    data.lang        = window.I18N?.current || 'fr';
+    data.favorites    = favInput.getTags();
+    data.dislikeVeg   = dvegInput.getTags();
+    data.dislikeMeat  = dmeatInput.getTags();
+    data.dislikeOther = dotherInput.getTags();
+    data.lang         = window.I18N?.current || 'fr';
+    // Add sportsOther to sports if filled
+    const sportsOtherEl = document.getElementById('sportsOther');
+    if (sportsOtherEl?.value.trim()) data.sportsOther = sportsOtherEl.value.trim();
+    // Effective diet
+    if (data.diet === 'autre' && data.dietOther.trim()) data.diet = data.dietOther.trim();
 
     // Save profile to localStorage first
     localStorage.setItem('brocoliProfile', JSON.stringify(data));
     localStorage.setItem('brocoliSelectedPlan', data.selectedPlan);
 
+    const generateLabel = t('q.generate', '🥦 Générer mon plan — 4 semaines !');
     if (nextLabel) nextLabel.textContent = '⏳ Préparation…';
     if (nextBtn) nextBtn.disabled = true;
 
     // Paid plan → Stripe Checkout
     if (data.selectedPlan !== 'free') {
-      // Check if already subscribed to this plan or higher
       const sub = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
       const planRank = { free: 0, essential: 1, premium: 2 };
       if (sub && planRank[sub.plan] >= planRank[data.selectedPlan]) {
-        // Already paid — go straight to analysis
         window.location.href = 'analyse.html';
         return;
       }
 
-      // Redirect to Stripe
       try {
         const res  = await fetch('/api/create-checkout-session', {
           method:  'POST',
@@ -378,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (err) {
         showToast?.('Erreur paiement : ' + err.message, 'error');
         if (nextBtn) { nextBtn.disabled = false; }
-        if (nextLabel) nextLabel.textContent = '🥦 Générer mon plan — 4 semaines !';
+        if (nextLabel) nextLabel.textContent = generateLabel;
       }
       return;
     }
@@ -387,7 +536,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'analyse.html';
   }
 
-  // Init nav
+  // Init
+  renderSports('enfant'); // default sports (will update when profil selected)
   buildStepsNav();
   updateNav();
 });

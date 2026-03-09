@@ -93,7 +93,7 @@
       </h1>
 
       <p class="hero-sub fade-up" data-i18n="hero.sub">
-        Notre équipe analyse le profil de votre enfant et génère un programme nutritionnel personnalisé, basé sur les recommandations PNNS/ANSES — adapté à son âge, ses goûts et sa santé.
+        Notre équipe analyse le profil de votre enfant et génère un programme nutritionnel personnalisé, basé sur les recommandations OMS — adapté à son âge, ses goûts et sa santé.
       </p>
 
       <div class="hero-actions fade-up">
@@ -154,9 +154,9 @@
 <!-- ========== PROOF STRIP ========== -->
 <div class="proof-strip">
   <div class="proof-scroll" id="proofScroll">
-    <span class="proof-item">✅ <span data-i18n="proof.1">Recommandations PNNS officielles</span></span>
+    <span class="proof-item">✅ <span data-i18n="proof.1">Recommandations OMS officielles</span></span>
     <span class="proof-dot"></span>
-    <span class="proof-item">🔬 <span data-i18n="proof.2">Guidelines ANSES respectées</span></span>
+    <span class="proof-item">🔬 <span data-i18n="proof.2">Directives OMS respectées</span></span>
     <span class="proof-dot"></span>
     <span class="proof-item">👨‍⚕️ <span data-i18n="proof.3">Validé par des diététiciens</span></span>
     <span class="proof-dot"></span>
@@ -167,9 +167,9 @@
     <span class="proof-item">📊 <span data-i18n="proof.6">Suivi hebdomadaire intelligent</span></span>
     <span class="proof-dot"></span>
     <!-- duplicate for seamless loop -->
-    <span class="proof-item">✅ <span data-i18n="proof.1">Recommandations PNNS officielles</span></span>
+    <span class="proof-item">✅ <span data-i18n="proof.1">Recommandations OMS officielles</span></span>
     <span class="proof-dot"></span>
-    <span class="proof-item">🔬 <span data-i18n="proof.2">Guidelines ANSES respectées</span></span>
+    <span class="proof-item">🔬 <span data-i18n="proof.2">Directives OMS respectées</span></span>
     <span class="proof-dot"></span>
     <span class="proof-item">👨‍⚕️ <span data-i18n="proof.3">Validé par des diététiciens</span></span>
     <span class="proof-dot"></span>
@@ -194,7 +194,7 @@
       <a href="questionnaire.html?profil=bebe" class="profile-card">
         <span class="profile-emoji">🍼</span>
         <div>
-          <div class="profile-title" data-i18n="profile.baby">Bébé (4 mois – 2 ans)</div>
+          <div class="profile-title" data-i18n="profile.baby">Bébé (4 – 24 mois)</div>
           <div class="profile-desc" data-i18n="profile.baby.desc">Diversification alimentaire, textures, apports essentiels</div>
         </div>
         <span class="profile-arrow">→</span>
@@ -202,7 +202,7 @@
       <a href="questionnaire.html?profil=enfant" class="profile-card">
         <span class="profile-emoji">🎒</span>
         <div>
-          <div class="profile-title" data-i18n="profile.child">Enfant (2 – 10 ans)</div>
+          <div class="profile-title" data-i18n="profile.child">Enfant (2 – 12 ans)</div>
           <div class="profile-desc" data-i18n="profile.child.desc">Croissance, énergie scolaire, néophobie alimentaire</div>
         </div>
         <span class="profile-arrow">→</span>
@@ -210,7 +210,7 @@
       <a href="questionnaire.html?profil=ado" class="profile-card">
         <span class="profile-emoji">🎧</span>
         <div>
-          <div class="profile-title" data-i18n="profile.teen">Adolescent (10 – 16 ans)</div>
+          <div class="profile-title" data-i18n="profile.teen">Adolescent (12 – 18 ans)</div>
           <div class="profile-desc" data-i18n="profile.teen.desc">Puberté, sport, image corporelle, autonomie</div>
         </div>
         <span class="profile-arrow">→</span>
@@ -301,10 +301,10 @@
           <div class="how-panel-badge" style="background:linear-gradient(135deg,#FF8C42,#e67d35)">🧠</div>
           <div class="how-panel-step-label">Étape <strong>2</strong> / 4</div>
           <h3 class="how-panel-title" data-i18n="step2.title">Analyse experte du profil</h3>
-          <p class="how-panel-desc" data-i18n="step2.desc">Nos experts croisent les données avec les recommandations nutritionnelles officielles (PNNS, ANSES) et les spécificités culturelles de votre pays.</p>
+          <p class="how-panel-desc" data-i18n="step2.desc">Nos experts croisent les données avec les recommandations nutritionnelles officielles de l'OMS et les spécificités culturelles de votre pays.</p>
           <ul class="how-panel-checklist">
             <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c1">20+ paramètres analysés en temps réel</span></li>
-            <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c2">Recommandations PNNS, ANSES, NHS…</span></li>
+            <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c2">Recommandations OMS et guidelines nationales</span></li>
             <li><span class="how-check" style="color:#FF8C42">✓</span> <span data-i18n="step2.c3">Adaptation culturelle automatique</span></li>
           </ul>
         </div>
@@ -397,7 +397,7 @@
     const fill = document.getElementById('howAutoFill');
     if (fill) { fill.classList.remove('running'); void fill.offsetWidth; fill.classList.add('running'); }
     clearTimeout(autoTimer);
-    autoTimer = setTimeout(() => show(current >= 4 ? 1 : current + 1), 5000);
+    autoTimer = setTimeout(() => show(current >= 4 ? 1 : current + 1), 12000);
   }
 
   tabs.forEach(t => t.addEventListener('click', () => show(+t.dataset.step)));
@@ -435,7 +435,7 @@
       <div class="feature-card fade-up">
         <div class="feature-icon">🔬</div>
         <div class="feature-title" data-i18n="feat3.title">Bases scientifiques</div>
-        <div class="feature-desc" data-i18n="feat3.desc">Recommandations alignées PNNS, ANSES, Société Française de Pédiatrie, DGE (Allemagne), INRAN (Italie), NHS (UK).</div>
+        <div class="feature-desc" data-i18n="feat3.desc">Recommandations alignées sur les directives OMS et les guidelines nationales de nutrition pédiatrique.</div>
       </div>
       <div class="feature-card fade-up">
         <div class="feature-icon">📊</div>
@@ -488,8 +488,7 @@
         <div class="plan-popular" data-i18n="plan.popular">⭐ Le plus populaire</div>
         <div class="plan-name" data-i18n="plan.ess.name">Essentiel</div>
         <div class="plan-price-wrap">
-          <span class="plan-amount">9</span>
-          <span style="font-size:1.5rem;font-weight:900;color:#fff">,90€</span>
+          <span class="plan-amount">9€</span>
           <span class="plan-period" data-i18n="plan.month">/mois</span>
         </div>
         <p class="plan-tagline" data-i18n="plan.ess.tagline">Un programme nutritionnel complet avec repas détaillés semaine après semaine.</p>
@@ -508,8 +507,7 @@
       <div class="plan-card">
         <div class="plan-name" data-i18n="plan.prem.name">Premium</div>
         <div class="plan-price-wrap">
-          <span class="plan-amount">19</span>
-          <span style="font-size:1.5rem;font-weight:900;color:var(--green-dark)">,90€</span>
+          <span class="plan-amount">19€</span>
           <span class="plan-period" data-i18n="plan.month">/mois</span>
         </div>
         <p class="plan-tagline" data-i18n="plan.prem.tagline">L'expérience complète : recettes pas à pas, courses automatiques et substitutions intelligentes.</p>
@@ -539,7 +537,7 @@
         <div class="testi-stars">★★★★★</div>
         <p class="testi-quote" data-i18n="testi1.quote">« Ma fille de 9 ans refusait les légumes. En 3 semaines de plan adapté, elle mange maintenant des courgettes et des carottes sans se plaindre. Le programme a vraiment su contourner sa néophobie ! »</p>
         <div class="testi-author">
-          <div class="testi-av">👩</div>
+          <div class="testi-av testi-av-init" style="background:#2E7D4F">S</div>
           <div>
             <div class="testi-name">Sophie M.</div>
             <div class="testi-meta" data-i18n="testi1.meta">Maman de Léa, 9 ans · Paris</div>
@@ -550,7 +548,7 @@
         <div class="testi-stars">★★★★★</div>
         <p class="testi-quote" data-i18n="testi2.quote">« Notre fils est diabétique de type 1. Le plan généré tient vraiment compte des index glycémiques, ça facilite tellement notre quotidien. Merci Brocoli.fit ! »</p>
         <div class="testi-author">
-          <div class="testi-av">👨</div>
+          <div class="testi-av testi-av-init" style="background:#1A5276">T</div>
           <div>
             <div class="testi-name">Thomas K.</div>
             <div class="testi-meta" data-i18n="testi2.meta">Papa de Noah, 12 ans · Lyon</div>
@@ -561,7 +559,7 @@
         <div class="testi-stars">★★★★☆</div>
         <p class="testi-quote" data-i18n="testi3.quote">« La liste de courses générée chaque semaine est un gain de temps énorme. Je cuisine pour 5 personnes dont 2 ados sportifs. Le plan Premium vaut vraiment son prix. »</p>
         <div class="testi-author">
-          <div class="testi-av">👩</div>
+          <div class="testi-av testi-av-init" style="background:#6C3483">M</div>
           <div>
             <div class="testi-name">Marie-Claire D.</div>
             <div class="testi-meta" data-i18n="testi3.meta">Maman de 3 enfants · Bordeaux</div>

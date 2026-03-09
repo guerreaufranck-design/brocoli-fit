@@ -12,7 +12,7 @@ const GEMINI = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 8192,
+        maxOutputTokens: 32768,
         ...(jsonMode ? { responseMimeType: 'application/json' } : {})
       }
     };
