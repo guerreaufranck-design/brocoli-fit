@@ -146,6 +146,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // Sur les pages protégées : si NON connecté → rediriger vers inscription
+  const _protectedPages = ['dashboard', 'plan', 'analyse'];
+  const _currentPage = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '');
+  if (_protectedPages.some(p => _currentPage === p || _currentPage.startsWith(p))) {
+    if (!AUTH.isLoggedIn()) {
+      const _dest = _currentPage || 'dashboard';
+      window.location.href = '/login?signup=true&redirect=' + encodeURIComponent(_dest);
+      return;
+    }
+  }
+
   // ── Boutons de la page login ──────────────────────────────
   const loginBtn    = document.getElementById('loginBtn');
   const registerBtn = document.getElementById('registerBtn');
