@@ -7,7 +7,15 @@
 const _sb = (window.supabase && window.BROCOLI_CONFIG?.SUPABASE_URL)
   ? window.supabase.createClient(
       window.BROCOLI_CONFIG.SUPABASE_URL,
-      window.BROCOLI_CONFIG.SUPABASE_ANON_KEY
+      window.BROCOLI_CONFIG.SUPABASE_ANON_KEY,
+      {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true,
+          flowType: 'pkce'
+        }
+      }
     )
   : null;
 
