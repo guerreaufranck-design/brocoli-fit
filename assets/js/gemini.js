@@ -55,65 +55,285 @@ const GEMINI = {
     const culture = window.I18N ? window.I18N.getCulturalProfile() : CULTURAL_PROFILES_FALLBACK.fr;
     const lang    = window.I18N ? window.I18N.current : 'fr';
 
+    const profil = profile.profil || 'enfant';
+    const age    = parseFloat(profile.age) || 0;
+    const weight = parseFloat(profile.weight) || 0;
+    const height = parseFloat(profile.height) || 0;
+    const gender = profile.genre === 'm' ? 'garçon' : profile.genre === 'f' ? 'fille' : 'non précisé';
+
+    // BMI calculé côté prompt pour contextualisation
+    const bmi = (height > 0 && weight > 0)
+      ? (weight / Math.pow(height / 100, 2)).toFixed(1)
+      : 'non calculable';
+
+    // ── Référentiels nutritionnels par tranche d'âge (ANSES / OMS / PNNS) ──
+    let nutritionRef;
+    if (profil === 'bebe' || age < 1) {
+      nutritionRef = `
+══════════════════════════════════════
+RÉFÉRENTIEL NUTRITIONNEL — NOURRISSON (< 1 an) | Sources : OMS, ANSES, SFP
+══════════════════════════════════════
+• Allaitement ou lait maternisé : base exclusive jusqu'à 6 mois révolus
+• Diversification : jamais avant 4 mois, idéalement vers 6 mois
+• 4-6 mois : purées lisses, légumes puis fruits, 1 aliment nouveau tous les 3 jours
+• 6-9 mois : textures lissées/mixées, légumes + viande/poisson 10-20 g/j
+• 9-12 mois : morceaux mous, finger foods, viande/poisson 20-30 g/j
+• Besoins caloriques : 500-700 kcal/j (dont lait)
+• Protéines : 1.5 g/kg/j
+• Calcium : 400-600 mg/j (lait maternel/maternisé couvre)
+• Fer : indispensable dès 6 mois — viande rouge, légumineuses, céréales enrichies
+• Vitamine D : systématique 400-800 UI/j (prescription médicale)
+• INTERDITS ABSOLUS : sel, sucre ajouté, miel (botulisme), lait de vache entier avant 1 an, noix entières, aliments durs
+• TEXTURES : strictement adaptées à l'âge (lisse < 6 mois, écrasé 6-9 mois, morceaux mous 9-12 mois)
+• Repas : 5 prises/j (biberon + 2-3 repas + goûter selon âge)`;
+    } else if (age < 3) {
+      nutritionRef = `
+══════════════════════════════════════
+RÉFÉRENTIEL NUTRITIONNEL — TOUT-PETIT 1-3 ans | Sources : ANSES 2021, PNNS4
+══════════════════════════════════════
+• Besoins énergétiques : 1000-1400 kcal/j (selon activité)
+• Protéines : 1.14 g/kg/j → ~${Math.round((weight || 12) * 1.14)} g/j pour ce profil
+• Lipides : 40-50% des AET (NE PAS réduire les graisses chez le tout-petit !)
+• Glucides : 45-55% des AET
+• Calcium : 500 mg/j → 3 produits laitiers/j (yaourt, fromage, lait de croissance)
+• Fer : 7 mg/j → 1 portion viande/poisson/œuf par jour
+• Zinc : 4 mg/j
+• Vitamine D : 400-600 UI/j (supplémentation recommandée)
+• Oméga-3 (DHA) : 100 mg/j → 1-2 fois/sem poisson gras (saumon, sardine)
+• PORTIONS adaptées à ce profil :
+  - Viande/poisson/œuf : 20-30 g par repas
+  - Féculents : 30-50 g cuits par repas
+  - Légumes : 80-100 g par repas (purée, petits dés)
+  - Produits laitiers : 3-4 x/j (yaourt 125 g, fromage 20 g)
+  - Fruits : 1-2 portions/j (compote sans sucre, fruit écrasé)
+• Lait de croissance (1er ou 2e âge enrichi) recommandé jusqu'à 3 ans
+• 4 repas structurés, pas de grignotage entre repas
+• Eau seule entre les repas, pas de jus de fruits`;
+    } else if (age < 6) {
+      nutritionRef = `
+══════════════════════════════════════
+RÉFÉRENTIEL NUTRITIONNEL — ENFANT 3-5 ans (maternelle) | Sources : ANSES 2021, PNNS4
+══════════════════════════════════════
+• Besoins énergétiques : 1200-1500 kcal/j (filles 1200, garçons 1300-1500)
+• Protéines : 1.0 g/kg/j → ~${Math.round((weight || 18) * 1.0)} g/j pour ce profil
+• Lipides : 35-40% des AET (huile de colza + olive pour équilibre oméga)
+• Calcium : 700 mg/j → 3 produits laitiers/j (yaourt, lait demi-écrémé, fromage)
+• Fer : 7 mg/j → viande/volaille 1x/j, légumineuses 2x/sem, céréales enrichies
+• Zinc : 5 mg/j
+• Vitamine C : 45 mg/j (kiwi, agrumes, poivron) → favorise absorption du fer
+• Fibres : 15 g/j → légumes, fruits, légumineuses, céréales semi-complètes
+• Oméga-3 : EPA+DHA 250 mg/j → poisson 1-2x/sem
+• PORTIONS adaptées à ce profil :
+  - Viande/poisson/œuf : 30-40 g par repas (1 portée)
+  - Féculents : 50-80 g cuits par repas (selon activité)
+  - Légumes : 100-150 g par repas (cuits ou crus)
+  - Produits laitiers : 3 x/j
+  - Fruits : 1-2 portions/j
+• 4 repas : petit-déjeuner, déjeuner, goûter, dîner (goûter OBLIGATOIRE)
+• Goûter idéal : 1 fruit + 1 laitage (pas de biscuits industriels)
+• Textures familiales, présentation ludique pour favoriser l'acceptation`;
+    } else if (age < 10) {
+      nutritionRef = `
+══════════════════════════════════════
+RÉFÉRENTIEL NUTRITIONNEL — ENFANT 6-9 ans (primaire) | Sources : ANSES 2021, PNNS4
+══════════════════════════════════════
+• Besoins énergétiques : 1400-1800 kcal/j
+  - Filles : 1400-1600 kcal/j ; Garçons : 1500-1800 kcal/j
+  - Activité sportive régulière : +200-400 kcal les jours d'entraînement
+• Protéines : 0.9-1.0 g/kg/j → ~${Math.round((weight || 26) * 0.95)} g/j pour ce profil
+• Glucides : 50-55% (privilégier index glycémique bas : légumineuses, céréales complètes)
+• Lipides : 35-40% (acides gras essentiels indispensables au cerveau)
+• Calcium : 900 mg/j → 3 laitages/j (période de croissance osseuse accélérée)
+• Fer : 8-10 mg/j → viande rouge 2x/sem, légumineuses 2x/sem, épinards, tofu
+• Zinc : 6 mg/j → viande, fruits de mer, graines de courge
+• Magnésium : 130-200 mg/j → oléagineux, légumineuses, chocolat noir
+• Vitamine D : 600 UI/j
+• Iode : 90 µg/j → poisson, produits laitiers
+• PORTIONS adaptées à ce profil :
+  - Viande/poisson/œuf : 50 g par repas (augmenter les jours de sport)
+  - Féculents : 80-120 g cuits par repas (base des repas)
+  - Légumes : 150-200 g par repas (au moins 2x/j)
+  - Fruits : 2-3 portions/j
+  - Produits laitiers : 3 x/j
+• 4 repas structurés — JAMAIS sauter le petit-déjeuner (impact concentr. scolaire)
+• Petit-déjeuner idéal : glucides complexes + protéines + fruit (ex: flocons avoine + œuf + orange)
+• Eau : 1.2-1.4 L/j minimum (eau seule, pas jus ni sodas)`;
+    } else if (age < 14) {
+      nutritionRef = `
+══════════════════════════════════════
+RÉFÉRENTIEL NUTRITIONNEL — PRÉ-ADOLESCENT 10-13 ans | Sources : ANSES 2021, PNNS4
+══════════════════════════════════════
+• Besoins énergétiques (pic de croissance pubertaire) :
+  - Filles : 1800-2100 kcal/j
+  - Garçons : 2000-2300 kcal/j
+  - Sport intensif : +300-500 kcal les jours d'entraînement
+• Protéines : 1.0-1.2 g/kg/j → ~${Math.round((weight || 42) * 1.1)} g/j pour ce profil
+• Calcium : 1200-1300 mg/j ⚠️ CRITIQUE — pic de minéralisation osseuse à cet âge !
+  → 4 produits laitiers/j impératifs (déficit = ostéoporose future)
+  → Alternatives : tofu enrichi, amandes, brocolis, sardines en boîte avec arêtes
+• Fer :
+  - Garçons : 11 mg/j
+  - Filles : 13 mg/j (si règles → besoins augmentés)
+  → viande rouge 2-3x/sem, légumineuses 3x/sem, épinards, lentilles
+• Zinc : 8-10 mg/j (croissance, immunité, hormones)
+• Magnésium : 280-300 mg/j (fonction musculaire, humeur, concentration)
+• Vitamine D : 600-800 UI/j
+• Iode : 120 µg/j
+• Oméga-3 : EPA+DHA 250-500 mg/j → poisson gras 2x/sem
+• PORTIONS adaptées à ce profil :
+  - Viande/poisson/œuf : 60-80 g par repas
+  - Féculents : 100-130 g cuits par repas (glucides = carburant de la croissance)
+  - Légumes : 200-250 g par repas
+  - Produits laitiers : 4 x/j
+• Ne JAMAIS sauter de repas en période de croissance accélérée
+• Attention aux régimes restrictifs souvent initiés à cet âge (risque de carences)
+• Eau : 1.6-1.8 L/j`;
+    } else {
+      nutritionRef = `
+══════════════════════════════════════
+RÉFÉRENTIEL NUTRITIONNEL — ADOLESCENT 14-18 ans | Sources : ANSES 2021, PNNS4
+══════════════════════════════════════
+• Besoins énergétiques :
+  - Filles : 2000-2500 kcal/j (+ 300-500 kcal si sport)
+  - Garçons : 2500-3200 kcal/j (+ 500-800 kcal si sport intensif)
+• Protéines :
+  - Filles : 46-50 g/j (1.0 g/kg/j)
+  - Garçons : 52-60 g/j (1.0-1.2 g/kg/j)
+  - Sport de force/endurance : jusqu'à 1.4-1.6 g/kg/j
+  → ~${Math.round((weight || 60) * (profile.genre === 'm' ? 1.1 : 1.0))} g/j pour ce profil
+• Calcium : 1200-1300 mg/j (finalisation de la masse osseuse — dernière chance !)
+  → 4 produits laitiers/j : lait, yaourt, fromage
+• Fer :
+  - Filles : 15-16 mg/j ⚠️ (menstruations = pertes importantes, risque d'anémie)
+  - Garçons : 11-12 mg/j
+  → viande rouge 2-3x/sem, lentilles, épinards, tofu, céréales enrichies + vitamine C
+• Zinc : Filles 9 mg/j, Garçons 11 mg/j (acné, immunité, fertilité)
+• Magnésium : 380-410 mg/j (stress scolaire, sport, humeur)
+• Iode : 130 µg/j
+• Vitamine D : 600-1000 UI/j
+• Oméga-3 (EPA+DHA) : 500 mg/j → saumon, maquereau, sardine 2-3x/sem
+• PORTIONS adaptées à ce profil :
+  - Viande/poisson/œuf : 80-120 g par repas (selon sexe et activité)
+  - Féculents : 120-180 g cuits par repas (glucides complexes en base)
+  - Légumes : 200-300 g par repas
+  - Produits laitiers : 4 x/j
+  - Oléagineux (noix, amandes) : 30 g/j comme collation
+• Alertes spécifiques adolescents :
+  - Attention aux régimes hypocaloriques restrictifs (risque de TCA)
+  - Éviter les boissons énergisantes (caféine + sucre → troubles du sommeil)
+  - Petit-déjeuner obligatoire pour les résultats scolaires
+  - Hydratation : 2.0-2.5 L/j (eau)
+${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à chaque bilan sanguin annuel' : '• Garçons spécifique : apport protéique post-entraînement dans les 30 min'}`;
+    }
+
+    // Ajustement calorique si sport
+    const sportsBonus = (profile.sports && profile.sports.length > 0 && profile.activity !== 'sedentaire')
+      ? `\n• BONUS SPORT (${(profile.sports || []).join(', ')}) : ajouter 200-500 kcal les jours d'entraînement (glucides + protéines)`
+      : '';
+
     const profileLines = [
-      `- Type de profil : ${profile.profil || 'enfant'}`,
+      `- Type de profil : ${profil}`,
       `- Prénom : ${profile.name || 'Votre enfant'}`,
-      `- Sexe : ${profile.genre === 'm' ? 'Garçon' : profile.genre === 'f' ? 'Fille' : 'Non précisé'}`,
-      `- Âge : ${profile.age || '?'} ans`,
+      `- Sexe : ${gender}`,
+      `- Âge : ${profile.age || '?'} ${profil === 'bebe' ? 'mois' : 'ans'}`,
       `- Poids : ${profile.weight || '?'} kg`,
       `- Taille : ${profile.height || '?'} cm`,
-      `- Objectif : ${profile.objectif || 'alimentation saine'}`,
-      `- Régime : ${profile.diet || 'omnivore'}`,
-      `- Allergènes exclus : ${(profile.allergens || []).join(', ') || 'aucun'}`,
+      `- IMC calculé : ${bmi} ${bmi !== 'non calculable' ? '(à contextualiser selon les courbes de croissance de l\'enfant)' : ''}`,
+      `- Objectif parental : ${profile.objectif || 'alimentation saine équilibrée'}`,
+      `- Régime alimentaire : ${profile.diet || 'omnivore'}`,
+      `- Allergènes EXCLUS (OBLIGATOIRE) : ${(profile.allergens || []).join(', ') || 'aucun'}`,
       `- Conditions médicales : ${(profile.healthConditions || []).join(', ') || 'aucune'}`,
-      `- Note médicale : ${profile.healthNote || 'aucune'}`,
-      `- Aliments aimés : ${(profile.favorites || []).join(', ') || 'non précisé'}`,
+      `- Note médicale du parent : ${profile.healthNote || 'aucune'}`,
+      `- Aliments appréciés : ${(profile.favorites || []).join(', ') || 'non précisé'}`,
       `- Légumes refusés : ${(profile.dislikeVeg || []).join(', ') || 'aucun'}`,
       `- Viandes/poissons refusés : ${(profile.dislikeMeat || []).join(', ') || 'aucun'}`,
       `- Autres aliments refusés : ${(profile.dislikeOther || []).join(', ') || 'aucun'}`,
-      `- Préférences cuisine : ${(profile.cuisines || []).join(', ') || 'familiale'}`,
+      `- Cuisines préférées : ${(profile.cuisines || []).join(', ') || 'familiale / française'}`,
       `- Personnes à table : ${profile.people || '4'}`,
-      `- Budget hebdo : ${profile.budget || '50-100€'}`,
-      `- Temps de cuisine : ${profile.cookTime || 'normal'}`,
-      `- Activité physique : ${profile.activity || 'léger'}`,
-      `- Sports : ${(profile.sports || []).join(', ') || 'aucun'}`,
+      `- Budget hebdomadaire : ${profile.budget || '50-100€'}`,
+      `- Temps de cuisine disponible : ${profile.cookTime || 'moyen (30-45 min)'}`,
+      `- Niveau d'activité physique : ${profile.activity || 'léger'}`,
+      `- Sports pratiqués : ${(profile.sports || []).join(', ') || 'aucun'}`,
     ].join('\n');
 
     const isPremium = profile.selectedPlan === 'premium';
     const isEssential = profile.selectedPlan === 'essential' || isPremium;
 
     return `Tu es NutriBot, l'expert en nutrition pédiatrique de Brocoli.fit.
-Tu dois générer un programme nutritionnel personnalisé COMPLET pour 1 semaine (7 jours).
+Tu dois générer un programme nutritionnel personnalisé COMPLET pour 1 semaine (7 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
 
+═══════════════════════════════════════════════
 CONTEXTE CULTUREL — PAYS : ${culture.name}
+═══════════════════════════════════════════════
 Langue de réponse : ${culture.lang} (réponds TOUJOURS en ${culture.lang})
-Repas structurés comme suit : ${culture.meals.join(' / ')}
-Références nutritionnelles : ${culture.guidelines}
+Structure des repas : ${culture.meals.join(' / ')}
+Références guidelines : ${culture.guidelines}
 ${culture.culturalNotes}
 
+═══════════════════════════════════════════════
 PROFIL DE L'ENFANT :
+═══════════════════════════════════════════════
 ${profileLines}
+${sportsBonus}
 
-RÈGLES ABSOLUES :
-1. Ne JAMAIS inclure les allergènes listés ci-dessus
-2. Ne JAMAIS inclure les aliments refusés
-3. Respecter le régime alimentaire indiqué
-4. Adapter les portions à l'âge et au poids
-5. Respecter les conditions médicales
-6. Utiliser la structure de repas culturelle du pays
-7. Ce n'est pas un avis médical, toujours rappeler de consulter un professionnel
+${nutritionRef}
+
+═══════════════════════════════════════════════
+RÈGLES DE GÉNÉRATION OBLIGATOIRES :
+═══════════════════════════════════════════════
+1. ⛔ ALLERGÈNES : Ne JAMAIS inclure les allergènes listés — vérifier CHAQUE ingrédient
+2. ⛔ REFUS : Ne JAMAIS inclure les aliments refusés listés
+3. ✅ RÉGIME : Respecter strictement le type de régime (végétarien, vegan, halal, etc.)
+4. ✅ PORTIONS : Utiliser EXACTEMENT les grammages du référentiel nutritionnel ci-dessus pour cet âge
+5. ✅ CALORIES : Les calories totales journalières DOIVENT correspondre au référentiel d'âge/sexe
+6. ✅ MICRONUTRIMENTS : Assurer les apports en calcium, fer, zinc, vitamine D selon le référentiel
+7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 7 jours
+8. ✅ CULTURE : Respecter la structure de repas et les aliments culturellement adaptés
+9. ✅ PRATICITÉ : Adapter à la réalité familiale (budget ${profile.budget || 'moyen'}, temps cuisine ${profile.cookTime || 'moyen'})
+10. ⚠️ AVERTISSEMENT : Rappeler qu'il s'agit de recommandations générales, à valider avec un professionnel de santé
+
+EXEMPLES DE REPAS ADAPTÉS À L'ÂGE :
+${profil === 'bebe' || age < 1 ? `
+- Petit-déjeuner : biberon lait maternisé + purée fruits (pomme-poire lisse, 80g)
+- Déjeuner : purée courgette-poulet (légumes 80g + viande 20g) + fromage blanc
+- Goûter : biberon ou compote pomme sans sucre
+- Dîner : crème de légumes variés (carotte-patate douce) + fromage blanc entier` :
+age < 3 ? `
+- Petit-déjeuner : lait de croissance (200ml) + pain de mie complet (30g) + purée de fruits
+- Déjeuner : steack haché (30g) + purée de légumes (100g) + yaourt entier
+- Goûter : yaourt + petits biscuits ou fruit
+- Dîner : soupe de légumes + oeuf mollet (1) + fromage frais` :
+age < 6 ? `
+- Petit-déjeuner : bol de lait + flocons d'avoine (40g) + fruit de saison
+- Déjeuner : filet de poisson (40g) + riz (60g cuit) + haricots verts vapeur (120g) + yaourt
+- Goûter : banane + verre de lait
+- Dîner : soupe de légumes + 1 œuf + pain complet + fromage` :
+age < 10 ? `
+- Petit-déjeuner : bol de céréales complètes (40g) + lait (200ml) + orange
+- Déjeuner : poulet rôti (50g) + pâtes complètes (100g cuit) + salade verte + yaourt
+- Goûter : pomme + poignée d'amandes (15g) ou fromage
+- Dîner : lentilles corail au curry (150g cuit) + riz (80g) + brocoli vapeur` :
+age < 14 ? `
+- Petit-déjeuner : pain complet (60g) + beurre de cacahuète (20g) + verre lait + kiwi
+- Déjeuner : boeuf sauté (70g) + quinoa (120g cuit) + légumes rôtis (200g) + laitage
+- Goûter : poignée d'amandes/noix (30g) + yaourt grec + fruits rouges
+- Dîner : saumon (70g) + patate douce (150g) + épinards + fromage` : `
+- Petit-déjeuner : flocons avoine (60g) + lait (250ml) + 2 œufs brouillés + fruit
+- Déjeuner : viande rouge (100g) + pâtes complètes (150g cuit) + salade + laitage
+- Collation post-sport : smoothie banane-lait + poignée amandes
+- Dîner : saumon (100g) + riz (120g) + légumes variés + fromage`}
 
 Génère une réponse JSON stricte avec cette structure EXACTE :
 {
   "analysis": {
     "name": "prénom enfant",
-    "age": 8,
-    "bmi": 16.5,
-    "bmi_status": "Normal",
+    "age": ${age || 8},
+    "bmi": ${bmi !== 'non calculable' ? bmi : 'null'},
+    "bmi_status": "Normal / Insuffisance pondérale / Surpoids / Obésité",
     "daily_calories": 1650,
-    "summary": "Résumé en 2-3 phrases du profil nutritionnel",
-    "key_points": ["point 1", "point 2", "point 3"],
-    "recommendations": ["conseil 1", "conseil 2", "conseil 3"],
+    "summary": "Résumé en 2-3 phrases précises du profil nutritionnel et des enjeux de l'âge",
+    "key_points": ["Besoin spécifique 1 lié à l'âge", "Micronutriment prioritaire", "Point comportement alimentaire"],
+    "recommendations": ["Conseil pratique 1", "Conseil pratique 2", "Conseil pratique 3"],
     "macro_proteins_pct": 18,
     "macro_carbs_pct": 52,
     "macro_fats_pct": 30
@@ -131,15 +351,15 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
           "total_calories": 380,
           "items": [
             {
-              "name": "Bol de céréales complètes",
+              "name": "Flocons d'avoine",
               "quantity": "40g",
               "calories": 150,
               "allergens": [],
-              "note": ""
+              "note": "Riches en fibres et en fer"
             }
           ],
           "prep_time_min": 5,
-          "recipe_hint": "Astuce rapide ou conseil de préparation"
+          "recipe_hint": "Astuce concrète et pratique de préparation ou présentation"
         }
       ]
     }
@@ -149,18 +369,18 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
       "name": "Nom de la recette",
       "emoji": "🍲",
       "for_meal": "Lundi déjeuner",
-      "servings": 4,
+      "servings": ${profile.people || 4},
       "prep_min": 15,
       "cook_min": 20,
-      "ingredients": [{"item": "poulet", "qty": "200g", "note": ""}],
-      "steps": ["Étape 1", "Étape 2"],
+      "ingredients": [{"item": "poulet", "qty": "200g", "note": "bio de préférence"}],
+      "steps": ["Étape 1 précise", "Étape 2 précise"],
       "allergens": [],
-      "substitutions": ["Si pas de poulet → dinde"]
+      "substitutions": ["Si pas de poulet → dinde ou tofu selon régime"]
     }
   ],
   "shopping_list": {
     "week": 1,
-    "persons": 4,
+    "persons": ${profile.people || 4},
     "categories": [
       {
         "category": "Fruits & Légumes",
@@ -172,7 +392,14 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
   }` : ''}
 }
 
-IMPORTANT : Génère les 7 jours complets avec TOUS les repas. Sois précis sur les quantités en grammes ou ml. Varie les repas chaque jour. Adapte tout au profil de l'enfant.`;
+IMPORTANT FINAL :
+- Génère les 7 jours COMPLETS avec TOUS les repas selon la structure culturelle
+- Quantités TOUJOURS en grammes (g) ou millilitres (ml) — jamais "1 portion" ou "au goût"
+- Calories PRÉCISES par item et par repas
+- Varie les sources protéiques (viande, poisson, œufs, légumineuses) chaque jour
+- Inclure au moins 5 couleurs de légumes différents sur la semaine
+- Les menus du week-end peuvent être légèrement plus élaborés (plus de temps de cuisine)
+- Adapte STRICTEMENT au profil : allergènes, refus, budget, temps cuisine`;
   },
 
   buildChatPrompt(userMessage, profile, planContext) {

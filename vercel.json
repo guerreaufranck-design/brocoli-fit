@@ -8,10 +8,12 @@
     }
   },
   "rewrites": [
-    { "source": "/plan",          "destination": "/plan.html" },
-    { "source": "/dashboard",     "destination": "/dashboard.html" },
-    { "source": "/questionnaire", "destination": "/questionnaire.html" },
-    { "source": "/login",         "destination": "/login.html" },
-    { "source": "/analyse",       "destination": "/analyse.html" }
+    { "source": "/plan",                "destination": "/plan.html" },
+    { "source": "/dashboard",           "destination": "/dashboard.html" },
+    { "source": "/questionnaire",       "destination": "/questionnaire.html" },
+    { "source": "/login",               "destination": "/login.html" },
+    { "source": "/analyse",             "destination": "/analyse.html" },
+    { "source": "/blog",                "destination": "/blog/index.html" },
+    { "source": "/blog/:article",       "destination": "/blog/:article.html" }
   ]
 }

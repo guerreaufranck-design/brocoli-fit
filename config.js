@@ -8,8 +8,8 @@
 window.BROCOLI_CONFIG = {
   // ── Supabase Auth ─────────────────────────────────────────
   // Récupérez ces valeurs dans : supabase.com → votre projet → Settings → API
-  SUPABASE_URL:      'VOTRE_SUPABASE_URL',       // ex: https://xxxx.supabase.co
-  SUPABASE_ANON_KEY: 'VOTRE_SUPABASE_ANON_KEY',  // clé anon/public (safe à exposer)
+  SUPABASE_URL:      'https://vjiiglfzqbzgzvbphtot.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqaWlnbGZ6cWJ6Z3p2YnBodG90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0Nzc4ODUsImV4cCI6MjA4ODA1Mzg4NX0.9_9fbhenyJ7QFYxrfZUN-bzyaKfHYaJmn0sfeNkB0EI',
 
   // ── App ────────────────────────────────────────────────────
   VERSION:      '1.1.0',
