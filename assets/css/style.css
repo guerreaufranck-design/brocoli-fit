@@ -1204,6 +1204,8 @@ ul, ol { list-style: none; }
    ============================================================ */
 @media (min-width: 480px) {
   .plan-select-grid { grid-template-columns: 1fr 1fr; }
+  .grid-2 { grid-template-columns: repeat(2,1fr); }
+  .grid-3 { grid-template-columns: repeat(2,1fr); }
 }
 @media (min-width: 640px) {
   .hero-actions { flex-direction: row; justify-content: center; }
@@ -1224,7 +1226,128 @@ ul, ol { list-style: none; }
   .footer-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
   .footer-bottom { flex-direction: row; justify-content: space-between; text-align: left; }
   .input-row { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: repeat(3,1fr); }
 }
 @media (min-width: 1024px) {
   .features-grid { grid-template-columns: repeat(3,1fr); }
+}
+
+/* ============================================================
+   MOBILE-FIRST — Polish écrans < 640px (80% des utilisateurs)
+   ============================================================ */
+
+/* ── Toasts : bas de l'écran sur mobile ── */
+@media (max-width: 639px) {
+  .toasts {
+    top: auto;
+    bottom: env(safe-area-inset-bottom, 1.25rem);
+    bottom: max(env(safe-area-inset-bottom), 1.25rem);
+    right: .75rem;
+    left: .75rem;
+    align-items: stretch;
+  }
+  .toast {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  /* ── Questionnaire : dots de progression ── */
+  .q-step-dot-label { display: none; }
+  .q-step-dot-circle { width: 28px; height: 28px; font-size: .8rem; }
+  .q-step-line { min-width: 8px; max-width: 18px; }
+
+  /* ── Questionnaire footer : boutons pleine largeur ── */
+  .q-footer-inner {
+    flex-direction: column-reverse;
+    gap: .75rem;
+    align-items: stretch;
+  }
+  .q-footer-inner .btn { width: 100%; justify-content: center; }
+
+  /* ── Login card : padding réduit ── */
+  .login-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: var(--r-xl);
+  }
+
+  /* ── Dashboard: nav compacte ── */
+  .dash-nav-inner {
+    gap: .375rem;
+  }
+  .dash-nav-inner > a { /* logo */
+    font-size: 1.1rem !important;
+    flex-shrink: 0;
+  }
+  .dash-tab {
+    padding: 0 .75rem;
+    font-size: .75rem;
+    gap: .25rem;
+  }
+  .dash-content { padding: 1.25rem var(--pad) 6rem; }
+
+  /* ── Dashboard: welcome card ── */
+  .welcome-card { padding: 1.5rem 1.25rem; }
+  .welcome-title { font-size: var(--text-2xl); }
+  .welcome-card > div[style] { flex-direction: column; }
+
+  /* ── Dashboard: checkin banner ── */
+  .checkin-banner {
+    flex-direction: column;
+    gap: .875rem;
+    text-align: center;
+    padding: 1.25rem;
+  }
+  .checkin-icon { align-self: center; font-size: 2rem; }
+
+  /* ── Checkin form: input-row en 1 colonne ── */
+  .input-row { grid-template-columns: 1fr; }
+
+  /* ── Plan page: stats 2 col OK, upgrade bar compact ── */
+  .plan-hero { padding: 2.5rem 0; }
+  .plan-upgrade-bar {
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: .5rem;
+    padding: .5rem 1rem;
+  }
+  .plan-content { padding: 1.5rem var(--pad) 5rem; }
+
+  /* ── Meal items: layout mobile ── */
+  .meal-item {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .meal-item-l { flex: 1; }
+  .meal-item-r { display: flex; gap: .5rem; align-items: center; flex-shrink: 0; }
+
+  /* ── Loading page (analyse) ── */
+  .loading-card { padding: 2.5rem 1.25rem; }
+
+  /* ── Hero CTA actions ── */
+  .hero-actions .btn { width: 100%; max-width: 320px; }
+
+  /* ── Navbar logo tagline ── */
+  .logo-tagline { display: none; }
+  .logo-brocoli { font-size: 1.7rem; }
+  .logo-dotfit  { font-size: .95rem; padding-bottom: 0.15em; }
+
+  /* ── Section padding réduit ── */
+  .section    { padding: 3.5rem 0; }
+  .section-lg { padding: 4rem 0; }
+  .cta-section { padding: 4rem 0; }
+}
+
+/* ── Très petits écrans (≤ 360px) ── */
+@media (max-width: 360px) {
+  .option-grid { grid-template-columns: 1fr; }
+  .plan-stat-val { font-size: var(--text-xl); }
+  .dash-stat-val { font-size: var(--text-xl); }
+}
+
+/* ── Safe area iOS (notch, home bar) ── */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .q-footer   { padding-bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
+  .dash-nav   { padding-top: env(safe-area-inset-top); }
+  .dash-content { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
 }
