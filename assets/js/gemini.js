@@ -5,28 +5,18 @@
 const GEMINI = {
 
   async call(prompt, jsonMode = true, timeoutMs = 300000) {
-    const cfg = window.BROCOLI_CONFIG;
-    const url = `${cfg.GEMINI_API_URL}${cfg.GEMINI_MODEL}:generateContent?key=${cfg.GEMINI_API_KEY}`;
-
-    const body = {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 32768,
-        ...(jsonMode ? { responseMimeType: 'application/json' } : {})
-      }
-    };
-
+    // ── Appel via la route serverless Vercel /api/gemini ──────
+    // La clé API reste sécurisée côté serveur.
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const timeoutId  = setTimeout(() => controller.abort(), timeoutMs);
 
     let res;
     try {
-      res = await fetch(url, {
-        method: 'POST',
+      res = await fetch('/api/gemini', {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-        signal: controller.signal
+        body:    JSON.stringify({ prompt, jsonMode }),
+        signal:  controller.signal
       });
     } catch (fetchErr) {
       clearTimeout(timeoutId);
@@ -39,7 +29,7 @@ const GEMINI = {
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
+      throw new Error(err.error || `HTTP ${res.status}`);
     }
 
     const data = await res.json();
