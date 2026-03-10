@@ -140,10 +140,37 @@ const AUTH = {
 window.AUTH = AUTH;
 
 // ============================================================
+// Met à jour les boutons du header selon l'état de connexion
+// ============================================================
+function _updateNavAuth() {
+  const loggedIn  = AUTH.isLoggedIn();
+  const userName  = AUTH.getUserName();
+
+  // Tous les liens "Connexion" → "Mon espace" si connecté
+  document.querySelectorAll('a[href="login.html"]').forEach(el => {
+    if (loggedIn) {
+      el.textContent = '👤 ' + userName;
+      el.href = 'dashboard.html';
+    }
+  });
+
+  // Bouton "Commencer" → "Mon tableau de bord" si connecté
+  document.querySelectorAll('a[href="questionnaire.html"]').forEach(el => {
+    if (loggedIn) {
+      el.textContent = '🥦 Mon tableau de bord';
+      el.href = 'dashboard.html';
+    }
+  });
+}
+
+// ============================================================
 // Logique de la page login.html
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
   await AUTH.init();
+
+  // Mise à jour du header sur toutes les pages
+  _updateNavAuth();
 
   // Sur la page login : si déjà connecté → rediriger
   if (window.location.pathname.includes('login')) {
