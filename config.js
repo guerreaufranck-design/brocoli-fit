@@ -6,16 +6,17 @@
 // ============================================================
 
 window.BROCOLI_CONFIG = {
-  // Version
-  VERSION: '1.1.0',
+  // ── Supabase Auth ─────────────────────────────────────────
+  // Récupérez ces valeurs dans : supabase.com → votre projet → Settings → API
+  SUPABASE_URL:      'VOTRE_SUPABASE_URL',       // ex: https://xxxx.supabase.co
+  SUPABASE_ANON_KEY: 'VOTRE_SUPABASE_ANON_KEY',  // clé anon/public (safe à exposer)
 
-  // Langue par défaut
+  // ── App ────────────────────────────────────────────────────
+  VERSION:      '1.1.0',
   DEFAULT_LANG: 'fr',
+  LANGUAGES:    ['fr', 'en', 'de', 'it'],
 
-  // Langues supportées
-  LANGUAGES: ['fr', 'en', 'de', 'it'],
-
-  // Plans tarifaires
+  // ── Plans tarifaires ──────────────────────────────────────
   PLANS: {
     free:      { price: 0,  name: 'Découverte' },
     essential: { price: 9,  name: 'Essentiel'  },

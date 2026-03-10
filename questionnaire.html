@@ -423,12 +423,14 @@
       </label>
     </div>
 
-    <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.activity">Activité physique</div>
-    <div class="sub-options" id="activityOptions">
-      <button class="sub-opt" data-val="sedentaire">🪑 <span data-i18n="act.sed">Sédentaire</span></button>
-      <button class="sub-opt" data-val="leger">🚶 <span data-i18n="act.light">Peu actif</span></button>
-      <button class="sub-opt" data-val="actif">🏃 <span data-i18n="act.active">Actif</span></button>
-      <button class="sub-opt" data-val="tres_actif">🏆 <span data-i18n="act.very">Très actif / Sportif</span></button>
+    <div id="activitySectionWrap">
+      <div class="q-sub-label" style="margin-top:1.5rem" data-i18n="q7.activity">Activité physique</div>
+      <div class="sub-options" id="activityOptions">
+        <button class="sub-opt" data-val="sedentaire">🪑 <span data-i18n="act.sed">Sédentaire</span></button>
+        <button class="sub-opt" data-val="leger">🚶 <span data-i18n="act.light">Peu actif</span></button>
+        <button class="sub-opt" data-val="actif">🏃 <span data-i18n="act.active">Actif</span></button>
+        <button class="sub-opt" data-val="tres_actif">🏆 <span data-i18n="act.very">Très actif / Sportif</span></button>
+      </div>
     </div>
     <div style="margin-top:1rem" id="sportsSectionWrap">
       <div class="q-sub-label" data-i18n="q7.sports">Sports pratiqués</div>
@@ -554,6 +556,7 @@
 <!-- TOASTS -->
 <div class="toasts" id="toasts"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/app.js"></script>

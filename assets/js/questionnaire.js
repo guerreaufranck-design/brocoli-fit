@@ -151,12 +151,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sports = sportsByProfile[profil] || sportsByProfile.enfant;
 
-    // Hide sports section for babies
+    // Hide sports & activity level sections for babies (not relevant for infants)
     if (wrap) wrap.style.display = profil === 'bebe' ? 'none' : '';
+    const actWrap = document.getElementById('activitySectionWrap');
+    if (actWrap) actWrap.style.display = profil === 'bebe' ? 'none' : '';
+    // For babies: auto-set activity to 'eveil' so Gemini adapts the plan
+    if (profil === 'bebe') { data.activity = 'eveil'; data.sports = []; }
 
     // Clear and re-render
     container.innerHTML = '';
-    data.sports = [];
+    if (profil !== 'bebe') data.sports = [];
 
     sports.forEach(s => {
       const btn = document.createElement('button');

@@ -6,7 +6,7 @@ const TRANSLATIONS = {
 
   fr: {
     // Meta
-    tagline: 'Nutrition · Enfants · Famille',
+    tagline: 'Nutrition · Enfant · Famille',
     // Nav
     'nav.how': 'Notre méthode',
     'nav.plans': 'Nos offres',
@@ -336,7 +336,7 @@ const TRANSLATIONS = {
   },
 
   en: {
-    tagline: 'Nutrition · Children · Family',
+    tagline: 'Nutrition · Child · Family',
     'nav.how': 'Our method',
     'nav.plans': 'Our offers',
     'nav.faq': 'FAQ',
@@ -579,7 +579,7 @@ const TRANSLATIONS = {
   },
 
   de: {
-    tagline: 'Ernährung · Kinder · Familie',
+    tagline: 'Ernährung · Kind · Familie',
     'nav.how': 'Unsere Methode',
     'nav.plans': 'Unsere Angebote',
     'nav.faq': 'FAQ',
@@ -814,7 +814,7 @@ const TRANSLATIONS = {
   },
 
   it: {
-    tagline: 'Nutrizione · Bambini · Famiglia',
+    tagline: 'Nutrizione · Bambino · Famiglia',
     'nav.how': 'Il nostro metodo',
     'nav.plans': 'Le nostre offerte',
     'nav.faq': 'FAQ',

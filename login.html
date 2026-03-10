@@ -8,99 +8,130 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .btn-google{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;padding:.75rem 1rem;border-radius:var(--r-md);border:1.5px solid var(--border);background:#fff;font-family:var(--font-sans);font-weight:700;font-size:var(--text-sm);color:#3c4043;cursor:pointer;transition:background .2s,box-shadow .2s}
+    .btn-google:hover{background:#f8f9fa;box-shadow:0 1px 6px rgba(0,0,0,.1)}
+    .auth-divider{display:flex;align-items:center;gap:.75rem;margin:1.25rem 0;color:var(--text-muted);font-size:var(--text-xs)}
+    .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    .auth-method-tabs{display:flex;gap:.5rem;margin-bottom:1.5rem;background:var(--bg);border-radius:var(--r-md);padding:.25rem}
+    .auth-method-tab{flex:1;padding:.5rem;border-radius:calc(var(--r-md) - 2px);border:none;background:transparent;font-family:var(--font-sans);font-weight:700;font-size:var(--text-xs);color:var(--text-muted);cursor:pointer;transition:all .2s}
+    .auth-method-tab.active{background:#fff;color:var(--green-dark);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+    .magic-success{display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:var(--r-md);padding:.875rem 1rem;font-size:var(--text-sm);color:#166534;margin-top:.75rem;line-height:1.5}
+  </style>
 </head>
 <body class="login-page">
 
 <nav style="background:transparent;padding:1.25rem var(--pad);display:flex;align-items:center;justify-content:space-between">
   <a href="index.html" style="font-family:var(--font-serif);font-style:italic;font-weight:600;font-size:1.75rem;color:var(--green-dark)">Brocoli<span style="font-family:var(--font-sans);font-weight:900;font-size:.7rem;color:var(--orange)">.fit</span></a>
-  <a href="index.html" class="btn btn-ghost btn-sm" data-i18n="login.back">← Retour</a>
+  <a href="index.html" class="btn btn-ghost btn-sm">← Retour</a>
 </nav>
 
 <div class="login-wrap">
   <div class="login-card">
     <div class="login-hd">
       <div style="font-size:2.5rem;margin-bottom:.75rem">🥦</div>
-      <h1 class="login-title" id="loginTitle" data-i18n="login.title">Bon retour !</h1>
-      <p class="login-desc" id="loginDesc" data-i18n="login.desc">Connectez-vous pour accéder à vos plans et suivis.</p>
+      <h1 class="login-title" id="loginTitle">Bon retour !</h1>
+      <p class="login-desc" id="loginDesc">Connectez-vous pour accéder à vos plans et suivis.</p>
     </div>
 
-    <!-- Tabs -->
-    <div class="login-tabs">
-      <button class="login-tab active" id="tabLogin" onclick="switchTab('login')" data-i18n="login.tab">Connexion</button>
-      <button class="login-tab" id="tabRegister" onclick="switchTab('register')" data-i18n="register.tab">Créer un compte</button>
+    <div class="login-tabs" style="margin-bottom:1.5rem">
+      <button class="login-tab active" id="tabLogin" onclick="switchTab('login')">Connexion</button>
+      <button class="login-tab" id="tabRegister" onclick="switchTab('register')">Créer un compte</button>
     </div>
 
-    <!-- Login form -->
+    <!-- CONNEXION -->
     <div id="loginForm">
-      <div style="display:flex;flex-direction:column;gap:1.1rem">
+      <button class="btn-google" id="googleBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuer avec Google
+      </button>
+      <div class="auth-divider">ou</div>
+      <div class="auth-method-tabs">
+        <button class="auth-method-tab active" onclick="switchMethod('password')">🔑 Mot de passe</button>
+        <button class="auth-method-tab" onclick="switchMethod('magic')">✨ Lien magique</button>
+      </div>
+      <div id="passwordSection" style="display:flex;flex-direction:column;gap:1rem">
         <div class="form-group">
-          <label class="form-label" data-i18n="login.email">Email</label>
+          <label class="form-label">Email</label>
           <input type="email" class="form-input" id="loginEmail" placeholder="votre@email.com" autocomplete="email">
         </div>
         <div class="form-group">
-          <label class="form-label" data-i18n="login.password">Mot de passe</label>
+          <label class="form-label">Mot de passe</label>
           <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
-          <a href="#" style="font-size:var(--text-xs);color:var(--green-dark);font-weight:700;margin-top:.25rem;display:inline-block" data-i18n="login.forgot">Mot de passe oublié ?</a>
+          <a href="#" id="forgotBtn" style="font-size:var(--text-xs);color:var(--green-dark);font-weight:700;margin-top:.25rem;display:inline-block">Mot de passe oublié ?</a>
         </div>
-        <button class="btn btn-primary btn-full btn-lg" id="loginBtn" data-i18n="login.cta">Se connecter</button>
+        <button class="btn btn-primary btn-full btn-lg" id="loginBtn">Se connecter</button>
+      </div>
+      <div id="magicSection" style="display:none;flex-direction:column;gap:1rem">
+        <p style="font-size:var(--text-sm);color:var(--text-muted);line-height:1.5">Recevez un lien de connexion par email — sans mot de passe.</p>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="magicEmail" placeholder="votre@email.com" autocomplete="email">
+        </div>
+        <button class="btn btn-primary btn-full btn-lg" id="magicLinkBtn">Recevoir le lien magique ✨</button>
+        <div class="magic-success" id="magicSuccess">📬 Lien envoyé ! Vérifiez votre boîte mail et cliquez sur le lien pour vous connecter instantanément.</div>
       </div>
     </div>
 
-    <!-- Register form -->
+    <!-- INSCRIPTION -->
     <div id="registerForm" style="display:none">
-      <div style="display:flex;flex-direction:column;gap:1.1rem">
+      <button class="btn-google" id="googleBtnReg">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        S'inscrire avec Google
+      </button>
+      <div class="auth-divider">ou avec un email</div>
+      <div style="display:flex;flex-direction:column;gap:1rem">
         <div class="form-group">
-          <label class="form-label" data-i18n="reg.name">Votre prénom</label>
+          <label class="form-label">Votre prénom</label>
           <input type="text" class="form-input" id="regName" placeholder="Marie" autocomplete="given-name">
         </div>
         <div class="form-group">
-          <label class="form-label" data-i18n="login.email">Email</label>
+          <label class="form-label">Email</label>
           <input type="email" class="form-input" id="regEmail" placeholder="votre@email.com" autocomplete="email">
         </div>
         <div class="form-group">
-          <label class="form-label" data-i18n="login.password">Mot de passe</label>
-          <input type="password" class="form-input" id="regPassword" placeholder="Min. 8 caractères" autocomplete="new-password">
+          <label class="form-label">Mot de passe <span style="font-weight:400;color:var(--text-muted)">(min. 6 caractères)</span></label>
+          <input type="password" class="form-input" id="regPassword" placeholder="••••••••" autocomplete="new-password">
         </div>
         <div style="display:flex;align-items:flex-start;gap:.75rem">
           <input type="checkbox" id="regTerms" style="margin-top:3px;flex-shrink:0;width:18px;height:18px;accent-color:var(--green)">
-          <label for="regTerms" style="font-size:var(--text-xs);color:var(--text-muted);cursor:pointer">
-            <span data-i18n="reg.terms1">J'accepte les </span><a href="#" style="color:var(--green-dark)" data-i18n="reg.termsLink">conditions d'utilisation</a><span data-i18n="reg.terms2"> et la </span><a href="#" style="color:var(--green-dark)" data-i18n="reg.privacyLink">politique de confidentialité</a>
-          </label>
+          <label for="regTerms" style="font-size:var(--text-xs);color:var(--text-muted);cursor:pointer;line-height:1.5">J'accepte les <a href="#" style="color:var(--green-dark)">conditions d'utilisation</a> et la <a href="#" style="color:var(--green-dark)">politique de confidentialité</a></label>
         </div>
-        <button class="btn btn-primary btn-full btn-lg" id="registerBtn" data-i18n="reg.cta">Créer mon compte</button>
+        <button class="btn btn-primary btn-full btn-lg" id="registerBtn">Créer mon compte</button>
       </div>
     </div>
 
-    <div class="divider"><div class="divider-line"></div><span class="divider-txt" data-i18n="login.or">ou</span><div class="divider-line"></div></div>
-
-    <div style="text-align:center">
-      <p style="font-size:var(--text-sm);color:var(--text-muted)" data-i18n="login.noAccount">Pas encore de compte ?</p>
-      <a href="questionnaire.html" class="btn btn-outline btn-full btn-lg" style="margin-top:.75rem">
-        🥦 <span data-i18n="login.startFree">Commencer gratuitement</span>
-      </a>
+    <div style="text-align:center;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)">
+      <p style="font-size:var(--text-sm);color:var(--text-muted)">Pas encore de compte ?</p>
+      <a href="questionnaire.html" class="btn btn-outline btn-full btn-lg" style="margin-top:.75rem">🥦 Commencer gratuitement</a>
     </div>
   </div>
 </div>
 
 <div class="toasts" id="toasts"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
+  document.getElementById('googleBtnReg')?.addEventListener('click', () => AUTH.loginWithGoogle());
   function switchTab(tab) {
     const isLogin = tab === 'login';
-    document.getElementById('loginForm').style.display = isLogin ? '' : 'none';
+    document.getElementById('loginForm').style.display    = isLogin ? '' : 'none';
     document.getElementById('registerForm').style.display = isLogin ? 'none' : '';
     document.getElementById('tabLogin').classList.toggle('active', isLogin);
     document.getElementById('tabRegister').classList.toggle('active', !isLogin);
-    document.getElementById('loginTitle').setAttribute('data-i18n', isLogin ? 'login.title' : 'register.title');
-    document.getElementById('loginDesc').setAttribute('data-i18n', isLogin ? 'login.desc' : 'register.desc');
-    if (window.applyI18n) applyI18n();
+    document.getElementById('loginTitle').textContent = isLogin ? 'Bon retour !' : 'Créer un compte';
+    document.getElementById('loginDesc').textContent  = isLogin ? 'Connectez-vous pour accéder à vos plans et suivis.' : 'Rejoignez Brocoli.fit — nutrition personnalisée pour vos enfants.';
   }
-  // Handle ?signup=true in URL
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('signup') === 'true') switchTab('register');
+  function switchMethod(method) {
+    const isPwd = method === 'password';
+    document.getElementById('passwordSection').style.display = isPwd ? 'flex' : 'none';
+    document.getElementById('magicSection').style.display    = isPwd ? 'none' : 'flex';
+    document.querySelectorAll('.auth-method-tab').forEach((t, i) => t.classList.toggle('active', (i===0&&isPwd)||(i===1&&!isPwd)));
+  }
+  if (new URLSearchParams(window.location.search).get('signup') === 'true') switchTab('register');
 </script>
 </body>
 </html>
