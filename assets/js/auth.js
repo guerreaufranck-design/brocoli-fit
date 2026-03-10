@@ -155,9 +155,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Sur les pages protégées : si NON connecté → rediriger vers inscription
+  // ⚠️ Exception : si ?code= est dans l'URL, c'est un retour OAuth PKCE en cours
+  //    → ne pas rediriger, laisser Supabase finir l'échange du code
+  const _hasOAuthCode = new URLSearchParams(window.location.search).has('code');
   const _protectedPages = ['dashboard', 'plan', 'analyse'];
   const _currentPage = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '');
-  if (_protectedPages.some(p => _currentPage === p || _currentPage.startsWith(p))) {
+  if (!_hasOAuthCode && _protectedPages.some(p => _currentPage === p || _currentPage.startsWith(p))) {
     if (!AUTH.isLoggedIn()) {
       const _dest = _currentPage || 'dashboard';
       window.location.href = '/login?signup=true&redirect=' + encodeURIComponent(_dest);
