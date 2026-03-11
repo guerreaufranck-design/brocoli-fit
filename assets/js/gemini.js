@@ -2,6 +2,65 @@
 // BROCOLI.FIT — Gemini AI Integration
 // ============================================================
 
+/**
+ * Calcule les besoins caloriques journaliers d'après les équations OMS/Schofield.
+ * @param {object} profile  — profil questionnaire
+ * @returns {{ target, breakfast, lunch, snack, dinner }} en kcal
+ */
+function _computeDailyCalories(profile) {
+  const profil  = profile.profil || 'enfant';
+  const age     = parseFloat(profile.age)    || 0;   // mois si bebe, ans sinon
+  const weight  = parseFloat(profile.weight) || 0;
+  const height  = parseFloat(profile.height) || 0;
+  const isMale  = profile.genre === 'm';
+  const activity = profile.activity || 'leger';
+
+  // PAL (Physical Activity Level)
+  const pal = { sedentaire: 1.2, leger: 1.375, modere: 1.55, actif: 1.725 }[activity] || 1.375;
+
+  let bmr = 0;
+
+  if (profil === 'bebe' || age < 1) {
+    // Nourrisson : kcal/kg/j (OMS) — age en mois
+    const ageMonths = profil === 'bebe' ? age : age * 12;
+    const kcalPerKg = ageMonths < 6 ? 105 : 80;
+    const w = weight > 0 ? weight : (ageMonths < 6 ? 5.5 : 8);
+    bmr = kcalPerKg * w;
+    // Les nourrissons n'ont pas de PAL significatif
+    const t = Math.round(bmr);
+    return { target: t, breakfast: Math.round(t * 0.25), lunch: Math.round(t * 0.30), snack: Math.round(t * 0.15), dinner: Math.round(t * 0.30) };
+  }
+
+  if (age < 3) {
+    // WHO 1–3 ans
+    bmr = isMale ? 60.9 * weight - 54 : 61.0 * weight - 51;
+  } else if (age < 10) {
+    // WHO 3–10 ans
+    bmr = isMale ? 22.7 * weight + 495 : 22.5 * weight + 499;
+  } else if (age < 18) {
+    // WHO 10–18 ans
+    bmr = isMale ? 17.5 * weight + 651 : 12.2 * weight + 746;
+  } else {
+    // Mifflin-St Jeor (18+)
+    bmr = isMale
+      ? 10 * weight + 6.25 * height - 5 * age + 5
+      : 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+
+  // Sécurité : valeurs minimales physiologiques
+  const minKcal = age < 3 ? 900 : age < 6 ? 1100 : age < 10 ? 1300 : age < 14 ? 1600 : 1800;
+  const target = Math.max(Math.round(bmr * pal), minKcal);
+
+  // Distribution standard des repas
+  return {
+    target,
+    breakfast: Math.round(target * 0.25),
+    lunch:     Math.round(target * 0.35),
+    snack:     Math.round(target * 0.10),
+    dinner:    Math.round(target * 0.30),
+  };
+}
+
 const GEMINI = {
 
   async call(prompt, jsonMode = true, timeoutMs = 300000) {
@@ -259,6 +318,9 @@ ${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à cha
     const isPremium = profile.selectedPlan === 'premium';
     const isEssential = profile.selectedPlan === 'essential' || isPremium;
 
+    // ── Calcul des calories spécifiques à ce profil ──────────────────────────
+    const cal = _computeDailyCalories(profile);
+
     return `Tu es NutriBot, l'expert en nutrition pédiatrique de Brocoli.fit.
 Tu dois générer un programme nutritionnel personnalisé COMPLET pour 1 semaine (7 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
 
@@ -278,6 +340,19 @@ ${sportsBonus}
 
 ${nutritionRef}
 
+╔═══════════════════════════════════════════════╗
+║   ⚡ CALORIES CALCULÉES POUR CE PROFIL PRÉCIS  ║
+╠═══════════════════════════════════════════════╣
+║  Total journalier : ${String(cal.target).padEnd(6)} kcal/j            ║
+║  Petit-déjeuner   : ~${String(cal.breakfast).padEnd(5)} kcal              ║
+║  Déjeuner         : ~${String(cal.lunch).padEnd(5)} kcal              ║
+║  Goûter           : ~${String(cal.snack).padEnd(5)} kcal              ║
+║  Dîner            : ~${String(cal.dinner).padEnd(5)} kcal              ║
+╚═══════════════════════════════════════════════╝
+⛔ INTERDIT : Ne JAMAIS utiliser 1650 kcal ou toute autre valeur par défaut.
+⛔ La valeur "daily_calories" dans le JSON DOIT être exactement ${cal.target}.
+⛔ Chaque "total_calories" de journée DOIT être entre ${Math.round(cal.target * 0.9)} et ${Math.round(cal.target * 1.1)} kcal.
+
 ═══════════════════════════════════════════════
 RÈGLES DE GÉNÉRATION OBLIGATOIRES :
 ═══════════════════════════════════════════════
@@ -285,7 +360,7 @@ RÈGLES DE GÉNÉRATION OBLIGATOIRES :
 2. ⛔ REFUS : Ne JAMAIS inclure les aliments refusés listés
 3. ✅ RÉGIME : Respecter strictement le type de régime (végétarien, vegan, halal, etc.)
 4. ✅ PORTIONS : Utiliser EXACTEMENT les grammages du référentiel nutritionnel ci-dessus pour cet âge
-5. ✅ CALORIES : Les calories totales journalières DOIVENT correspondre au référentiel d'âge/sexe
+5. ✅ CALORIES : daily_calories = ${cal.target} kcal/j OBLIGATOIRE (calculé d'après OMS/Schofield pour ce profil)
 6. ✅ MICRONUTRIMENTS : Assurer les apports en calcium, fer, zinc, vitamine D selon le référentiel
 7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 7 jours
 8. ✅ CULTURE : Respecter la structure de repas et les aliments culturellement adaptés
@@ -330,7 +405,7 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
     "age": ${age || 8},
     "bmi": ${bmi !== 'non calculable' ? bmi : 'null'},
     "bmi_status": "Normal / Insuffisance pondérale / Surpoids / Obésité",
-    "daily_calories": 1650,
+    "daily_calories": ${cal.target},
     "summary": "Résumé en 2-3 phrases précises du profil nutritionnel et des enjeux de l'âge",
     "key_points": ["Besoin spécifique 1 lié à l'âge", "Micronutriment prioritaire", "Point comportement alimentaire"],
     "recommendations": ["Conseil pratique 1", "Conseil pratique 2", "Conseil pratique 3"],
@@ -342,18 +417,18 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
     {
       "day": "Lundi",
       "day_en": "Monday",
-      "total_calories": 1650,
+      "total_calories": ${cal.target},
       "meals": [
         {
           "type": "Petit-déjeuner",
           "emoji": "🥣",
           "time": "7h30",
-          "total_calories": 380,
+          "total_calories": ${cal.breakfast},
           "items": [
             {
               "name": "Flocons d'avoine",
               "quantity": "40g",
-              "calories": 150,
+              "calories": ${Math.round(cal.breakfast / 2)},
               "allergens": [],
               "note": "Riches en fibres et en fer"
             }
