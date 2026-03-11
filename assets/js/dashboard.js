@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newDislikes= document.getElementById('ci_newDislikes')?.value?.trim()   || '';
 
     if (!plan) {
-      showToast('Aucun plan actif. Créez votre programme d\'abord.', 'error');
+      showToast(t('toast.noPlan') || 'Aucun plan actif. Créez votre programme d\'abord.', 'error');
       return;
     }
 
@@ -183,18 +183,18 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('brocoliHistory', JSON.stringify(history));
           }
 
-          showToast('✅ Plan ajusté pour la semaine prochaine !', 'success');
+          showToast(t('toast.planAdjusted')   || '✅ Plan ajusté pour la semaine prochaine !', 'success');
           renderAdviceTimeline(history);
           renderHistory(history);
         } else {
-          showToast('Plan enregistré (ajustement IA non disponible).', 'info');
+          showToast(t('toast.planSavedNoAI')  || 'Plan enregistré (ajustement IA non disponible).', 'info');
         }
       } else {
-        showToast('Suivi enregistré avec succès !', 'success');
+        showToast(t('toast.checkinSaved')     || 'Suivi enregistré avec succès !', 'success');
       }
     } catch (err) {
       console.error('Checkin AI error:', err);
-      showToast('Suivi enregistré. Ajustement non disponible.', 'info');
+      showToast(t('toast.checkinSavedNoAdj') || 'Suivi enregistré. Ajustement non disponible.', 'info');
     }
 
     // Reset form
@@ -370,17 +370,34 @@ function formatDateShort(iso) {
 }
 
 function moodLabel(val) {
-  const m = { happy: '😄 Super', ok: '🙂 Bien', meh: '😐 Moyen', bad: '😔 Difficile' };
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+  const m = {
+    happy: '😄 ' + (_t('mood.great') || 'Super'),
+    ok:    '🙂 ' + (_t('mood.ok')    || 'Bien'),
+    meh:   '😐 ' + (_t('mood.meh')   || 'Moyen'),
+    bad:   '😔 ' + (_t('mood.bad')   || 'Difficile'),
+  };
   return m[val] || val || '—';
 }
 
 function appetiteLabel(val) {
-  const a = { great: 'Très bon appétit', normal: 'Normal', low: 'Peu d\'appétit', none: 'Pas mangé' };
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+  const a = {
+    great:  _t('app.great')  || 'Très bon appétit',
+    normal: _t('app.normal') || 'Normal',
+    low:    _t('app.low')    || 'Peu d\'appétit',
+    none:   _t('app.none')   || 'Pas mangé',
+  };
   return a[val] || val || '—';
 }
 
 function planLabel(p) {
-  return { free: 'Découverte', essential: 'Essentiel', premium: 'Premium' }[p] || 'Découverte';
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+  return {
+    free:      _t('plan.free.name') || 'Découverte',
+    essential: _t('plan.ess.name')  || 'Essentiel',
+    premium:   _t('plan.prem.name') || 'Premium',
+  }[p] || _t('plan.free.name') || 'Découverte';
 }
 
 function setText(id, val) {

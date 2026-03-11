@@ -20,10 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const weeks = plan.week ? distributeWeeks(plan.week) : {};
 
   // ---- Hero ----
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
   const heroName = document.getElementById('planHeroName');
   const heroMeta = document.getElementById('planHeroMeta');
-  if (heroName) heroName.textContent = `Plan de ${a.name || profile.name || 'votre enfant'}`;
-  if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 semaines · Généré par nos experts`;
+  const childName = a.name || profile.name || _t('s.yourChild') || 'votre enfant';
+  if (heroName) heroName.textContent = `Plan de ${childName}`;
+  if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 ${_t('stat.weeks') || 'semaines'} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
 
   // Show upgrade bar for free users
   if (userPlan === 'free') {
@@ -240,5 +242,10 @@ function escHtml(str) {
 }
 
 function planLabel(p) {
-  return {free:'Découverte',essential:'Essentiel',premium:'Premium'}[p] || 'Découverte';
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+  return {
+    free:      _t('plan.free.name') || 'Découverte',
+    essential: _t('plan.ess.name')  || 'Essentiel',
+    premium:   _t('plan.prem.name') || 'Premium',
+  }[p] || _t('plan.free.name') || 'Découverte';
 }

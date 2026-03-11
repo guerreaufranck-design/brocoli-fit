@@ -333,6 +333,31 @@ const TRANSLATIONS = {
     'sp.athletisme': 'Athlétisme',
     'sp.handball': 'Handball',
     'sp.volleyball': 'Volleyball',
+    // Auth — états de chargement
+    'auth.loading.connecting': 'Connexion…',
+    'auth.loading.creating':   'Création…',
+    'auth.loading.sending':    'Envoi…',
+    // Auth — messages d'erreur
+    'err.invalidCredentials': 'Email ou mot de passe incorrect.',
+    'err.emailNotConfirmed':  'Confirmez votre email avant de vous connecter.',
+    'err.alreadyRegistered':  'Un compte existe déjà avec cet email.',
+    'err.passwordTooShort':   'Le mot de passe doit contenir au moins 6 caractères.',
+    'err.invalidEmail':       'Adresse email invalide.',
+    // Auth — toasts & UI
+    'auth.fillEmailPwd':      'Remplissez email et mot de passe',
+    'auth.acceptTerms':       'Acceptez les conditions d\'utilisation',
+    'auth.accountCreated':    '✅ Compte créé ! Vérifiez votre email pour confirmer.',
+    'auth.resetSent':         '✅ Email de réinitialisation envoyé !',
+    'auth.enterEmail':        'Entrez votre adresse email',
+    'auth.enterEmailFirst':   'Entrez d\'abord votre email ci-dessus',
+    // Dashboard — toasts
+    'toast.noPlan':           'Aucun plan actif. Créez votre programme d\'abord.',
+    'toast.planAdjusted':     '✅ Plan ajusté pour la semaine prochaine !',
+    'toast.planSavedNoAI':    'Plan enregistré (ajustement IA non disponible).',
+    'toast.checkinSaved':     'Suivi enregistré avec succès !',
+    'toast.checkinSavedNoAdj':'Suivi enregistré. Ajustement non disponible.',
+    // Login page — tab dynamique
+    'register.desc.alt':      'Rejoignez Brocoli.fit — nutrition personnalisée pour vos enfants.',
   },
 
   en: {
@@ -576,6 +601,31 @@ const TRANSLATIONS = {
     'plan.dashboard': 'My space',
     'plan.eyebrow': 'PERSONALISED NUTRITIONAL PROGRAMME',
     'plan.tracking': 'Weekly tracking',
+    // Auth — loading states
+    'auth.loading.connecting': 'Logging in…',
+    'auth.loading.creating':   'Creating…',
+    'auth.loading.sending':    'Sending…',
+    // Auth — error messages
+    'err.invalidCredentials': 'Incorrect email or password.',
+    'err.emailNotConfirmed':  'Please confirm your email before logging in.',
+    'err.alreadyRegistered':  'An account already exists with this email.',
+    'err.passwordTooShort':   'Password must be at least 6 characters.',
+    'err.invalidEmail':       'Invalid email address.',
+    // Auth — toasts & UI
+    'auth.fillEmailPwd':      'Please fill in your email and password',
+    'auth.acceptTerms':       'Please accept the terms of service',
+    'auth.accountCreated':    '✅ Account created! Check your email to confirm.',
+    'auth.resetSent':         '✅ Password reset email sent!',
+    'auth.enterEmail':        'Please enter your email address',
+    'auth.enterEmailFirst':   'Please enter your email address above first',
+    // Dashboard — toasts
+    'toast.noPlan':           'No active plan. Create your programme first.',
+    'toast.planAdjusted':     '✅ Plan adjusted for next week!',
+    'toast.planSavedNoAI':    'Plan saved (AI adjustment unavailable).',
+    'toast.checkinSaved':     'Check-in saved successfully!',
+    'toast.checkinSavedNoAdj':'Check-in saved. Adjustment unavailable.',
+    // Login page — dynamic tab
+    'register.desc.alt':      'Join Brocoli.fit — personalised nutrition for your children.',
   },
 
   de: {
@@ -811,6 +861,31 @@ const TRANSLATIONS = {
     'plan.dashboard': 'Mein Bereich',
     'plan.eyebrow': 'PERSONALISIERTER ERNÄHRUNGSPLAN',
     'plan.tracking': 'Wöchentliches Tracking',
+    // Auth — Ladezustände
+    'auth.loading.connecting': 'Anmelden…',
+    'auth.loading.creating':   'Erstellen…',
+    'auth.loading.sending':    'Senden…',
+    // Auth — Fehlermeldungen
+    'err.invalidCredentials': 'Falsche E-Mail oder falsches Passwort.',
+    'err.emailNotConfirmed':  'Bitte bestätigen Sie Ihre E-Mail, bevor Sie sich anmelden.',
+    'err.alreadyRegistered':  'Ein Konto mit dieser E-Mail existiert bereits.',
+    'err.passwordTooShort':   'Das Passwort muss mindestens 6 Zeichen lang sein.',
+    'err.invalidEmail':       'Ungültige E-Mail-Adresse.',
+    // Auth — Meldungen & UI
+    'auth.fillEmailPwd':      'Bitte E-Mail und Passwort eingeben',
+    'auth.acceptTerms':       'Bitte akzeptieren Sie die Nutzungsbedingungen',
+    'auth.accountCreated':    '✅ Konto erstellt! Überprüfen Sie Ihre E-Mail.',
+    'auth.resetSent':         '✅ Passwort-Reset-E-Mail gesendet!',
+    'auth.enterEmail':        'Bitte geben Sie Ihre E-Mail-Adresse ein',
+    'auth.enterEmailFirst':   'Bitte geben Sie oben zuerst Ihre E-Mail-Adresse ein',
+    // Dashboard — Benachrichtigungen
+    'toast.noPlan':           'Kein aktiver Plan. Erstellen Sie zuerst Ihr Programm.',
+    'toast.planAdjusted':     '✅ Plan für nächste Woche angepasst!',
+    'toast.planSavedNoAI':    'Plan gespeichert (KI-Anpassung nicht verfügbar).',
+    'toast.checkinSaved':     'Check-in erfolgreich gespeichert!',
+    'toast.checkinSavedNoAdj':'Check-in gespeichert. Anpassung nicht verfügbar.',
+    // Login — dynamischer Tab
+    'register.desc.alt':      'Treten Sie Brocoli.fit bei — personalisierte Ernährung für Ihre Kinder.',
   },
 
   it: {
@@ -1046,6 +1121,31 @@ const TRANSLATIONS = {
     'plan.dashboard': 'Il mio spazio',
     'plan.eyebrow': 'PROGRAMMA NUTRIZIONALE PERSONALIZZATO',
     'plan.tracking': 'Monitoraggio settimanale',
+    // Auth — stati di caricamento
+    'auth.loading.connecting': 'Accesso…',
+    'auth.loading.creating':   'Creazione…',
+    'auth.loading.sending':    'Invio…',
+    // Auth — messaggi di errore
+    'err.invalidCredentials': 'Email o password errata.',
+    'err.emailNotConfirmed':  'Conferma la tua email prima di accedere.',
+    'err.alreadyRegistered':  'Esiste già un account con questa email.',
+    'err.passwordTooShort':   'La password deve contenere almeno 6 caratteri.',
+    'err.invalidEmail':       'Indirizzo email non valido.',
+    // Auth — toast & UI
+    'auth.fillEmailPwd':      'Compila email e password',
+    'auth.acceptTerms':       'Accetta le condizioni di utilizzo',
+    'auth.accountCreated':    '✅ Account creato! Controlla la tua email per confermare.',
+    'auth.resetSent':         '✅ Email di reimpostazione password inviata!',
+    'auth.enterEmail':        'Inserisci il tuo indirizzo email',
+    'auth.enterEmailFirst':   'Prima inserisci la tua email in alto',
+    // Dashboard — notifiche
+    'toast.noPlan':           'Nessun piano attivo. Crea prima il tuo programma.',
+    'toast.planAdjusted':     '✅ Piano adattato per la prossima settimana!',
+    'toast.planSavedNoAI':    'Piano salvato (adattamento AI non disponibile).',
+    'toast.checkinSaved':     'Check-in salvato con successo!',
+    'toast.checkinSavedNoAdj':'Check-in salvato. Adattamento non disponibile.',
+    // Login — tab dinamico
+    'register.desc.alt':      'Unisciti a Brocoli.fit — nutrizione personalizzata per i tuoi bambini.',
   }
 };
 

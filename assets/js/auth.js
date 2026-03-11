@@ -121,14 +121,15 @@ const AUTH = {
     window.location.href = 'index.html';
   },
 
-  // ── Traduction erreurs Supabase → FR ──────────────────────
+  // ── Traduction erreurs Supabase → langue de l'UI ──────────
   _translateError(msg) {
+    const t = k => (window.I18N && window.I18N.t(k)) || null;
     const map = {
-      'Invalid login credentials':        'Email ou mot de passe incorrect.',
-      'Email not confirmed':               'Confirmez votre email avant de vous connecter.',
-      'User already registered':           'Un compte existe déjà avec cet email.',
-      'Password should be at least 6':     'Le mot de passe doit contenir au moins 6 caractères.',
-      'Unable to validate email address':  'Adresse email invalide.',
+      'Invalid login credentials':        t('err.invalidCredentials') || 'Email ou mot de passe incorrect.',
+      'Email not confirmed':               t('err.emailNotConfirmed')  || 'Confirmez votre email avant de vous connecter.',
+      'User already registered':           t('err.alreadyRegistered')  || 'Un compte existe déjà avec cet email.',
+      'Password should be at least 6':     t('err.passwordTooShort')   || 'Le mot de passe doit contenir au moins 6 caractères.',
+      'Unable to validate email address':  t('err.invalidEmail')       || 'Adresse email invalide.',
     };
     for (const [k, v] of Object.entries(map)) {
       if (msg.includes(k)) return v;
@@ -203,18 +204,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const forgotBtn   = document.getElementById('forgotBtn');
   const logoutBtn   = document.getElementById('dashLogout');
 
+  // Helper i18n local
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+
   // Connexion email + mot de passe
   loginBtn?.addEventListener('click', async () => {
     const email = document.getElementById('loginEmail')?.value?.trim();
     const pass  = document.getElementById('loginPassword')?.value;
-    if (!email || !pass) { showToast?.('Remplissez email et mot de passe', 'warning'); return; }
-    setLoading(loginBtn, true, 'Connexion…');
+    if (!email || !pass) { showToast?.(_t('auth.fillEmailPwd') || 'Remplissez email et mot de passe', 'warning'); return; }
+    setLoading(loginBtn, true, _t('auth.loading.connecting') || 'Connexion…');
     try {
       await AUTH.login(email, pass);
       // onAuthStateChange gère la redirection
     } catch (e) {
       showToast?.(e.message, 'error');
-      setLoading(loginBtn, false, 'Se connecter');
+      setLoading(loginBtn, false, _t('login.cta') || 'Se connecter');
     }
   });
 
@@ -224,24 +228,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const email = document.getElementById('regEmail')?.value?.trim();
     const pass  = document.getElementById('regPassword')?.value;
     const terms = document.getElementById('regTerms')?.checked;
-    if (!email || !pass) { showToast?.('Remplissez email et mot de passe', 'warning'); return; }
-    if (!terms)          { showToast?.('Acceptez les conditions d\'utilisation', 'warning'); return; }
-    setLoading(registerBtn, true, 'Création…');
+    if (!email || !pass) { showToast?.(_t('auth.fillEmailPwd') || 'Remplissez email et mot de passe', 'warning'); return; }
+    if (!terms)          { showToast?.(_t('auth.acceptTerms')  || 'Acceptez les conditions d\'utilisation', 'warning'); return; }
+    setLoading(registerBtn, true, _t('auth.loading.creating') || 'Création…');
     try {
       await AUTH.register(email, pass, name || email.split('@')[0]);
-      showToast?.('✅ Compte créé ! Vérifiez votre email pour confirmer.', 'success');
+      showToast?.(_t('auth.accountCreated') || '✅ Compte créé ! Vérifiez votre email pour confirmer.', 'success');
     } catch (e) {
       showToast?.(e.message, 'error');
     } finally {
-      setLoading(registerBtn, false, 'Créer mon compte');
+      setLoading(registerBtn, false, _t('reg.cta') || 'Créer mon compte');
     }
   });
 
   // Magic link
   magicBtn?.addEventListener('click', async () => {
     const email = document.getElementById('magicEmail')?.value?.trim();
-    if (!email) { showToast?.('Entrez votre adresse email', 'warning'); return; }
-    setLoading(magicBtn, true, 'Envoi…');
+    if (!email) { showToast?.(_t('auth.enterEmail') || 'Entrez votre adresse email', 'warning'); return; }
+    setLoading(magicBtn, true, _t('auth.loading.sending') || 'Envoi…');
     try {
       await AUTH.sendMagicLink(email);
       const suc = document.getElementById('magicSuccess');
@@ -263,10 +267,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   forgotBtn?.addEventListener('click', async (e) => {
     e.preventDefault();
     const email = document.getElementById('loginEmail')?.value?.trim();
-    if (!email) { showToast?.('Entrez d\'abord votre email ci-dessus', 'warning'); return; }
+    if (!email) { showToast?.(_t('auth.enterEmailFirst') || 'Entrez d\'abord votre email ci-dessus', 'warning'); return; }
     try {
       await AUTH.resetPassword(email);
-      showToast?.('✅ Email de réinitialisation envoyé !', 'success');
+      showToast?.(_t('auth.resetSent') || '✅ Email de réinitialisation envoyé !', 'success');
     } catch (err) { showToast?.(err.message, 'error'); }
   });
 

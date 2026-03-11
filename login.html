@@ -118,12 +118,13 @@
   document.getElementById('googleBtnReg')?.addEventListener('click', () => AUTH.loginWithGoogle());
   function switchTab(tab) {
     const isLogin = tab === 'login';
+    const _t = k => (window.I18N && window.I18N.t(k)) || k;
     document.getElementById('loginForm').style.display    = isLogin ? '' : 'none';
     document.getElementById('registerForm').style.display = isLogin ? 'none' : '';
     document.getElementById('tabLogin').classList.toggle('active', isLogin);
     document.getElementById('tabRegister').classList.toggle('active', !isLogin);
-    document.getElementById('loginTitle').textContent = isLogin ? 'Bon retour !' : 'Créer un compte';
-    document.getElementById('loginDesc').textContent  = isLogin ? 'Connectez-vous pour accéder à vos plans et suivis.' : 'Rejoignez Brocoli.fit — nutrition personnalisée pour vos enfants.';
+    document.getElementById('loginTitle').textContent = isLogin ? _t('login.title')        : _t('register.title');
+    document.getElementById('loginDesc').textContent  = isLogin ? _t('login.desc')         : _t('register.desc.alt');
   }
   function switchMethod(method) {
     const isPwd = method === 'password';
