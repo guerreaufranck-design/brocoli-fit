@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable button, show loading
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = '⏳ <span>Analyse en cours…</span>';
+      btn.innerHTML = '⏳ <span>' + (t('dash.analyzing') || 'Analyse en cours…') + '</span>';
     }
 
     try {
@@ -236,7 +236,7 @@ function renderPlanPreview(plan, profile) {
     container.innerHTML = `
       <div style="text-align:center;padding:3rem;color:var(--text-muted)">
         <div style="font-size:3rem">🥦</div>
-        <p style="margin-top:1rem">Aucun plan actif. <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">Créez votre programme →</a></p>
+        <p style="margin-top:1rem">${t('dash.noPlanActive') || 'Aucun plan actif.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${t('dash.createProgram') || 'Créez votre programme →'}</a></p>
       </div>`;
     return;
   }
@@ -265,7 +265,7 @@ function renderPlanPreview(plan, profile) {
 
     ${a.recommendations?.length ? `
     <div class="card" style="margin-bottom:1rem">
-      <div style="font-size:var(--text-sm);font-weight:900;color:var(--text);margin-bottom:.875rem">🧠 Points clés</div>
+      <div style="font-size:var(--text-sm);font-weight:900;color:var(--text);margin-bottom:.875rem">🧠 ${t('dash.keyPoints') || 'Points clés'}</div>
       ${a.recommendations.slice(0,3).map(r => `
         <div style="display:flex;gap:.625rem;align-items:flex-start;margin-bottom:.625rem">
           <span style="color:var(--green);flex-shrink:0">✅</span>
@@ -276,7 +276,7 @@ function renderPlanPreview(plan, profile) {
 
     ${today ? `
     <div class="card">
-      <div style="font-size:var(--text-sm);font-weight:900;color:var(--text);margin-bottom:.875rem">🍽️ Repas d'aujourd'hui</div>
+      <div style="font-size:var(--text-sm);font-weight:900;color:var(--text);margin-bottom:.875rem">🍽️ ${t('dash.todayMeals') || "Repas d'aujourd'hui"}</div>
       ${(today.meals || []).slice(0,3).map(meal => `
         <div style="display:flex;align-items:center;justify-content:space-between;padding:.625rem 0;border-bottom:1px solid var(--border)">
           <div style="display:flex;align-items:center;gap:.625rem">
@@ -325,10 +325,10 @@ function renderHistory(history) {
         <div class="week-card">
           <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.75rem">
             <div>
-              <div class="week-num">Semaine ${entry.week} · ${formatDateShort(entry.date)}</div>
+              <div class="week-num">${t('dash.week') || 'Semaine'} ${entry.week} · ${formatDateShort(entry.date)}</div>
               <div class="week-name">${moodLabel(entry.mood)} · ${appetiteLabel(entry.appetite)}</div>
             </div>
-            <span class="badge badge-green">${entry.adherence || 0}% adhésion</span>
+            <span class="badge badge-green">${entry.adherence || 0}% ${t('dash.adherence') || 'adhésion'}</span>
           </div>
           <div class="week-tags">
             ${entry.weight ? `<span class="tag">${entry.weight} kg</span>` : ''}
@@ -336,7 +336,7 @@ function renderHistory(history) {
           </div>
           ${entry.aiAdvice ? `
           <div style="margin-top:.75rem;padding:.625rem;background:var(--green-pale);border-radius:var(--r-md)">
-            <div style="font-size:var(--text-xs);font-weight:900;color:var(--green-dark);margin-bottom:.25rem">💚 Conseil personnalisé</div>
+            <div style="font-size:var(--text-xs);font-weight:900;color:var(--green-dark);margin-bottom:.25rem">💚 ${t('dash.personalAdvice') || 'Conseil personnalisé'}</div>
             <div style="font-size:var(--text-sm);color:var(--text-mid)">${escHtml(entry.aiAdvice)}</div>
           </div>` : ''}
         </div>

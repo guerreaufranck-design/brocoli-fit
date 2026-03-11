@@ -26,40 +26,46 @@
 
 <div class="success-card">
   <div class="success-icon">🎉</div>
-  <h1 class="success-title">Paiement confirmé !</h1>
-  <p class="success-desc">Votre abonnement Brocoli.fit est actif. Notre équipe prépare maintenant votre programme personnalisé…</p>
+  <h1 class="success-title" data-i18n="success.title">Paiement confirmé !</h1>
+  <p class="success-desc" data-i18n="success.desc">Votre abonnement Brocoli.fit est actif. Notre équipe prépare maintenant votre programme personnalisé…</p>
 
   <div class="success-plan-badge" id="planBadge">
-    <span>⭐</span> <span id="planName">Plan activé</span>
+    <span>⭐</span> <span id="planName" data-i18n="success.planDefault">Plan activé</span>
   </div>
 
   <div class="success-loading" id="loadingMsg">
     <div class="success-spinner"></div>
-    <span>Vérification du paiement en cours…</span>
+    <span data-i18n="success.loading">Vérification du paiement en cours…</span>
   </div>
 
   <div class="success-error" id="errorBox">
-    <strong>⚠️</strong> <span id="errorMsg">Une erreur est survenue.</span>
+    <strong>⚠️</strong> <span id="errorMsg" data-i18n="success.errDefault">Une erreur est survenue.</span>
     <div style="margin-top:.75rem">
-      <a href="index.html" class="btn btn-secondary btn-sm">Retour à l'accueil</a>
+      <a href="index.html" class="btn btn-secondary btn-sm" data-i18n="success.backHome">Retour à l'accueil</a>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
+  const _t = k => (window.I18N?.t(k)) || null;
   const params     = new URLSearchParams(window.location.search);
   const sessionId  = params.get('session_id');
   const plan       = params.get('plan');
 
-  const planLabels = { essential: '✅ Plan Essentiel activé', premium: '⭐ Plan Premium activé' };
-  const planEl     = document.getElementById('planName');
-  if (planEl && plan) planEl.textContent = planLabels[plan] || 'Plan activé';
+  const planLabels = {
+    essential: _t('success.planEssential') || '✅ Plan Essentiel activé',
+    premium:   _t('success.planPremium')   || '⭐ Plan Premium activé'
+  };
+  const planEl = document.getElementById('planName');
+  if (planEl && plan) planEl.textContent = planLabels[plan] || _t('success.planDefault') || 'Plan activé';
 
   if (!sessionId) {
-    showError('Paramètre session_id manquant.');
+    showError(_t('success.errSession') || 'Paramètre session_id manquant.');
     return;
   }
 
@@ -86,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       localStorage.setItem('brocoliSelectedPlan', data.plan);
 
       document.getElementById('loadingMsg').innerHTML =
-        '<span style="color:var(--green-dark);font-weight:800">✅ Paiement vérifié — redirection…</span>';
+        `<span style="color:var(--green-dark);font-weight:800">${_t('success.verified') || '✅ Paiement vérifié — redirection…'}</span>`;
 
       setTimeout(() => {
         // If profile exists, go to analysis; otherwise questionnaire
@@ -95,10 +101,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       }, 1500);
 
     } else {
-      showError(`Statut du paiement : ${data.success ? 'en attente' : 'non confirmé'}. Contactez le support si le problème persiste.`);
+      const statusMsg = (_t('success.errStatus') || 'Statut du paiement : {{status}}. Contactez le support si le problème persiste.')
+        .replace('{{status}}', data.success ? 'en attente' : 'non confirmé');
+      showError(statusMsg);
     }
   } catch (err) {
-    showError('Impossible de vérifier le paiement. Vérifiez votre connexion.');
+    showError(_t('success.errNetwork') || 'Impossible de vérifier le paiement. Vérifiez votre connexion.');
     console.error(err);
   }
 

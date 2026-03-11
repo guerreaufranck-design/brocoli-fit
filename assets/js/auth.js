@@ -253,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
       showToast?.(e.message, 'error');
     } finally {
-      setLoading(magicBtn, false, 'Recevoir le lien magique ✨');
+      setLoading(magicBtn, false, _t('auth.magic.cta') || 'Recevoir le lien magique ✨');
     }
   });
 

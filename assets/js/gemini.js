@@ -80,7 +80,7 @@ const GEMINI = {
     } catch (fetchErr) {
       clearTimeout(timeoutId);
       if (fetchErr.name === 'AbortError') {
-        throw new Error('La génération a pris trop de temps. Réessayez ou simplifiez le profil.');
+        throw new Error((window.I18N?.t('gemini.timeout')) || 'La génération a pris trop de temps. Réessayez ou simplifiez le profil.');
       }
       throw fetchErr;
     }
@@ -104,7 +104,7 @@ const GEMINI = {
         // Try raw JSON extraction (first { to last })
         const s = text.indexOf('{'), e = text.lastIndexOf('}');
         if (s !== -1 && e > s) { try { return JSON.parse(text.slice(s, e + 1)); } catch {} }
-        throw new Error('Réponse IA invalide. Réessayez.');
+        throw new Error((window.I18N?.t('gemini.invalidResp')) || 'Réponse IA invalide. Réessayez.');
       }
     }
     return text;
@@ -563,13 +563,14 @@ async function runGeminiAnalysis(profile) {
   function startHeartbeat(startPct) {
     let pct = startPct;
     let stopped = false;
+    const _t = k => (window.I18N?.t(k)) || null;
     const messages = [
-      'Génération de votre plan sur 7 jours… ✨',
-      'Calcul des portions adaptées à l\'âge…',
-      'Adaptation aux préférences culturelles…',
-      'Vérification des allergènes…',
-      'Création de la liste de courses…',
-      'Presque terminé, encore un instant… 🥦',
+      _t('gemini.hb1') || 'Génération de votre plan sur 7 jours… ✨',
+      _t('gemini.hb2') || "Calcul des portions adaptées à l'âge…",
+      _t('gemini.hb3') || 'Adaptation aux préférences culturelles…',
+      _t('gemini.hb4') || 'Vérification des allergènes…',
+      _t('gemini.hb5') || 'Création de la liste de courses…',
+      _t('gemini.hb6') || 'Presque terminé, encore un instant… 🥦',
     ];
     let msgIdx = 0;
     const iv = setInterval(() => {
@@ -598,7 +599,7 @@ async function runGeminiAnalysis(profile) {
     }
     setStep(4, 'active');
     setProgress(stepProgress[4]);
-    setSubtitle('Génération de votre plan personnalisé… Cela peut prendre 1 à 2 minutes.');
+    setSubtitle((window.I18N?.t('gemini.generating')) || 'Génération de votre plan personnalisé… Cela peut prendre 1 à 2 minutes.');
 
     // Start heartbeat animation while Gemini works
     const stopHeartbeat = startHeartbeat(stepProgress[4]);
@@ -613,7 +614,7 @@ async function runGeminiAnalysis(profile) {
     } catch (firstErr) {
       // Retry once on network/timeout error
       if (firstErr.name === 'AbortError' || firstErr.message.includes('trop de temps') || firstErr.message.includes('fetch')) {
-        setSubtitle('Nouvelle tentative en cours…');
+        setSubtitle((window.I18N?.t('gemini.retry')) || 'Nouvelle tentative en cours…');
         await delay(2000);
         result = await GEMINI.call(prompt, true, 300000);
       } else {
@@ -639,7 +640,7 @@ async function runGeminiAnalysis(profile) {
     const errEl = document.getElementById('anaError');
     const errMsg = document.getElementById('anaErrorMsg');
     if (errEl) errEl.style.display = '';
-    if (errMsg) errMsg.textContent = err.message || 'Erreur inconnue. Vérifiez votre connexion.';
+    if (errMsg) errMsg.textContent = err.message || (window.I18N?.t('gemini.errUnknown')) || 'Erreur inconnue. Vérifiez votre connexion.';
   }
 }
 

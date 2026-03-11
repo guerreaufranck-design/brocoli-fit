@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('mealsContent').innerHTML = `
       <div style="text-align:center;padding:3rem">
         <div style="font-size:3rem">🥦</div>
-        <p style="color:var(--text-muted);margin-top:1rem">Aucun plan disponible. <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">Créez votre programme →</a></p>
+        <p style="color:var(--text-muted);margin-top:1rem">${_t('dash.noPlanActive') || 'Aucun plan disponible.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${_t('dash.createProgram') || 'Créez votre programme →'}</a></p>
       </div>`;
     return;
   }
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroName = document.getElementById('planHeroName');
   const heroMeta = document.getElementById('planHeroMeta');
   const childName = a.name || profile.name || _t('s.yourChild') || 'votre enfant';
-  if (heroName) heroName.textContent = `Plan de ${childName}`;
+  if (heroName) heroName.textContent = `${_t('plan.heroOf') || 'Plan de'} ${childName}`;
   if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 ${_t('stat.weeks') || 'semaines'} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
 
   // Show upgrade bar for free users
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     days.forEach((day, i) => {
       const btn = document.createElement('button');
       btn.className = `day-tab${i === currentDay ? ' active' : ''}`;
-      btn.textContent = day.day || `Jour ${i+1}`;
+      btn.textContent = day.day || `${_t('plan.day') || 'Jour'} ${i+1}`;
       btn.addEventListener('click', () => {
         document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
         btn.classList.add('active');
@@ -144,16 +144,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const section = document.getElementById('recipesSection');
     if (!section || !recipes.length) return;
     section.innerHTML = `
-      <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark);margin-bottom:1rem">📖 Fiches recettes</h3>
+      <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark);margin-bottom:1rem">📖 ${_t('plan.recipesTitle') || 'Fiches recettes'}</h3>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem">
         ${recipes.map(r => `
           <div class="recipe-card">
             <div class="recipe-thumb">${r.emoji || '🍲'}</div>
             <div class="recipe-body">
               <div class="recipe-name">${escHtml(r.name || '')}</div>
-              <div class="recipe-meta">⏱ ${r.prep_min || 0}+${r.cook_min || 0} min · 🍽 ${r.servings || 4} pers.</div>
+              <div class="recipe-meta">⏱ ${r.prep_min || 0}+${r.cook_min || 0} min · 🍽 ${r.servings || 4} ${_t('plan.pers') || 'pers.'}</div>
               <div class="recipe-tags">${(r.allergens||[]).map(a => `<span class="allergen-tag">${escHtml(a)}</span>`).join('')}</div>
-              <button class="btn btn-outline btn-sm btn-full" style="margin-top:.875rem" onclick='showRecipe(${JSON.stringify(r).replace(/'/g,"&#39;")})'>Voir la recette</button>
+              <button class="btn btn-outline btn-sm btn-full" style="margin-top:.875rem" onclick='showRecipe(${JSON.stringify(r).replace(/'/g,"&#39;")})'>${_t('plan.viewRecipe') || 'Voir la recette'}</button>
             </div>
           </div>
         `).join('')}
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!section || !list) return;
     section.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark)">🛒 Liste de courses</h3>
+        <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark)">🛒 ${_t('plan.shoppingTitle') || 'Liste de courses'}</h3>
         <span class="badge badge-green">~${list.estimated_total || '?'}</span>
       </div>
       ${(list.categories||[]).map(cat => `
@@ -192,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Show recipe modal
 function showRecipe(recipe) {
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
   const modal = document.createElement('div');
   modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:1rem';
   modal.innerHTML = `
@@ -201,16 +202,16 @@ function showRecipe(recipe) {
         <button onclick="this.closest('div[style]').remove()" style="font-size:1.25rem;cursor:pointer;padding:.5rem">✕</button>
       </div>
       <h3 style="font-size:var(--text-2xl);font-weight:900;color:var(--green-dark);margin-bottom:.5rem">${escHtml(recipe.name)}</h3>
-      <div style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1.5rem">⏱ ${recipe.prep_min}+${recipe.cook_min} min · 🍽 ${recipe.servings} personnes</div>
-      <h4 style="font-size:var(--text-sm);font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:.75rem">Ingrédients</h4>
+      <div style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1.5rem">⏱ ${recipe.prep_min}+${recipe.cook_min} min · 🍽 ${recipe.servings} ${_t('plan.persons') || 'personnes'}</div>
+      <h4 style="font-size:var(--text-sm);font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:.75rem">${_t('plan.ingredients') || 'Ingrédients'}</h4>
       <ul style="margin-bottom:1.5rem;display:flex;flex-direction:column;gap:.375rem">
         ${(recipe.ingredients||[]).map(i => `<li style="font-size:var(--text-sm);display:flex;gap:.5rem"><span>•</span><span><strong>${escHtml(i.item)}</strong> — ${escHtml(i.qty)}${i.note ? ` (${escHtml(i.note)})` : ''}</span></li>`).join('')}
       </ul>
-      <h4 style="font-size:var(--text-sm);font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:.75rem">Préparation</h4>
+      <h4 style="font-size:var(--text-sm);font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--green);margin-bottom:.75rem">${_t('plan.preparation') || 'Préparation'}</h4>
       <ol style="display:flex;flex-direction:column;gap:.625rem">
         ${(recipe.steps||[]).map((s,i) => `<li style="font-size:var(--text-sm);display:flex;gap:.75rem"><span style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--green-pale);color:var(--green-dark);font-weight:900;font-size:.75rem;display:flex;align-items:center;justify-content:center">${i+1}</span><span>${escHtml(s)}</span></li>`).join('')}
       </ol>
-      ${recipe.substitutions?.length ? `<div style="margin-top:1.5rem;padding:1rem;background:var(--orange-light);border-radius:var(--r-md)"><div style="font-size:var(--text-sm);font-weight:900;color:#c96520;margin-bottom:.5rem">🔄 Substitutions</div>${recipe.substitutions.map(s=>`<div style="font-size:var(--text-sm);color:var(--text-mid)">${escHtml(s)}</div>`).join('')}</div>` : ''}
+      ${recipe.substitutions?.length ? `<div style="margin-top:1.5rem;padding:1rem;background:var(--orange-light);border-radius:var(--r-md)"><div style="font-size:var(--text-sm);font-weight:900;color:#c96520;margin-bottom:.5rem">🔄 ${_t('plan.substitutions') || 'Substitutions'}</div>${recipe.substitutions.map(s=>`<div style="font-size:var(--text-sm);color:var(--text-mid)">${escHtml(s)}</div>`).join('')}</div>` : ''}
     </div>`;
   document.body.appendChild(modal);
   modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
