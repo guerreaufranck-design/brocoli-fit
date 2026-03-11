@@ -257,8 +257,8 @@
 <!-- NAV -->
 <nav class="suivi-nav">
   <a href="index.html" class="suivi-nav-logo">Brocoli<span>.fit</span></a>
-  <div class="suivi-nav-title">Suivi &amp; Progrès</div>
-  <a href="dashboard.html" class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:.8rem">← Tableau de bord</a>
+  <div class="suivi-nav-title" data-i18n="suivi.nav.title">Suivi &amp; Progrès</div>
+  <a href="dashboard.html" class="btn btn-outline btn-sm" style="flex-shrink:0;font-size:.8rem" data-i18n="suivi.nav.back">← Tableau de bord</a>
 </nav>
 
 <div class="suivi-content">
@@ -266,9 +266,9 @@
   <!-- NO PROFILE STATE -->
   <div class="no-profile-cta hidden" id="noProfileState">
     <div class="no-profile-icon">🌱</div>
-    <h2 class="no-profile-title">Commençons par votre profil</h2>
-    <p class="no-profile-desc">Le suivi de progrès est disponible une fois votre profil créé et votre programme nutritionnel généré. C'est rapide — moins de 3 minutes.</p>
-    <a href="questionnaire.html" class="btn btn-primary" style="display:inline-flex;gap:.5rem">Créer mon profil &amp; mon programme →</a>
+    <h2 class="no-profile-title" data-i18n="suivi.noprofile.title">Commençons par votre profil</h2>
+    <p class="no-profile-desc" data-i18n="suivi.noprofile.desc">Le suivi de progrès est disponible une fois votre profil créé et votre programme nutritionnel généré. C'est rapide — moins de 3 minutes.</p>
+    <a href="questionnaire.html" class="btn btn-primary" style="display:inline-flex;gap:.5rem" data-i18n="suivi.noprofile.cta">Créer mon profil &amp; mon programme →</a>
   </div>
 
   <!-- MAIN APP STATE -->
@@ -279,22 +279,22 @@
       <div class="hero-stat fade-up">
         <div class="hero-stat-icon">📅</div>
         <div class="hero-stat-val" id="statWeek">—</div>
-        <div class="hero-stat-lbl">Semaine en cours</div>
+        <div class="hero-stat-lbl" data-i18n="suivi.stat.week">Semaine en cours</div>
       </div>
       <div class="hero-stat fade-up">
         <div class="hero-stat-icon">⚖️</div>
         <div class="hero-stat-val" id="statWeight">—</div>
-        <div class="hero-stat-lbl">Poids actuel (kg)</div>
+        <div class="hero-stat-lbl" data-i18n="suivi.stat.weight">Poids actuel (kg)</div>
       </div>
       <div class="hero-stat fade-up">
         <div class="hero-stat-icon">🎯</div>
         <div class="hero-stat-val" id="statAdherence">—</div>
-        <div class="hero-stat-lbl">Adhésion moy.</div>
+        <div class="hero-stat-lbl" data-i18n="suivi.stat.adherence">Adhésion moy.</div>
       </div>
       <div class="hero-stat fade-up">
         <div class="hero-stat-icon">✅</div>
         <div class="hero-stat-val" id="statCheckins">0</div>
-        <div class="hero-stat-lbl">Suivis complétés</div>
+        <div class="hero-stat-lbl" data-i18n="suivi.stat.checkins">Suivis complétés</div>
       </div>
     </div>
 
@@ -311,27 +311,27 @@
           </svg>
           <div class="ring-center">
             <div class="ring-pct" id="progressRingVal">0%</div>
-            <div class="ring-sub">Objectif</div>
+            <div class="ring-sub" data-i18n="suivi.ring.sub">Objectif</div>
           </div>
         </div>
-        <div class="ring-goal-lbl"  id="ringGoalLabel">Adhérence au plan</div>
-        <div class="ring-goal-desc" id="ringGoalDesc">Moyenne des 4 derniers suivis</div>
+        <div class="ring-goal-lbl"  id="ringGoalLabel" data-i18n="suivi.ring.defaultlbl">Adhérence au plan</div>
+        <div class="ring-goal-desc" id="ringGoalDesc" data-i18n="suivi.ring.defaultdesc">Moyenne des 4 derniers suivis</div>
         <div class="ring-weight-row hidden" id="ringWeightRow">
-          <div class="ring-weight-item"><div class="ring-weight-val" id="ringStartWeight">—</div><div class="ring-weight-lbl">Départ</div></div>
+          <div class="ring-weight-item"><div class="ring-weight-val" id="ringStartWeight">—</div><div class="ring-weight-lbl" data-i18n="suivi.ring.start">Départ</div></div>
           <div class="ring-arrow">→</div>
-          <div class="ring-weight-item"><div class="ring-weight-val" id="ringCurrentWeight">—</div><div class="ring-weight-lbl">Actuel</div></div>
+          <div class="ring-weight-item"><div class="ring-weight-val" id="ringCurrentWeight">—</div><div class="ring-weight-lbl" data-i18n="suivi.ring.current">Actuel</div></div>
           <div class="ring-arrow">→</div>
-          <div class="ring-weight-item"><div class="ring-weight-val" id="ringTargetWeight">—</div><div class="ring-weight-lbl">Objectif</div></div>
+          <div class="ring-weight-item"><div class="ring-weight-val" id="ringTargetWeight">—</div><div class="ring-weight-lbl" data-i18n="suivi.ring.target">Objectif</div></div>
         </div>
-        <div class="ring-update-note">Mise à jour automatique selon vos suivis</div>
+        <div class="ring-update-note" data-i18n="suivi.ring.update">Mise à jour automatique selon vos suivis</div>
       </div>
 
       <!-- Sparkline -->
       <div class="sparkline-card fade-up">
-        <div class="sparkline-title"><span>📈</span><span>Évolution du poids</span></div>
+        <div class="sparkline-title"><span>📈</span><span data-i18n="suivi.spark.title">Évolution du poids</span></div>
         <div id="sparklineEmpty" class="sparkline-empty">
           <div style="font-size:2.5rem;margin-bottom:.75rem">📊</div>
-          <p>Deux suivis avec poids renseigné sont nécessaires pour afficher la courbe.</p>
+          <p data-i18n="suivi.spark.empty">Deux suivis avec poids renseigné sont nécessaires pour afficher la courbe.</p>
         </div>
         <svg id="weightSparklineSvg" viewBox="0 0 280 114" style="display:none;width:100%;height:auto;overflow:visible" aria-label="Courbe évolution poids"></svg>
       </div>
@@ -341,8 +341,8 @@
     <div class="submit-success hidden" id="submitSuccessBanner">
       <div class="submit-success-icon">🎉</div>
       <div>
-        <div class="submit-success-msg">Suivi enregistré avec succès !</div>
-        <div class="submit-success-sub">Vos statistiques et graphiques ont été mis à jour.</div>
+        <div class="submit-success-msg" data-i18n="suivi.success.title">Suivi enregistré avec succès !</div>
+        <div class="submit-success-sub" data-i18n="suivi.success.sub">Vos statistiques et graphiques ont été mis à jour.</div>
       </div>
     </div>
 
@@ -351,19 +351,19 @@
       <div class="ai-adapt-header">
         <div class="ai-adapt-icon">🤖</div>
         <div>
-          <div class="ai-adapt-title">Adaptation de votre programme</div>
-          <div class="ai-adapt-subtitle">Analyse basée sur votre suivi de cette semaine</div>
+          <div class="ai-adapt-title" data-i18n="suivi.ai.title">Adaptation de votre programme</div>
+          <div class="ai-adapt-subtitle" data-i18n="suivi.ai.sub">Analyse basée sur votre suivi de cette semaine</div>
         </div>
       </div>
       <div class="ai-adapt-body">
         <div class="ai-loading" id="aiLoadingState">
           <div class="ai-dots"><span></span><span></span><span></span></div>
-          <span>Analyse en cours, veuillez patienter…</span>
+          <span data-i18n="suivi.ai.loading">Analyse en cours, veuillez patienter…</span>
         </div>
         <div id="aiAdaptText" class="hidden"></div>
       </div>
       <div class="mt-3">
-        <a href="plan.html" class="btn btn-primary btn-sm">Voir le plan adapté →</a>
+        <a href="plan.html" class="btn btn-primary btn-sm" data-i18n="suivi.ai.cta">Voir le plan adapté →</a>
       </div>
     </div>
 
@@ -385,89 +385,89 @@
 
         <!-- Step 0 : Mesures -->
         <div class="form-section active" data-step="0">
-          <div class="section-label">📏 Étape 1 / 5 — Mesures</div>
+          <div class="section-label" data-i18n="suivi.step1.label">📏 Étape 1 / 5 — Mesures</div>
           <div class="form-row">
             <div>
-              <label class="form-lbl" for="ci_weight">Poids actuel (kg) <span style="color:#e53935">*</span></label>
+              <label class="form-lbl" for="ci_weight"><span data-i18n="suivi.step1.weight">Poids actuel (kg)</span> <span style="color:#e53935">*</span></label>
               <input type="number" id="ci_weight" class="suivi-input" placeholder="Ex : 28.5" step="0.1" min="1" max="300" inputmode="decimal">
             </div>
             <div>
-              <label class="form-lbl" for="ci_height">Taille (cm) — optionnel</label>
+              <label class="form-lbl" for="ci_height" data-i18n="suivi.step1.height">Taille (cm) — optionnel</label>
               <input type="number" id="ci_height" class="suivi-input" placeholder="Ex : 128" step="1" min="30" max="250" inputmode="numeric">
             </div>
           </div>
           <div class="step-nav">
             <span class="step-count">1 / 5</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(1)">Suivant →</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(1)" data-i18n="suivi.btn.next">Suivant →</button>
           </div>
         </div>
 
         <!-- Step 1 : Humeur & Appétit -->
         <div class="form-section" data-step="1">
-          <div class="section-label">😊 Étape 2 / 5 — Humeur &amp; Appétit</div>
-          <label class="form-lbl">Humeur générale cette semaine <span style="color:#e53935">*</span></label>
+          <div class="section-label" data-i18n="suivi.step2.label">😊 Étape 2 / 5 — Humeur &amp; Appétit</div>
+          <label class="form-lbl"><span data-i18n="suivi.step2.mood">Humeur générale cette semaine</span> <span style="color:#e53935">*</span></label>
           <div class="mood-grid" id="moodGrid">
-            <div class="mood-btn" data-val="great" role="button" tabindex="0"><span class="mood-emoji">😄</span><span>Super</span></div>
-            <div class="mood-btn" data-val="ok"    role="button" tabindex="0"><span class="mood-emoji">🙂</span><span>Bien</span></div>
-            <div class="mood-btn" data-val="meh"   role="button" tabindex="0"><span class="mood-emoji">😐</span><span>Moyen</span></div>
-            <div class="mood-btn" data-val="bad"   role="button" tabindex="0"><span class="mood-emoji">😔</span><span>Difficile</span></div>
+            <div class="mood-btn" data-val="great" role="button" tabindex="0"><span class="mood-emoji">😄</span><span data-i18n="suivi.mood.great">Super</span></div>
+            <div class="mood-btn" data-val="ok"    role="button" tabindex="0"><span class="mood-emoji">🙂</span><span data-i18n="suivi.mood.ok">Bien</span></div>
+            <div class="mood-btn" data-val="meh"   role="button" tabindex="0"><span class="mood-emoji">😐</span><span data-i18n="suivi.mood.meh">Moyen</span></div>
+            <div class="mood-btn" data-val="bad"   role="button" tabindex="0"><span class="mood-emoji">😔</span><span data-i18n="suivi.mood.bad">Difficile</span></div>
           </div>
-          <label class="form-lbl mt-2">Appétit cette semaine <span style="color:#e53935">*</span></label>
+          <label class="form-lbl mt-2"><span data-i18n="suivi.step2.appetite">Appétit cette semaine</span> <span style="color:#e53935">*</span></label>
           <div class="appetite-grid" id="appetiteGrid">
-            <div class="appetite-btn" data-val="great"  role="button" tabindex="0"><span class="appetite-emoji">😋</span><span>Très bon</span></div>
-            <div class="appetite-btn" data-val="normal" role="button" tabindex="0"><span class="appetite-emoji">👍</span><span>Normal</span></div>
-            <div class="appetite-btn" data-val="low"    role="button" tabindex="0"><span class="appetite-emoji">😕</span><span>Peu d'appétit</span></div>
-            <div class="appetite-btn" data-val="none"   role="button" tabindex="0"><span class="appetite-emoji">🙅</span><span>Pas mangé</span></div>
+            <div class="appetite-btn" data-val="great"  role="button" tabindex="0"><span class="appetite-emoji">😋</span><span data-i18n="suivi.ap.great">Très bon</span></div>
+            <div class="appetite-btn" data-val="normal" role="button" tabindex="0"><span class="appetite-emoji">👍</span><span data-i18n="suivi.ap.normal">Normal</span></div>
+            <div class="appetite-btn" data-val="low"    role="button" tabindex="0"><span class="appetite-emoji">😕</span><span data-i18n="suivi.ap.low">Peu d'appétit</span></div>
+            <div class="appetite-btn" data-val="none"   role="button" tabindex="0"><span class="appetite-emoji">🙅</span><span data-i18n="suivi.ap.none">Pas mangé</span></div>
           </div>
           <div class="step-nav">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(0)">← Retour</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(0)" data-i18n="suivi.btn.back">← Retour</button>
             <span class="step-count">2 / 5</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(2)">Suivant →</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(2)" data-i18n="suivi.btn.next">Suivant →</button>
           </div>
         </div>
 
         <!-- Step 2 : Adhésion -->
         <div class="form-section" data-step="2">
-          <div class="section-label">📋 Étape 3 / 5 — Adhésion au plan</div>
-          <label class="form-lbl" for="ci_adherence">Quelle part du plan avez-vous respectée cette semaine ?</label>
+          <div class="section-label" data-i18n="suivi.step3.label">📋 Étape 3 / 5 — Adhésion au plan</div>
+          <label class="form-lbl" for="ci_adherence" data-i18n="suivi.step3.q">Quelle part du plan avez-vous respectée cette semaine ?</label>
           <div class="range-wrap">
             <input type="range" id="ci_adherence" min="0" max="100" value="70" step="5">
             <span class="range-val" id="adherenceVal">70%</span>
           </div>
-          <div class="adherence-feedback" id="adherenceFeedback" style="color:#2E7D4F">Très bien ! Continuez sur cette lancée.</div>
+          <div class="adherence-feedback" id="adherenceFeedback" style="color:#2E7D4F" data-i18n="suivi.adh.good">Très bien ! Continuez sur cette lancée.</div>
           <div class="step-nav">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(1)">← Retour</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(1)" data-i18n="suivi.btn.back">← Retour</button>
             <span class="step-count">3 / 5</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(3)">Suivant →</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(3)" data-i18n="suivi.btn.next">Suivant →</button>
           </div>
         </div>
 
         <!-- Step 3 : Notes -->
         <div class="form-section" data-step="3">
-          <div class="section-label">📝 Étape 4 / 5 — Notes &amp; Observations</div>
-          <label class="form-lbl" for="ci_notes">Notes libres</label>
+          <div class="section-label" data-i18n="suivi.step4.label">📝 Étape 4 / 5 — Notes &amp; Observations</div>
+          <label class="form-lbl" for="ci_notes" data-i18n="suivi.step4.notes">Notes libres</label>
           <textarea id="ci_notes" class="suivi-input" rows="4" style="resize:vertical" placeholder="Ex : a bien accepté les courgettes, fatigue après l'école, repas du weekend difficiles…"></textarea>
-          <label class="form-lbl mt-2" for="ci_newDislikes">Nouveaux aliments refusés cette semaine</label>
+          <label class="form-lbl mt-2" for="ci_newDislikes" data-i18n="suivi.step4.dislikes">Nouveaux aliments refusés cette semaine</label>
           <input type="text" id="ci_newDislikes" class="suivi-input" placeholder="Ex : brocoli, purée de pois…">
           <div class="step-nav">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(2)">← Retour</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(2)" data-i18n="suivi.btn.back">← Retour</button>
             <span class="step-count">4 / 5</span>
-            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(4)">Suivant →</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="goStep(4)" data-i18n="suivi.btn.next">Suivant →</button>
           </div>
         </div>
 
         <!-- Step 4 : Récap + Submit -->
         <div class="form-section" data-step="4">
-          <div class="section-label">✅ Étape 5 / 5 — Récapitulatif</div>
+          <div class="section-label" data-i18n="suivi.step5.label">✅ Étape 5 / 5 — Récapitulatif</div>
           <div id="recapContent"></div>
           <button type="button" class="btn-submit" id="submitCheckinBtn" onclick="submitCheckin()">
-            <span>💚</span><span>Enregistrer et analyser →</span>
+            <span>💚</span><span data-i18n="suivi.btn.submit">Enregistrer et analyser →</span>
           </button>
-          <p style="font-size:.63rem;text-align:center;color:var(--text-muted);margin-top:.625rem">
+          <p style="font-size:.63rem;text-align:center;color:var(--text-muted);margin-top:.625rem" data-i18n="suivi.step5.note">
             Brocoli.fit analysera vos données et proposera des ajustements pour la semaine prochaine.
           </p>
           <div class="step-nav">
-            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(3)">← Modifier</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="goStep(3)" data-i18n="suivi.btn.edit">← Modifier</button>
             <span class="step-count">5 / 5</span>
           </div>
         </div>
@@ -477,7 +477,7 @@
 
     <!-- HISTORY -->
     <div class="history-section">
-      <h2 class="history-section-title">📅 Historique des suivis</h2>
+      <h2 class="history-section-title" data-i18n="suivi.history.title">📅 Historique des suivis</h2>
       <div id="historyContainer"></div>
     </div>
 
@@ -493,6 +493,8 @@
 /* ============================================================
    SUIVI.HTML — Page Logic
    ============================================================ */
+
+var _t = function(k){ return (window.I18N && window.I18N.t(k)) || k; };
 
 var profile      = {};
 var plan         = null;
@@ -596,9 +598,9 @@ function updateRingLabels() {
   var lbl = document.getElementById('ringGoalLabel');
   var desc= document.getElementById('ringGoalDesc');
   var row = document.getElementById('ringWeightRow');
-  if (lbl) lbl.textContent = profile.objectif ? 'Objectif : ' + profile.objectif : 'Adhérence au plan';
+  if (lbl) lbl.textContent = profile.objectif ? _t('suivi.ring.objectif') + profile.objectif : _t('suivi.ring.defaultlbl');
   if (isW && profile.weight) {
-    if (desc) desc.textContent = 'Progression vers votre objectif poids';
+    if (desc) desc.textContent = _t('suivi.ring.weightdesc');
     if (row)  row.classList.remove('hidden');
     var lw = getLatestWeight();
     var sw = document.getElementById('ringStartWeight');
@@ -608,7 +610,7 @@ function updateRingLabels() {
     if (cw) cw.textContent = (lw !== null ? lw : parseFloat(profile.weight)).toFixed(1) + ' kg';
     if (tw) tw.textContent = profile.targetWeight ? parseFloat(profile.targetWeight).toFixed(1) + ' kg' : '?';
   } else {
-    if (desc) desc.textContent = 'Moyenne des 4 derniers suivis';
+    if (desc) desc.textContent = _t('suivi.ring.defaultdesc');
     if (row)  row.classList.add('hidden');
   }
 }
@@ -699,20 +701,20 @@ function validateStep(step) {
   if (step === 0) {
     var w = parseFloat(document.getElementById('ci_weight').value);
     if (!w || w < 1 || w > 300) {
-      if (window.showToast) showToast('Veuillez entrer un poids valide (ex : 28.5 kg)', 'warning');
+      if (window.showToast) showToast(_t('suivi.val.weight'), 'warning');
       return false;
     }
   }
   if (step === 1) {
-    if (!selectedMood)     { if (window.showToast) showToast('Sélectionnez votre humeur pour cette semaine', 'warning'); return false; }
-    if (!selectedAppetite) { if (window.showToast) showToast("Sélectionnez l'appétit pour cette semaine", 'warning'); return false; }
+    if (!selectedMood)     { if (window.showToast) showToast(_t('suivi.val.mood'), 'warning'); return false; }
+    if (!selectedAppetite) { if (window.showToast) showToast(_t('suivi.val.appetite'), 'warning'); return false; }
   }
   return true;
 }
 
 function buildRecap() {
-  var ml  = { great:'😄 Super', ok:'🙂 Bien', meh:'😐 Moyen', bad:'😔 Difficile' };
-  var al  = { great:'😋 Très bon', normal:'👍 Normal', low:'😕 Peu', none:'🙅 Pas mangé' };
+  var ml  = { great:'😄 ' + _t('suivi.mood.great'), ok:'🙂 ' + _t('suivi.mood.ok'), meh:'😐 ' + _t('suivi.mood.meh'), bad:'😔 ' + _t('suivi.mood.bad') };
+  var al  = { great:'😋 ' + _t('suivi.ap.great'), normal:'👍 ' + _t('suivi.ap.normal'), low:'😕 ' + _t('suivi.ap.low'), none:'🙅 ' + _t('suivi.ap.none') };
   var w   = document.getElementById('ci_weight').value;
   var h   = document.getElementById('ci_height').value;
   var a   = document.getElementById('ci_adherence').value;
@@ -720,20 +722,20 @@ function buildRecap() {
   var d   = document.getElementById('ci_newDislikes').value.trim();
 
   var rows = [
-    ['Poids', w ? w + ' kg' : '—'],
-    h ? ['Taille', h + ' cm'] : null,
-    ['Humeur', ml[selectedMood] || '—'],
-    ['Appétit', al[selectedAppetite] || '—'],
-    ['Adhésion', a + '%'],
-    n ? ['Notes', n] : null,
-    d ? ['Aliments refusés', d] : null,
+    [_t('suivi.recap.weight'), w ? w + ' kg' : '—'],
+    h ? [_t('suivi.recap.height'), h + ' cm'] : null,
+    [_t('suivi.recap.mood'), ml[selectedMood] || '—'],
+    [_t('suivi.recap.appetite'), al[selectedAppetite] || '—'],
+    [_t('suivi.recap.adherence'), a + '%'],
+    n ? [_t('suivi.recap.notes'), n] : null,
+    d ? [_t('suivi.recap.refused'), d] : null,
   ].filter(Boolean);
 
   var rc   = document.getElementById('recapContent');
   if (!rc) return;
   var html = '<div class="recap-grid">';
   rows.forEach(function(row){
-    var fw = (row[0] === 'Notes' || row[0] === 'Aliments refusés');
+    var fw = (row[0] === _t('suivi.recap.notes') || row[0] === _t('suivi.recap.refused'));
     html += '<div style="' + (fw ? 'grid-column:1/-1' : '') + '">' +
       '<span class="recap-lbl">' + escHtml(row[0]) + '</span>' +
       '<span class="recap-val">' + escHtml(row[1]) + '</span></div>';
@@ -750,7 +752,7 @@ function saveCheckin(data) {
 
 async function submitCheckin() {
   var btn = document.getElementById('submitCheckinBtn');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span><span>Enregistrement…</span>'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span><span>' + _t('suivi.saving') + '</span>'; }
 
   var data = {
     weight     : parseFloat(document.getElementById('ci_weight').value) || null,
@@ -772,12 +774,12 @@ async function submitCheckin() {
   if (banner) { banner.classList.remove('hidden'); setTimeout(function(){ banner.classList.add('hidden'); }, 5500); }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (window.showToast) showToast('Suivi enregistré ! 🎉', 'success');
+  if (window.showToast) showToast(_t('suivi.toast.saved'), 'success');
 
   var isPremium = subscription && subscription.plan === 'premium';
   if (isPremium && window.GEMINI && plan) showAiAdaptation(data);
 
-  if (btn) { btn.disabled = false; btn.innerHTML = '<span>💚</span><span>Enregistrer et analyser →</span>'; }
+  if (btn) { btn.disabled = false; btn.innerHTML = '<span>💚</span><span>' + _t('suivi.btn.submit') + '</span>'; }
 }
 
 function resetForm() {
@@ -819,7 +821,7 @@ async function showAiAdaptation(checkinData) {
   } catch(err) {
     if (ld) ld.style.display = 'none';
     if (tx) {
-      tx.innerHTML = '<span style="color:var(--text-muted)">Analyse disponible — rechargez la page pour générer vos recommandations personnalisées.</span>';
+      tx.innerHTML = '<span style="color:var(--text-muted)">' + _t('suivi.ai.error') + '</span>';
       tx.classList.remove('hidden');
     }
   }
@@ -832,16 +834,16 @@ function renderHistory() {
   if (!checkins || !checkins.length) {
     con.innerHTML = '<div class="history-empty">' +
       '<div class="history-empty-icon">📅</div>' +
-      '<div class="history-empty-title">Aucun suivi pour l\'instant</div>' +
-      '<p class="history-empty-desc">Complétez votre premier suivi hebdomadaire ci-dessus pour commencer à suivre vos progrès.<br>Chaque semaine enregistrée vous rapproche de votre objectif !</p>' +
-      '<button class="btn btn-outline btn-sm" style="margin-top:1.25rem" onclick="document.getElementById(\'checkinSection\').scrollIntoView({behavior:\'smooth\'})">Faire mon premier suivi →</button>' +
+      '<div class="history-empty-title">' + _t('suivi.history.empty.title') + '</div>' +
+      '<p class="history-empty-desc">' + _t('suivi.history.empty.desc') + '</p>' +
+      '<button class="btn btn-outline btn-sm" style="margin-top:1.25rem" onclick="document.getElementById(\'checkinSection\').scrollIntoView({behavior:\'smooth\'})">' + _t('suivi.history.empty.cta') + '</button>' +
     '</div>';
     return;
   }
 
   var me = { great:'😄', ok:'🙂', meh:'😐', bad:'😔' };
-  var ml = { great:'Super', ok:'Bien', meh:'Moyen', bad:'Difficile' };
-  var al = { great:'Très bon', normal:'Normal', low:"Peu d'appétit", none:'Pas mangé' };
+  var ml = { great:_t('suivi.mood.great'), ok:_t('suivi.mood.ok'), meh:_t('suivi.mood.meh'), bad:_t('suivi.mood.bad') };
+  var al = { great:_t('suivi.ap.great'), normal:_t('suivi.ap.normal'), low:_t('suivi.ap.low'), none:_t('suivi.ap.none') };
   var ip = subscription && subscription.plan === 'premium';
   var sorted = checkins.slice().reverse();
 
@@ -860,19 +862,19 @@ function renderHistory() {
         '<div class="history-card">' +
           '<div class="history-card-head">' +
             '<div>' +
-              '<div class="history-week-lbl">Semaine ' + c.week + '</div>' +
+              '<div class="history-week-lbl">' + _t('suivi.history.week') + ' ' + c.week + '</div>' +
               '<div class="history-date">' + formatDate(c.date) + '</div>' +
             '</div>' +
-            '<div>' + (ip ? '<span class="badge-ai">✨ Ajustement IA disponible</span>' : '') + '</div>' +
+            '<div>' + (ip ? '<span class="badge-ai">' + _t('suivi.history.ai') + '</span>' : '') + '</div>' +
           '</div>' +
           '<div class="history-chips">' +
             (c.weight ? '<div class="history-chip"><span>⚖️</span><span>' + parseFloat(c.weight).toFixed(1) + ' kg</span></div>' : '') +
             (c.mood   ? '<div class="history-chip"><span>' + (me[c.mood]||'🙂') + '</span><span class="chip-label">' + (ml[c.mood]||c.mood) + '</span></div>' : '') +
             (c.appetite ? '<div class="history-chip"><span class="chip-label">' + (al[c.appetite]||c.appetite) + '</span></div>' : '') +
-            ((c.adherence !== undefined && c.adherence !== null) ? '<div class="history-chip"><span>🎯</span><span style="color:' + ac + ';font-weight:900">' + c.adherence + '%</span><span class="chip-label"> adhésion</span></div>' : '') +
+            ((c.adherence !== undefined && c.adherence !== null) ? '<div class="history-chip"><span>🎯</span><span style="color:' + ac + ';font-weight:900">' + c.adherence + '%</span><span class="chip-label"> ' + _t('suivi.history.adherence') + '</span></div>' : '') +
           '</div>' +
           (c.notes ? '<div class="history-notes">' + escHtml(c.notes) + '</div>' : '') +
-          (c.newDislikes ? '<div class="dislikes-tag">🚫 Refusés : ' + escHtml(c.newDislikes) + '</div>' : '') +
+          (c.newDislikes ? '<div class="dislikes-tag">' + _t('suivi.history.refused') + escHtml(c.newDislikes) + '</div>' : '') +
         '</div>' +
       '</div>';
   }
@@ -918,11 +920,11 @@ function updateRangeUI(v) {
   if (ve) ve.textContent = v + '%';
   if (s)  s.style.setProperty('--range-fill', v + '%');
   var msg, col;
-  if      (v >= 80){ msg = 'Excellent ! Vous suivez parfaitement le plan.';      col = '#2E7D4F'; }
-  else if (v >= 60){ msg = 'Très bien ! Continuez sur cette lancée.';            col = '#2E7D4F'; }
-  else if (v >= 40){ msg = 'Passable — essayons de simplifier le plan ensemble.';col = '#E8701A'; }
-  else if (v >= 20){ msg = "Difficile cette semaine — ne vous découragez pas.";  col = '#c96520'; }
-  else             { msg = "Semaine très difficile — analysons ensemble.";       col = '#e53935'; }
+  if      (v >= 80){ msg = _t('suivi.adh.exc');  col = '#2E7D4F'; }
+  else if (v >= 60){ msg = _t('suivi.adh.good'); col = '#2E7D4F'; }
+  else if (v >= 40){ msg = _t('suivi.adh.ok');   col = '#E8701A'; }
+  else if (v >= 20){ msg = _t('suivi.adh.low');  col = '#c96520'; }
+  else             { msg = _t('suivi.adh.vlow'); col = '#e53935'; }
   if (fe){ fe.textContent = msg; fe.style.color = col; }
 }
 
@@ -931,8 +933,8 @@ function initPage() {
   var w = getCurrentWeek();
   var t = document.getElementById('checkinTitle');
   var b = document.getElementById('checkinWeekBadge');
-  if (t) t.textContent = '📝 Suivi de la semaine ' + w;
-  if (b) b.textContent = 'Semaine ' + w;
+  if (t) t.textContent = _t('suivi.form.title') + ' ' + w;
+  if (b) b.textContent = _t('suivi.form.week') + ' ' + w;
   updateStats();
   renderHistory();
 }

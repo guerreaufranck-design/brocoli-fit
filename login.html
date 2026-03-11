@@ -23,7 +23,7 @@
 
 <nav style="background:transparent;padding:1.25rem var(--pad);display:flex;align-items:center;justify-content:space-between">
   <a href="index.html" style="font-family:var(--font-serif);font-style:italic;font-weight:600;font-size:1.75rem;color:var(--green-dark)">Brocoli<span style="font-family:var(--font-sans);font-weight:900;font-size:.7rem;color:var(--orange)">.fit</span></a>
-  <a href="index.html" class="btn btn-ghost btn-sm">← Retour</a>
+  <a href="index.html" class="btn btn-ghost btn-sm" data-i18n="login.back">← Retour</a>
 </nav>
 
 <div class="login-wrap">
@@ -35,8 +35,8 @@
     </div>
 
     <div class="login-tabs" style="margin-bottom:1.5rem">
-      <button class="login-tab active" id="tabLogin" onclick="switchTab('login')">Connexion</button>
-      <button class="login-tab" id="tabRegister" onclick="switchTab('register')">Créer un compte</button>
+      <button class="login-tab active" id="tabLogin" onclick="switchTab('login')" data-i18n="login.tab">Connexion</button>
+      <button class="login-tab" id="tabRegister" onclick="switchTab('register')" data-i18n="register.tab">Créer un compte</button>
     </div>
 
     <!-- CONNEXION -->
@@ -56,14 +56,14 @@
           <input type="email" class="form-input" id="loginEmail" placeholder="votre@email.com" autocomplete="email">
         </div>
         <div class="form-group">
-          <label class="form-label">Mot de passe</label>
+          <label class="form-label" data-i18n="login.password">Mot de passe</label>
           <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
-          <a href="#" id="forgotBtn" style="font-size:var(--text-xs);color:var(--green-dark);font-weight:700;margin-top:.25rem;display:inline-block">Mot de passe oublié ?</a>
+          <a href="#" id="forgotBtn" style="font-size:var(--text-xs);color:var(--green-dark);font-weight:700;margin-top:.25rem;display:inline-block" data-i18n="login.forgot">Mot de passe oublié ?</a>
         </div>
-        <button class="btn btn-primary btn-full btn-lg" id="loginBtn">Se connecter</button>
+        <button class="btn btn-primary btn-full btn-lg" id="loginBtn" data-i18n="login.cta">Se connecter</button>
       </div>
       <div id="magicSection" style="display:none;flex-direction:column;gap:1rem">
-        <p style="font-size:var(--text-sm);color:var(--text-muted);line-height:1.5">Recevez un lien de connexion par email — sans mot de passe.</p>
+        <p style="font-size:var(--text-sm);color:var(--text-muted);line-height:1.5" data-i18n="auth.magic.desc">Recevez un lien de connexion par email — sans mot de passe.</p>
         <div class="form-group">
           <label class="form-label">Email</label>
           <input type="email" class="form-input" id="magicEmail" placeholder="votre@email.com" autocomplete="email">
@@ -97,7 +97,7 @@
           <input type="checkbox" id="regTerms" style="margin-top:3px;flex-shrink:0;width:18px;height:18px;accent-color:var(--green)">
           <label for="regTerms" style="font-size:var(--text-xs);color:var(--text-muted);cursor:pointer;line-height:1.5">J'accepte les <a href="#" style="color:var(--green-dark)">conditions d'utilisation</a> et la <a href="#" style="color:var(--green-dark)">politique de confidentialité</a></label>
         </div>
-        <button class="btn btn-primary btn-full btn-lg" id="registerBtn">Créer mon compte</button>
+        <button class="btn btn-primary btn-full btn-lg" id="registerBtn" data-i18n="register.cta">Créer mon compte</button>
       </div>
     </div>
 
