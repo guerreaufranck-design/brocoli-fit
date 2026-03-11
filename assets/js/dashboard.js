@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resetCheckinForm();
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '🧠 <span data-i18n="ci.submit">Analyser et ajuster mon plan</span>';
+      btn.innerHTML = `🧠 <span>${t('ci.submit') || 'Analyser et ajuster mon plan'}</span>`;
     }
 
     // Hide check-in banner

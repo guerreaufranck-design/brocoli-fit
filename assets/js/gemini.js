@@ -80,7 +80,9 @@ const GEMINI = {
     } catch (fetchErr) {
       clearTimeout(timeoutId);
       if (fetchErr.name === 'AbortError') {
-        throw new Error((window.I18N?.t('gemini.timeout')) || 'La génération a pris trop de temps. Réessayez ou simplifiez le profil.');
+        const timeoutErr = new Error((window.I18N?.t('gemini.timeout')) || 'La génération a pris trop de temps. Réessayez ou simplifiez le profil.');
+        timeoutErr.type = 'timeout';
+        throw timeoutErr;
       }
       throw fetchErr;
     }
@@ -613,7 +615,7 @@ async function runGeminiAnalysis(profile) {
       result = await GEMINI.call(prompt, true, 300000);
     } catch (firstErr) {
       // Retry once on network/timeout error
-      if (firstErr.name === 'AbortError' || firstErr.message.includes('trop de temps') || firstErr.message.includes('fetch')) {
+      if (firstErr.name === 'AbortError' || firstErr.type === 'timeout' || firstErr.message.includes('fetch')) {
         setSubtitle((window.I18N?.t('gemini.retry')) || 'Nouvelle tentative en cours…');
         await delay(2000);
         result = await GEMINI.call(prompt, true, 300000);

@@ -3,6 +3,7 @@
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
   const plan    = JSON.parse(localStorage.getItem('brocoliPlan')    || 'null');
   const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
   const userPlan= profile?.selectedPlan || 'free';
@@ -20,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const weeks = plan.week ? distributeWeeks(plan.week) : {};
 
   // ---- Hero ----
-  const _t = k => (window.I18N && window.I18N.t(k)) || null;
   const heroName = document.getElementById('planHeroName');
   const heroMeta = document.getElementById('planHeroMeta');
   const childName = a.name || profile.name || _t('s.yourChild') || 'votre enfant';

@@ -55,14 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.GEMINI) {
         response = await GEMINI.call(prompt, false);
       } else {
-        response = 'Je suis NutriBot. Configurez la clé API Gemini dans config.js pour activer l\'IA.';
+        response = (window.I18N?.t('chat.noApi')) || 'Je suis NutriBot. Configurez la clé API Gemini dans config.js pour activer l\'IA.';
       }
 
       typingEl.remove();
       appendMsg('bot', response);
     } catch(err) {
       typingEl.remove();
-      appendMsg('bot', `Désolé, je rencontre un problème technique. Réessayez dans quelques instants. (${err.message})`);
+      appendMsg('bot', `${(window.I18N?.t('chat.techError')) || 'Désolé, je rencontre un problème technique. Réessayez dans quelques instants.'} (${err.message})`);
     } finally {
       isTyping = false;
     }

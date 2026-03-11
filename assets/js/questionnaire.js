@@ -526,10 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (json.url) {
           window.location.href = json.url;
         } else {
-          throw new Error(json.error || 'Erreur Stripe');
+          throw new Error(json.error || t('err.stripe', 'Erreur Stripe'));
         }
       } catch (err) {
-        showToast?.('Erreur paiement : ' + err.message, 'error');
+        showToast?.(t('err.payment', 'Erreur paiement') + ' : ' + err.message, 'error');
         if (nextBtn) { nextBtn.disabled = false; }
         if (nextLabel) nextLabel.textContent = generateLabel;
       }
