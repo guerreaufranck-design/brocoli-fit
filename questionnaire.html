@@ -167,7 +167,7 @@
     <div style="display:flex;flex-direction:column;gap:1.25rem">
       <div class="form-group">
         <label class="form-label" data-i18n="q2.name">Prénom de l'enfant</label>
-        <input type="text" class="form-input" id="q_name" placeholder="Ex : Lucas, Emma…" autocomplete="off">
+        <input type="text" class="form-input" id="q_name" placeholder="Ex : Lucas, Emma…" data-i18n-placeholder="q2.name.ph" autocomplete="off">
       </div>
       <div class="q-pair-grid">
         <div class="form-group">
@@ -247,7 +247,7 @@
     <div class="form-group">
       <div class="q-sub-label" data-i18n="q3.fav">🌟 Aliments et plats préférés</div>
       <div class="tag-input-wrap" id="favWrap">
-        <input class="tag-input" id="favInput" placeholder="Ex: pâtes, poulet, fraises…" autocomplete="off">
+        <input class="tag-input" id="favInput" placeholder="Ex: pâtes, poulet, fraises…" data-i18n-placeholder="q3.fav.ph" autocomplete="off">
       </div>
       <!-- Suggestions -->
       <div style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.625rem" id="favSuggestions"></div>
@@ -255,7 +255,7 @@
     <div class="form-group" style="margin-top:1.5rem">
       <div class="q-sub-label" data-i18n="q3.regime">🥗 Régime alimentaire</div>
       <div class="sub-options" id="dietOptions">
-        <button class="sub-opt selected" data-val="omnivore">🍖 Omnivore</button>
+        <button class="sub-opt selected" data-val="omnivore">🍖 <span data-i18n="diet.omni">Omnivore</span></button>
         <button class="sub-opt" data-val="vegetarien">🥦 <span data-i18n="diet.veg">Végétarien</span></button>
         <button class="sub-opt" data-val="vegan">🌱 <span data-i18n="diet.vegan">Végétalien</span></button>
         <button class="sub-opt" data-val="halal">☪️ <span data-i18n="diet.halal">Halal</span></button>
@@ -295,21 +295,21 @@
     <div class="form-group">
       <div class="q-sub-label" data-i18n="q4.vegs">🥦 Légumes boudés</div>
       <div class="tag-input-wrap" id="dislikeVegWrap">
-        <input class="tag-input" id="dislikeVegInput" placeholder="Ex : épinards, courgettes…" autocomplete="off">
+        <input class="tag-input" id="dislikeVegInput" placeholder="Ex : épinards, courgettes…" data-i18n-placeholder="q4.vegs.ph" autocomplete="off">
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.5rem" id="dislikeVegSugg"></div>
     </div>
     <div class="form-group" style="margin-top:1.25rem">
       <div class="q-sub-label" data-i18n="q4.meat">🍖 Viandes & poissons refusés</div>
       <div class="tag-input-wrap" id="dislikeMeatWrap">
-        <input class="tag-input" id="dislikeMeatInput" placeholder="Ex : poisson, foie…" autocomplete="off">
+        <input class="tag-input" id="dislikeMeatInput" placeholder="Ex : poisson, foie…" data-i18n-placeholder="q4.meat.ph" autocomplete="off">
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:.375rem;margin-top:.5rem" id="dislikeMeatSugg"></div>
     </div>
     <div class="form-group" style="margin-top:1.25rem">
       <div class="q-sub-label" data-i18n="q4.other">🙅 Autres aliments ou textures refusés</div>
       <div class="tag-input-wrap" id="dislikeOtherWrap">
-        <input class="tag-input" id="dislikeOtherInput" placeholder="Ex : purée, légumineuses, épicé…" autocomplete="off">
+        <input class="tag-input" id="dislikeOtherInput" placeholder="Ex : purée, légumineuses, épicé…" data-i18n-placeholder="q4.other.ph" autocomplete="off">
       </div>
     </div>
   </div>
@@ -340,7 +340,7 @@
     </div>
     <div style="margin-top:1.5rem">
       <div class="q-sub-label" data-i18n="q5.other">Autres intolérances ou restrictions</div>
-      <input type="text" class="form-input" id="q_otherAllergy" placeholder="Ex: fructose, sorbitol, FODMAP…">
+      <input type="text" class="form-input" id="q_otherAllergy" placeholder="Ex: fructose, sorbitol, FODMAP…" data-i18n-placeholder="q5.other.ph">
     </div>
   </div>
 
@@ -357,7 +357,7 @@
     </div>
     <div class="q-sub-label" data-i18n="q6.conditions">Condition(s) à prendre en compte</div>
     <div class="health-grid" id="healthGrid">
-      <div class="health-card" data-val="tdah"><span class="health-icon">🧠</span><span class="health-name">TDAH</span><span class="health-desc" data-i18n="h.tdah">Pauvre en additifs, riche en oméga-3</span></div>
+      <div class="health-card" data-val="tdah"><span class="health-icon">🧠</span><span class="health-name" data-i18n="h.tdah">TDAH</span><span class="health-desc" data-i18n="h.tdahd">Pauvre en additifs, riche en oméga-3</span></div>
       <div class="health-card" data-val="diabete1"><span class="health-icon">🩸</span><span class="health-name" data-i18n="h.diab1">Diabète type 1</span><span class="health-desc" data-i18n="h.diab1d">Index glycémique contrôlé</span></div>
       <div class="health-card" data-val="prediabete"><span class="health-icon">📉</span><span class="health-name" data-i18n="h.prediab">Pré-diabète</span><span class="health-desc" data-i18n="h.prediabd">Glucides complexes privilégiés</span></div>
       <div class="health-card" data-val="epilepsie"><span class="health-icon">⚡</span><span class="health-name" data-i18n="h.epil">Épilepsie</span><span class="health-desc" data-i18n="h.epild">Compatible régime cétogène</span></div>
@@ -372,7 +372,7 @@
     </div>
     <div style="margin-top:1.5rem">
       <div class="q-sub-label" data-i18n="q6.other">Information complémentaire (traitement, suivi, précision…)</div>
-      <textarea class="form-input" id="q_healthNote" rows="3" placeholder="Ex : traitement au Ritalin depuis 6 mois, suivi diététique en cours…" style="resize:vertical"></textarea>
+      <textarea class="form-input" id="q_healthNote" rows="3" placeholder="Ex : traitement au Ritalin depuis 6 mois, suivi diététique en cours…" data-i18n-placeholder="q6.other.ph" style="resize:vertical"></textarea>
     </div>
   </div>
 

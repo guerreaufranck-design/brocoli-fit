@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('brocoliSelectedPlan', data.selectedPlan);
 
     const generateLabel = t('q.generate', '🥦 Générer mon plan — 4 semaines !');
-    if (nextLabel) nextLabel.textContent = '⏳ Préparation…';
+    if (nextLabel) nextLabel.textContent = t('q.loading', '⏳ Préparation…');
     if (nextBtn) nextBtn.disabled = true;
 
     // Paid plan → Stripe Checkout
