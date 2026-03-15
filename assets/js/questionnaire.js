@@ -34,10 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
           ${t('q.freeLimitViewPlan', '📋 Voir mon plan actuel')}
         </a>
         <div style="margin-top:1rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
-          <a href="questionnaire.html?plan=essential" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
+          <a href="login.html?redirect=checkout&plan=essential" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
             ⭐ ${t('plan.ess', 'Essentiel')} — 9€/mois (2 enfants)
           </a>
-          <a href="questionnaire.html?plan=premium" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
+          <a href="login.html?redirect=checkout&plan=premium" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
             👑 ${t('plan.prem', 'Premium')} — 14,90€/mois (illimité)
           </a>
         </div>
@@ -321,25 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ---- Plan selection ----
-  document.querySelectorAll('.plan-sel-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.plan-sel-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      data.selectedPlan = card.dataset.plan;
-    });
-  });
-  // Default: essential
-  document.querySelector('.plan-sel-card[data-plan="essential"]')?.classList.add('selected');
-  data.selectedPlan = 'essential';
-
-  // Pre-select from URL
-  const urlPlan = new URLSearchParams(window.location.search).get('plan');
-  if (urlPlan) {
-    document.querySelectorAll('.plan-sel-card').forEach(c => c.classList.remove('selected'));
-    document.querySelector(`.plan-sel-card[data-plan="${urlPlan}"]`)?.classList.add('selected');
-    data.selectedPlan = urlPlan;
-  }
+  // ---- Plan : read from localStorage (already chosen before questionnaire) ----
+  const _sub = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
+  data.selectedPlan = _sub?.plan
+    || localStorage.getItem('brocoliSelectedPlan')
+    || new URLSearchParams(window.location.search).get('plan')
+    || 'free';
 
   // Pre-select profil from URL
   const urlProfil = new URLSearchParams(window.location.search).get('profil');
@@ -533,44 +520,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Effective diet
     if (data.diet === 'autre' && data.dietOther.trim()) data.diet = data.dietOther.trim();
 
-    // Save profile to localStorage first
+    // Save profile to localStorage
     localStorage.setItem('brocoliProfile', JSON.stringify(data));
     localStorage.setItem('brocoliSelectedPlan', data.selectedPlan);
 
-    const generateLabel = t('q.generate', '🥦 Générer mon plan — 4 semaines !');
     if (nextLabel) nextLabel.textContent = t('q.loading', '⏳ Préparation…');
     if (nextBtn) nextBtn.disabled = true;
 
-    // Paid plan → Stripe Checkout
-    if (data.selectedPlan !== 'free') {
-      const sub = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
-      const planRank = { free: 0, essential: 1, premium: 2 };
-      if (sub && planRank[sub.plan] >= planRank[data.selectedPlan]) {
-        window.location.href = 'analyse.html';
-        return;
-      }
-
-      try {
-        const res  = await fetch('/api/create-checkout-session', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ plan: data.selectedPlan, locale: data.lang }),
-        });
-        const json = await res.json();
-        if (json.url) {
-          window.location.href = json.url;
-        } else {
-          throw new Error(json.error || t('err.stripe', 'Erreur Stripe'));
-        }
-      } catch (err) {
-        showToast?.(t('err.payment', 'Erreur paiement') + ' : ' + err.message, 'error');
-        if (nextBtn) { nextBtn.disabled = false; }
-        if (nextLabel) nextLabel.textContent = generateLabel;
-      }
-      return;
-    }
-
-    // Free plan → go straight to analysis
+    // Payment is already done (via Stripe before questionnaire) — go straight to analysis
     window.location.href = 'analyse.html';
   }
 
