@@ -11,6 +11,40 @@ document.addEventListener('DOMContentLoaded', () => {
     return (window.I18N && window.I18N.t(key)) || fallback || key;
   }
 
+  // ── Guard: free users can only create 1 plan ──────────────────────────
+  const existingPlan = JSON.parse(localStorage.getItem('brocoliPlan') || 'null');
+  const existingSub  = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
+  const existingProfile = JSON.parse(localStorage.getItem('brocoliProfile') || 'null');
+  const currentTier = existingSub?.plan || existingProfile?.selectedPlan || 'free';
+
+  if (existingPlan && existingPlan.analysis && currentTier === 'free') {
+    // Free user already has a plan → block access
+    document.querySelector('.q-container')?.remove();
+    const main = document.querySelector('main') || document.body;
+    main.innerHTML = `
+      <div style="max-width:500px;margin:4rem auto;text-align:center;padding:2rem">
+        <div style="font-size:3.5rem;margin-bottom:1rem">🔒</div>
+        <h2 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
+          ${t('q.freeLimitTitle', 'Votre plan est déjà actif !')}
+        </h2>
+        <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem">
+          ${t('q.freeLimitDesc', 'Le plan gratuit inclut un seul programme de 4 semaines. Pour créer de nouveaux programmes pour d\'autres enfants, passez à un plan supérieur.')}
+        </p>
+        <a href="plan.html" class="btn btn-green" style="margin-bottom:.75rem;display:inline-block">
+          ${t('q.freeLimitViewPlan', '📋 Voir mon plan actuel')}
+        </a>
+        <div style="margin-top:1rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+          <a href="questionnaire.html?plan=essential" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
+            ⭐ ${t('plan.ess', 'Essentiel')} — 9€/mois (2 enfants)
+          </a>
+          <a href="questionnaire.html?plan=premium" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
+            👑 ${t('plan.prem', 'Premium')} — 19€/mois (illimité)
+          </a>
+        </div>
+      </div>`;
+    return; // Stop questionnaire initialization
+  }
+
   // State
   const data = {
     profil: null, name: '', genre: null, age: 7, ageUnit: 'years', weight: 28, height: 128,
