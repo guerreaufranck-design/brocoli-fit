@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ⚠️ Exception : si ?code= est dans l'URL, c'est un retour OAuth PKCE en cours
   //    → ne pas rediriger, laisser Supabase finir l'échange du code
   const _hasOAuthCode = new URLSearchParams(window.location.search).has('code');
-  const _protectedPages = ['dashboard', 'plan', 'analyse', 'questionnaire'];
+  const _protectedPages = ['dashboard', 'plan', 'analyse', 'questionnaire', 'suivi'];
   const _currentPage = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '');
   if (!_hasOAuthCode && _protectedPages.some(p => _currentPage === p || _currentPage.startsWith(p))) {
     if (!AUTH.isLoggedIn()) {

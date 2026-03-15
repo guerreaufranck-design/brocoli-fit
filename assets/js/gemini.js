@@ -552,31 +552,215 @@ ${planContext ? `Contexte du plan actif: ${planContext}` : ''}
 Question de l'utilisateur: ${userMessage}`;
   },
 
-  buildCheckinPrompt(profile, checkinData, currentPlan) {
+  /**
+   * Builds a TEXT feedback prompt for the weekly check-in.
+   * Returns a detailed, empathetic coaching response.
+   */
+  buildCheckinFeedbackPrompt(profile, checkinData, allCheckins, currentPlan) {
     const culture = window.I18N ? window.I18N.getCulturalProfile() : {};
     const lang = window.I18N ? window.I18N.current : 'fr';
 
+    // Build history summary for trend analysis
+    let historyBlock = '';
+    if (allCheckins && allCheckins.length > 1) {
+      const recent = allCheckins.slice(-8); // Last 8 check-ins
+      historyBlock = `
+═══════════════════════════════════
+HISTORIQUE DES SUIVIS PRÉCÉDENTS (${recent.length} derniers) :
+═══════════════════════════════════`;
+      for (let i = 0; i < recent.length; i++) {
+        const c = recent[i];
+        historyBlock += `
+Semaine ${c.week || i + 1} (${c.date ? new Date(c.date).toLocaleDateString('fr-FR') : '?'}) :
+  - Poids: ${c.weight ? c.weight + ' kg' : '—'} | Taille: ${c.height ? c.height + ' cm' : '—'}
+  - Humeur: ${c.mood || '—'} | Appétit: ${c.appetite || '—'}
+  - Adhésion: ${c.adherence || '—'}%
+  - Notes: ${c.notes || '—'}
+  - Aliments refusés: ${c.newDislikes || '—'}`;
+      }
+
+      // Calculate trends
+      const weights = recent.filter(c => c.weight).map(c => ({ week: c.week, w: parseFloat(c.weight) }));
+      if (weights.length >= 2) {
+        const first = weights[0].w;
+        const last = weights[weights.length - 1].w;
+        const delta = last - first;
+        historyBlock += `
+
+📊 TENDANCE POIDS : ${first} kg → ${last} kg (${delta > 0 ? '+' : ''}${delta.toFixed(1)} kg sur ${weights.length} semaines)`;
+      }
+
+      const heights = recent.filter(c => c.height).map(c => ({ week: c.week, h: parseFloat(c.height) }));
+      if (heights.length >= 2) {
+        const first = heights[0].h;
+        const last = heights[heights.length - 1].h;
+        const delta = last - first;
+        historyBlock += `
+📊 TENDANCE TAILLE : ${first} cm → ${last} cm (${delta > 0 ? '+' : ''}${delta.toFixed(1)} cm sur ${heights.length} semaines)`;
+      }
+
+      const adherences = recent.filter(c => c.adherence != null).map(c => parseInt(c.adherence));
+      if (adherences.length >= 2) {
+        const avg = Math.round(adherences.reduce((s, a) => s + a, 0) / adherences.length);
+        const trend = adherences[adherences.length - 1] - adherences[0];
+        historyBlock += `
+📊 ADHÉSION MOYENNE : ${avg}% (tendance : ${trend > 0 ? '↗ en hausse' : trend < 0 ? '↘ en baisse' : '→ stable'})`;
+      }
+    }
+
+    // Profile weight goal analysis
+    let goalAnalysis = '';
+    if (profile.targetWeight && checkinData.weight) {
+      const target = parseFloat(profile.targetWeight);
+      const current = parseFloat(checkinData.weight);
+      const start = parseFloat(profile.weight) || current;
+      const totalNeeded = Math.abs(target - start);
+      const achieved = Math.abs(current - start);
+      const remaining = Math.abs(target - current);
+      const direction = target > start ? 'prise de poids' : 'perte de poids';
+      goalAnalysis = `
+═══════════════════════════════════
+OBJECTIF POIDS :
+═══════════════════════════════════
+- Objectif : ${direction} de ${start} kg → ${target} kg
+- Progression : ${achieved.toFixed(1)} kg sur ${totalNeeded.toFixed(1)} kg (${totalNeeded > 0 ? Math.round(achieved / totalNeeded * 100) : 100}%)
+- Reste : ${remaining.toFixed(1)} kg`;
+    }
+
+    return `Tu es NutriBot, coach nutritionnel bienveillant et expert en nutrition pédiatrique de Brocoli.fit.
+Réponds TOUJOURS en ${culture.lang || 'français'}.
+
+═══════════════════════════════════
+PROFIL DE L'ENFANT :
+═══════════════════════════════════
+- Prénom : ${profile?.name || 'Votre enfant'}
+- Profil : ${profile?.profil || 'enfant'}
+- Âge : ${profile?.age || '?'} ${profile?.profil === 'bebe' ? 'mois' : 'ans'}
+- Poids initial : ${profile?.weight || '?'} kg
+- Taille initiale : ${profile?.height || '?'} cm
+- Objectif : ${profile?.objectif || 'alimentation saine et équilibrée'}
+- Régime : ${profile?.diet || 'omnivore'}
+- Allergènes : ${(profile?.allergens || []).join(', ') || 'aucun'}
+- Aliments refusés : ${[...(profile?.dislikeVeg || []), ...(profile?.dislikeMeat || []), ...(profile?.dislikeOther || [])].join(', ') || 'aucun'}
+${goalAnalysis}
+${historyBlock}
+
+═══════════════════════════════════
+SUIVI DE CETTE SEMAINE :
+═══════════════════════════════════
+- Poids actuel : ${checkinData.weight ? checkinData.weight + ' kg' : 'non renseigné'}
+- Taille actuelle : ${checkinData.height ? checkinData.height + ' cm' : 'non renseignée'}
+- Humeur : ${checkinData.mood || 'non renseignée'} ${checkinData.mood === 'great' ? '(très bien 😄)' : checkinData.mood === 'ok' ? '(bien 🙂)' : checkinData.mood === 'meh' ? '(bof 😐)' : checkinData.mood === 'bad' ? '(mauvaise 😔)' : ''}
+- Appétit : ${checkinData.appetite || 'non renseigné'} ${checkinData.appetite === 'great' ? '(excellent 😋)' : checkinData.appetite === 'normal' ? '(normal 👍)' : checkinData.appetite === 'low' ? '(faible 😕)' : checkinData.appetite === 'none' ? '(très faible 🙅)' : ''}
+- Adhésion au plan : ${checkinData.adherence || '?'}%
+- Commentaires du parent : "${checkinData.notes || 'aucun commentaire'}"
+- Nouveaux aliments refusés : ${checkinData.newDislikes || 'aucun'}
+
+═══════════════════════════════════
+CE QUE TU DOIS FAIRE :
+═══════════════════════════════════
+
+Rédige un BILAN COMPLET et PERSONNALISÉ en format texte (PAS de JSON), structuré en sections. Sois bienveillant, encourageant mais honnête :
+
+## 🎯 Bilan de la semaine
+- Analyse l'évolution du poids et de la taille par rapport aux semaines précédentes
+- Pour un enfant/bébé en croissance : la prise de poids est-elle normale pour l'âge ?
+- Compare avec les courbes de croissance OMS si pertinent
+- Mentionne si la tendance est rassurante ou si des ajustements sont nécessaires
+
+## 💬 Réponse aux commentaires
+- Si le parent a laissé des notes/commentaires, réponds-y DIRECTEMENT et de manière empathique
+- Propose des solutions concrètes à chaque problème soulevé
+- Si aucun commentaire : félicite le parent pour son suivi régulier
+
+## 🍽️ Adaptations recommandées pour la semaine prochaine
+Selon les données :
+- Si adhésion < 50% → propose des repas PLUS SIMPLES et rapides, favorise les aliments préférés, réduis le nombre d'ingrédients
+- Si adhésion 50-70% → quelques ajustements ciblés, garde les repas qui marchent
+- Si adhésion > 70% → félicite et propose de nouveaux défis culinaires progressifs
+- Si appétit faible → portions plus petites mais plus fréquentes, textures appétissantes, couleurs variées
+- Si appétit bon → augmente légèrement les portions si croissance le nécessite
+- Si humeur mauvaise → favorise aliments riches en tryptophane (banane, lait, avoine), magnésium (chocolat noir, amandes)
+- Si nouveaux aliments refusés → propose 2-3 alternatives pour chaque aliment refusé
+
+## 🔄 Suggestions d'alternatives
+- Pour chaque aliment refusé, propose 2-3 substituts équivalents nutritionnellement
+- Si des repas spécifiques n'ont pas fonctionné, propose des alternatives
+
+## 💪 Encouragements et prochaines étapes
+- Encourage le parent, souligne les points positifs
+- Fixe 2-3 petits objectifs concrets pour la semaine à venir
+- Rappelle qu'il est normal que l'enfant ait des phases de refus
+
+IMPORTANT :
+- Sois CONCRET (pas de conseils vagues), donne des exemples de repas/aliments
+- Adapte le ton selon le profil (bébé = plus technique sur textures/portions, ado = plus de conseils sur autonomie)
+- Ne dépasse PAS 500 mots au total
+- NE fournis PAS de JSON, uniquement du texte formaté en markdown`;
+  },
+
+  /**
+   * Builds a JSON prompt to regenerate/adapt the nutrition plan based on check-in data.
+   * Only used for paid plans (essential/premium).
+   */
+  buildCheckinAdaptPrompt(profile, checkinData, allCheckins, currentPlan) {
+    const culture = window.I18N ? window.I18N.getCulturalProfile() : {};
+
+    // Gather all refused foods (original + new from check-ins)
+    const allRefused = [
+      ...(profile?.dislikeVeg || []),
+      ...(profile?.dislikeMeat || []),
+      ...(profile?.dislikeOther || []),
+    ];
+    if (allCheckins) {
+      allCheckins.forEach(c => {
+        if (c.newDislikes) {
+          c.newDislikes.split(',').forEach(d => {
+            const trimmed = d.trim();
+            if (trimmed && !allRefused.includes(trimmed)) allRefused.push(trimmed);
+          });
+        }
+      });
+    }
+
+    const cal = _computeDailyCalories(profile);
+
     return `Tu es NutriBot, expert en nutrition pédiatrique de Brocoli.fit.
-Sur base du suivi hebdomadaire ci-dessous, ajuste le plan nutritionnel pour la semaine prochaine.
-Réponds en JSON structuré comme le plan original. Langue: ${culture.lang || 'français'}.
+Sur base du suivi hebdomadaire, génère un plan nutritionnel ADAPTÉ pour la semaine prochaine.
+Langue : ${culture.lang || 'français'}.
 
-Profil: ${profile?.name || 'Enfant'}, ${profile?.age || '?'} ans, objectif: ${profile?.objectif || 'alimentation saine'}
+Profil : ${profile?.name || 'Enfant'}, ${profile?.age || '?'} ${profile?.profil === 'bebe' ? 'mois' : 'ans'}, ${profile?.weight || '?'} kg, objectif: ${profile?.objectif || 'alimentation saine'}
+Régime : ${profile?.diet || 'omnivore'}
+Allergènes EXCLUS : ${(profile?.allergens || []).join(', ') || 'aucun'}
+TOUS les aliments refusés (y compris nouveaux) : ${allRefused.join(', ') || 'aucun'}
+Calories cibles : ${cal.target} kcal/j
 
-Données de suivi cette semaine:
-- Poids actuel: ${checkinData.weight || 'non renseigné'} kg
-- Humeur: ${checkinData.mood || 'non renseigné'}
-- Appétit: ${checkinData.appetite || 'non renseigné'}
-- Adhésion au plan: ${checkinData.adherence || '?'}%
+Données de suivi cette semaine :
+- Poids: ${checkinData.weight || '?'} kg | Taille: ${checkinData.height || '?'} cm
+- Humeur: ${checkinData.mood || '?'} | Appétit: ${checkinData.appetite || '?'}
+- Adhésion: ${checkinData.adherence || '?'}%
 - Notes: ${checkinData.notes || 'aucune'}
-- Nouveaux aliments refusés: ${checkinData.newDislikes || 'aucun'}
 
-Ajustements à apporter:
-- Si faible appétit → portions légèrement réduites, repas plus appétissants
-- Si mauvaise humeur → aliments riches en tryptophane/magnésium
-- Si mauvaise adhésion → simplifier les repas, favoriser les préférences
-- Si nouveaux aliments refusés → les exclure complètement
+RÈGLES D'ADAPTATION :
+${checkinData.adherence < 50 ? '⚠️ ADHÉSION FAIBLE → Simplifie les repas : max 4-5 ingrédients, temps préparation < 20min, favorise les goûts de l\'enfant' : ''}
+${checkinData.appetite === 'low' || checkinData.appetite === 'none' ? '⚠️ APPÉTIT FAIBLE → Portions réduites de 20%, repas plus fréquents, textures appétissantes' : ''}
+${checkinData.mood === 'bad' || checkinData.mood === 'meh' ? '⚠️ HUMEUR BASSE → Inclure aliments riches en tryptophane, magnésium, oméga-3' : ''}
+- Exclure COMPLÈTEMENT les aliments refusés listés ci-dessus
+- Calories journalières : exactement ${cal.target} kcal/j
 
-Génère le plan ajusté pour la semaine prochaine avec le même format JSON.`;
+Génère EXACTEMENT 7 jours (1 semaine) au même format JSON que le plan original :
+{
+  "analysis": { "daily_calories": ${cal.target}, "summary": "Résumé des ajustements", ... },
+  "week": [
+    { "day": "Lundi", "day_en": "Monday", "total_calories": ${cal.target}, "meals": [...] },
+    ... 7 jours
+  ]
+}`;
+  },
+
+  // Keep legacy method as alias
+  buildCheckinPrompt(profile, checkinData, currentPlan) {
+    return this.buildCheckinFeedbackPrompt(profile, checkinData, [], null);
   }
 };
 
