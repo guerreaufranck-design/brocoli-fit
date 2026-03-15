@@ -68,10 +68,19 @@ async function _handlePostAuthRedirect() {
     return;
   }
 
-  // ── redirect=questionnaire → questionnaire ──
+  // ── redirect=plans → page de choix du plan ──
+  if (redirect === 'plans') {
+    if (profil) localStorage.setItem('brocoliSelectedProfil', profil);
+    window.location.href = 'index.html#plans';
+    return;
+  }
+
+  // ── redirect=questionnaire → questionnaire (plan déjà choisi) ──
   if (redirect === 'questionnaire') {
     if (plan) localStorage.setItem('brocoliSelectedPlan', plan);
-    const qs = [plan && `plan=${plan}`, profil && `profil=${profil}`].filter(Boolean).join('&');
+    const storedProfil = profil || localStorage.getItem('brocoliSelectedProfil') || '';
+    if (storedProfil) localStorage.removeItem('brocoliSelectedProfil');
+    const qs = [plan && `plan=${plan}`, storedProfil && `profil=${storedProfil}`].filter(Boolean).join('&');
     window.location.href = `questionnaire.html${qs ? '?' + qs : ''}`;
     return;
   }
@@ -228,9 +237,9 @@ function _updateNavAuth() {
     }
   });
 
-  // Boutons "Commencer" / liens vers login.html?redirect=questionnaire → "Mon tableau de bord" si connecté
+  // Boutons "Commencer" / liens vers login.html?redirect=plans → "Mon tableau de bord" si connecté
   document.querySelectorAll('a[href^="login.html?"]').forEach(el => {
-    if (loggedIn && el.href.includes('redirect=questionnaire')) {
+    if (loggedIn && (el.href.includes('redirect=plans') || el.href.includes('redirect=questionnaire'))) {
       el.textContent = '🥦 Mon tableau de bord';
       el.href = 'dashboard.html';
     }
