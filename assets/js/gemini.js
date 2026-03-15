@@ -543,12 +543,17 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
       {
         "category": "Fruits & Légumes",
         "emoji": "🥦",
-        "items": [{"name": "Carottes", "qty": "500g", "approx_cost": "1.20€"}]
+        "items": [{"name": "Carottes", "qty": "1 kg", "approx_cost": "1.80€"}]
       }
     ],
     "estimated_total": "65€"
   }` : ''}
 }
+⚠️ LISTE DE COURSES — RÈGLE DE CONSOLIDATION :
+La "shopping_list" doit regrouper les QUANTITÉS TOTALES pour TOUTE la semaine (7 jours).
+Si un même ingrédient apparaît plusieurs jours, ADDITIONNE les quantités en une seule ligne.
+Exemple : poulet lundi 100g + poulet jeudi 100g = "Poulet" → "200g" (pas 2 lignes séparées).
+Les quantités doivent être arrondies pour être pratiques en courses (ex: "1 kg" plutôt que "950g", "6 yaourts" plutôt que "5.6 yaourts").
 
 IMPORTANT FINAL :
 - Génère EXACTEMENT 7 jours (Lundi à Dimanche) dans "week" — 7 objets

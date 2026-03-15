@@ -224,7 +224,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // ---- Shopping list (Premium only) ----
   if (userPlan === 'premium') {
-    renderShopping(plan.shopping_list);
+    const consolidated = consolidateShopping(plan.shopping_list);
+    renderShopping(consolidated);
+    // ---- Orange shopping button ----
+    if (consolidated) {
+      const btnWrap = document.createElement('div');
+      btnWrap.id = 'shoppingBtnWrap';
+      btnWrap.style.cssText = 'text-align:center;margin:1.25rem 0 .5rem';
+      btnWrap.innerHTML = `<button onclick="document.getElementById('shoppingSection').scrollIntoView({behavior:'smooth',block:'start'})" style="display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#FF8C42,#e07020);color:#fff;font-weight:800;border:none;border-radius:99px;padding:.75rem 1.75rem;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(255,140,66,.35);transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(255,140,66,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(255,140,66,.35)'">🛒 ${_t('plan.shoppingBtn') || 'Liste de courses de la semaine'}</button>`;
+      const dayTabsEl = document.getElementById('dayTabs');
+      if (dayTabsEl) dayTabsEl.parentNode.insertBefore(btnWrap, dayTabsEl.nextSibling);
+    }
   }
 
   function renderRecipes(recipes) {
@@ -250,27 +260,54 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderShopping(list) {
     const section = document.getElementById('shoppingSection');
     if (!section || !list) return;
+    const totalItems = (list.categories || []).reduce((s, c) => s + (c.items || []).length, 0);
     section.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark)">🛒 ${_t('plan.shoppingTitle') || 'Liste de courses'}</h3>
-        <span class="badge badge-green">~${list.estimated_total || '?'}</span>
+        <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark)">🛒 ${_t('plan.shoppingTitle') || 'Liste de courses de la semaine'}</h3>
+        <div style="display:flex;gap:.5rem;align-items:center">
+          <span class="badge badge-green">${totalItems} ${_t('plan.items') || 'articles'}</span>
+          <span class="badge badge-green">~${list.estimated_total || '?'}</span>
+        </div>
       </div>
-      ${(list.categories||[]).map(cat => `
+      <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1rem">📋 ${_t('plan.shoppingDesc') || 'Quantités regroupées pour toute la semaine. Cochez au fur et à mesure de vos courses !'}</p>
+      ${(list.categories||[]).map((cat, ci) => `
         <div class="card" style="margin-bottom:1rem">
           <div style="font-size:var(--text-base);font-weight:900;color:var(--text);margin-bottom:.875rem">${cat.emoji || '🛒'} ${escHtml(cat.category || '')}</div>
-          <div style="display:flex;flex-direction:column;gap:.5rem">
-            ${(cat.items||[]).map(item => `
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem .75rem;background:var(--bg);border-radius:var(--r-md)">
-                <span style="font-size:var(--text-sm);font-weight:700">${escHtml(item.name || '')}</span>
-                <div style="display:flex;align-items:center;gap:.75rem">
-                  <span style="font-size:var(--text-xs);color:var(--text-muted)">${escHtml(item.qty || '')}</span>
-                  <span style="font-size:var(--text-xs);color:var(--text-muted)">${escHtml(item.approx_cost || '')}</span>
-                </div>
-              </div>
+          <div style="display:flex;flex-direction:column;gap:.375rem">
+            ${(cat.items||[]).map((item, ii) => `
+              <label style="display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;background:var(--bg);border-radius:var(--r-md);cursor:pointer;transition:opacity .2s" onclick="this.style.opacity=this.querySelector('input').checked?'.5':'1'">
+                <input type="checkbox" style="width:18px;height:18px;accent-color:var(--green);flex-shrink:0;cursor:pointer">
+                <span style="font-size:var(--text-sm);font-weight:700;flex:1">${escHtml(item.name || '')}</span>
+                <span style="font-size:var(--text-sm);color:var(--text-muted);white-space:nowrap">${escHtml(item.qty || '')}</span>
+                ${item.approx_cost ? `<span style="font-size:var(--text-xs);color:var(--text-muted);white-space:nowrap">${escHtml(item.approx_cost)}</span>` : ''}
+              </label>
             `).join('')}
           </div>
         </div>
       `).join('')}`;
+  }
+
+  // ---- Consolidate shopping list (merge duplicate items per category) ----
+  function consolidateShopping(list) {
+    if (!list || !list.categories) return list;
+    const consolidated = { ...list, categories: [] };
+    for (const cat of list.categories) {
+      const merged = {};
+      for (const item of (cat.items || [])) {
+        const key = (item.name || '').toLowerCase().trim();
+        if (!key) continue;
+        if (merged[key]) {
+          // Merge: concatenate qty if different, keep higher cost
+          if (item.qty && merged[key].qty && item.qty !== merged[key].qty) {
+            merged[key].qty = merged[key].qty + ' + ' + item.qty;
+          }
+        } else {
+          merged[key] = { ...item };
+        }
+      }
+      consolidated.categories.push({ ...cat, items: Object.values(merged) });
+    }
+    return consolidated;
   }
 
   // Init with week 1
