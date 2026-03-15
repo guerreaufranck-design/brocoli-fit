@@ -6,7 +6,7 @@ const TRANSLATIONS = {
 
   fr: {
     // Meta
-    tagline: 'Nutrition · Enfant · Famille',
+    tagline: 'Nutrition · Enfant · Personnalisé',
     // Nav
     'nav.how': 'Notre méthode',
     'nav.plans': 'Nos offres',
@@ -132,7 +132,7 @@ const TRANSLATIONS = {
     'q6.desc':       'Ces informations permettent d\'adapter les règles nutritionnelles des menus.',
     'q6.conditions': 'Condition(s) à prendre en compte',
     'q6.other':      'Information complémentaire (traitement, suivi, précision…)',
-    'q7.title': 'Organisation & budget',
+    'q7.title': 'Organisation',
     'q7.desc': 'Pour des menus qui collent vraiment à votre quotidien.',
     'q8.title': 'Parfait ! Voici le profil',
     'q8.desc': 'Vérifiez et générez votre plan personnalisé en un clic.',
@@ -474,8 +474,8 @@ const TRANSLATIONS = {
     'h.overw':  'Surpoids',           'h.overwId':  'Gestion du poids adaptée',
     'h.underw': 'Insuffisance pondérale','h.underwId':'Menus plus caloriques',
     // Labels section q7
-    'q7.people':  'Nombre de personnes à table (pour les courses)',
-    'q7.budget':  'Budget alimentaire hebdomadaire',
+    'q7.people':  '',
+    'q7.budget':  '',
     'q7.time':    'Temps disponible pour cuisiner / repas',
     'q7.activity':'Activité physique',
     'q7.sports':  'Sports pratiqués',
@@ -656,7 +656,7 @@ const TRANSLATIONS = {
   },
 
   en: {
-    tagline: 'Nutrition · Child · Family',
+    tagline: 'Nutrition · Child · Personalised',
     'nav.how': 'Our method',
     'nav.plans': 'Our offers',
     'nav.faq': 'FAQ',
@@ -774,7 +774,7 @@ const TRANSLATIONS = {
     'q6.desc':       'This information allows us to adapt the nutritional rules of the menus.',
     'q6.conditions': 'Condition(s) to consider',
     'q6.other':      'Additional information (treatment, monitoring, details…)',
-    'q7.title': 'Organisation & budget',
+    'q7.title': 'Organisation',
     'q7.desc': 'For menus that truly fit your everyday life.',
     'q8.title': 'Perfect! Here\'s the profile',
     'q8.desc': 'Review and generate your personalised plan in one click.',
@@ -1058,8 +1058,8 @@ const TRANSLATIONS = {
     'h.neo':    'Picky eater',       'h.neod':     'Food neophobia',
     'h.overw':  'Overweight',        'h.overwId':  'Adapted weight management',
     'h.underw': 'Underweight',       'h.underwId': 'Higher calorie menus',
-    'q7.people':  'Number of people at the table (for shopping)',
-    'q7.budget':  'Weekly food budget',
+    'q7.people':  '',
+    'q7.budget':  '',
     'q7.time':    'Available cooking time / meal',
     'q7.activity':'Physical activity',
     'q7.sports':  'Sports practised',
@@ -1256,7 +1256,7 @@ const TRANSLATIONS = {
   },
 
   de: {
-    tagline: 'Ernährung · Kind · Familie',
+    tagline: 'Ernährung · Kind · Personalisiert',
     'nav.how': 'Unsere Methode',
     'nav.plans': 'Unsere Angebote',
     'nav.faq': 'FAQ',
@@ -1375,7 +1375,7 @@ const TRANSLATIONS = {
     'q6.desc':       'Diese Informationen ermöglichen es, die Ernährungsregeln der Menüs anzupassen.',
     'q6.conditions': 'Zu berücksichtigende Erkrankung(en)',
     'q6.other':      'Zusätzliche Information (Behandlung, Nachsorge, Präzisierung…)',
-    'q7.title': 'Organisation & Budget',
+    'q7.title': 'Organisation',
     'q7.desc': 'Für Menüs, die wirklich zu Ihrem Alltag passen.',
     'q8.title': 'Perfekt! Hier ist das Profil',
     'q8.desc': 'Überprüfen Sie und erstellen Sie Ihren personalisierten Plan mit einem Klick.',
@@ -1658,8 +1658,8 @@ const TRANSLATIONS = {
     'h.neo':    'Wählerischer Esser',   'h.neod':     'Lebensmittelneophobíe',
     'h.overw':  'Übergewicht',          'h.overwId':  'Angepasstes Gewichtsmanagement',
     'h.underw': 'Untergewicht',         'h.underwId': 'Kalorienreichere Menüs',
-    'q7.people':  'Anzahl Personen am Tisch (für Einkäufe)',
-    'q7.budget':  'Wöchentliches Lebensmittelbudget',
+    'q7.people':  '',
+    'q7.budget':  '',
     'q7.time':    'Verfügbare Kochzeit / Mahlzeit',
     'q7.activity':'Körperliche Aktivität',
     'q7.sports':  'Ausgeübte Sportarten',
@@ -1856,7 +1856,7 @@ const TRANSLATIONS = {
   },
 
   it: {
-    tagline: 'Nutrizione · Bambino · Famiglia',
+    tagline: 'Nutrizione · Bambino · Personalizzato',
     'nav.how': 'Il nostro metodo',
     'nav.plans': 'Le nostre offerte',
     'nav.faq': 'FAQ',
@@ -1975,7 +1975,7 @@ const TRANSLATIONS = {
     'q6.desc':       'Queste informazioni permettono di adattare le regole nutrizionali dei menu.',
     'q6.conditions': 'Condizione/i da considerare',
     'q6.other':      'Informazione aggiuntiva (trattamento, monitoraggio, precisazione…)',
-    'q7.title': 'Organizzazione & budget',
+    'q7.title': 'Organizzazione',
     'q7.desc': 'Per menu che si adattano davvero alla tua quotidianità.',
     'q8.title': 'Perfetto! Ecco il profilo',
     'q8.desc': 'Verifica e genera il tuo piano personalizzato con un clic.',
@@ -2258,8 +2258,8 @@ const TRANSLATIONS = {
     'h.neo':    'Mangiatore difficile',    'h.neod':     'Neofobia alimentare',
     'h.overw':  'Sovrappeso',              'h.overwId':  'Gestione del peso adattata',
     'h.underw': 'Sottopeso',               'h.underwId': 'Menu più calorici',
-    'q7.people':  'Numero di persone a tavola (per la spesa)',
-    'q7.budget':  'Budget alimentare settimanale',
+    'q7.people':  '',
+    'q7.budget':  '',
     'q7.time':    'Tempo disponibile per cucinare / pasto',
     'q7.activity':'Attività fisica',
     'q7.sports':  'Sport praticati',
