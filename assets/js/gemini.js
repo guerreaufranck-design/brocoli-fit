@@ -347,7 +347,8 @@ ${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à cha
     const cal = _computeDailyCalories(profile);
 
     return `Tu es NutriBot, l'expert en nutrition pédiatrique de Brocoli.fit.
-Tu dois générer un programme nutritionnel personnalisé COMPLET pour 1 semaine (7 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
+Tu dois générer un programme nutritionnel personnalisé COMPLET pour 4 SEMAINES (28 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
+⚠️ CHAQUE SEMAINE DOIT ÊTRE DIFFÉRENTE — pas de copier-coller entre les semaines. Varie les protéines, les légumes, les féculents et les recettes d'une semaine à l'autre.
 
 ═══════════════════════════════════════════════
 CONTEXTE CULTUREL — PAYS : ${culture.name}
@@ -387,7 +388,7 @@ RÈGLES DE GÉNÉRATION OBLIGATOIRES :
 4. ✅ PORTIONS : Utiliser EXACTEMENT les grammages du référentiel nutritionnel ci-dessus pour cet âge
 5. ✅ CALORIES : daily_calories = ${cal.target} kcal/j OBLIGATOIRE (calculé d'après OMS/Schofield pour ce profil)
 6. ✅ MICRONUTRIMENTS : Assurer les apports en calcium, fer, zinc, vitamine D selon le référentiel
-7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 7 jours
+7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 28 jours. Chaque semaine doit proposer des plats distincts
 8. ✅ CULTURE : Respecter la structure de repas et les aliments culturellement adaptés
 9. ✅ PRATICITÉ : Adapter à la réalité familiale (temps cuisine ${profile.cookTime || 'moyen'})
 10. ⚠️ AVERTISSEMENT : Rappeler qu'il s'agit de recommandations générales, à valider avec un professionnel de santé
@@ -439,6 +440,7 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
     "macro_fats_pct": 30
   },
   "week": [
+    // SEMAINE 1 — 7 jours (index 0-6)
     {
       "day": "Lundi",
       "day_en": "Monday",
@@ -459,10 +461,15 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
             }
           ],
           "prep_time_min": 5,
-          "recipe_hint": "Astuce concrète et pratique de préparation ou présentation"
+          "recipe_hint": "Astuce de préparation"
         }
       ]
-    }
+    },
+    // ... Mardi à Dimanche semaine 1 ...
+    // SEMAINE 2 — 7 jours (index 7-13) — REPAS DIFFÉRENTS de la semaine 1
+    // SEMAINE 3 — 7 jours (index 14-20) — REPAS DIFFÉRENTS des semaines 1 et 2
+    // SEMAINE 4 — 7 jours (index 21-27) — REPAS DIFFÉRENTS des semaines 1, 2 et 3
+    // TOTAL : 28 objets jour dans ce tableau
   ]${isPremium ? `,
   "recipes": [
     {
@@ -493,13 +500,19 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
 }
 
 IMPORTANT FINAL :
-- Génère les 7 jours COMPLETS avec TOUS les repas selon la structure culturelle
+- Génère EXACTEMENT 28 jours (4 semaines × 7 jours) dans le tableau "week" — 28 objets au total
+- Les jours se nomment Lundi, Mardi, …, Dimanche et se RÉPÈTENT 4 fois (semaine 1 puis semaine 2, etc.)
+- CHAQUE SEMAINE doit proposer des plats VRAIMENT DIFFÉRENTS :
+  • Semaine 1 : base classique (poulet, pâtes, riz, légumes verts…)
+  • Semaine 2 : exploration (poisson, quinoa, légumineuses, légumes racines…)
+  • Semaine 3 : cuisine du monde adaptée à l'âge (curry doux, tajine, wok, risotto…)
+  • Semaine 4 : retour aux favoris avec nouvelles combinaisons
 - Quantités TOUJOURS en grammes (g) ou millilitres (ml) — jamais "1 portion" ou "au goût"
 - Calories PRÉCISES par item et par repas
 - Varie les sources protéiques (viande, poisson, œufs, légumineuses) chaque jour
-- Inclure au moins 5 couleurs de légumes différents sur la semaine
+- Inclure au moins 5 couleurs de légumes différents PAR semaine (20+ sur le mois)
 - Les menus du week-end peuvent être légèrement plus élaborés (plus de temps de cuisine)
-- Adapte STRICTEMENT au profil : allergènes, refus, budget, temps cuisine`;
+- Adapte STRICTEMENT au profil : allergènes, refus, temps cuisine`;
   },
 
   buildChatPrompt(userMessage, profile, planContext) {
