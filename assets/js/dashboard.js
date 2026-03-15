@@ -3,9 +3,11 @@
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
-  const plan    = JSON.parse(localStorage.getItem('brocoliPlan')    || 'null');
-  const history = JSON.parse(localStorage.getItem('brocoliHistory') || '[]');
+  // ── Multi-child migration & data loading ──
+  if (window.CHILDREN) { CHILDREN.migrate(); CHILDREN.cleanupIncomplete(); }
+  const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+  const plan    = window.CHILDREN ? CHILDREN.getPlan()    : JSON.parse(localStorage.getItem('brocoliPlan')    || 'null');
+  const history = window.CHILDREN ? CHILDREN.getHistory()  : JSON.parse(localStorage.getItem('brocoliHistory') || '[]');
 
   // ---- Guard: redirect to login if not authenticated ----
   if (!AUTH?.isLoggedIn()) {
@@ -20,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
                              t('dash.evening')  || 'Bonsoir';
   const name  = profile.name || profile.parentName || '';
   setText('dashGreet', `${greet}${name ? ' ' + name : ''} 👋`);
+
+  // ---- Child selector (multi-child) ----
+  renderChildSelector();
 
   // ---- Stats row ----
   const userPlan = profile.selectedPlan || 'free';
@@ -146,12 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (weight) {
       profile.weight = weight;
       if (height) profile.height = height;
-      localStorage.setItem('brocoliProfile', JSON.stringify(profile));
+      if (window.CHILDREN) CHILDREN.saveProfile(profile);
+      else localStorage.setItem('brocoliProfile', JSON.stringify(profile));
     }
 
     // Store check-in
     history.push(entry);
-    localStorage.setItem('brocoliHistory', JSON.stringify(history));
+    if (window.CHILDREN) CHILDREN.saveHistory(history);
+    else localStorage.setItem('brocoliHistory', JSON.stringify(history));
 
     // Update stats display
     if (weight) setText('ds-weight', weight);
@@ -174,13 +181,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newPlan && newPlan.analysis) {
           // Merge new plan: keep history, update plan data
           const updatedPlan = { ...plan, ...newPlan, generatedAt: new Date().toISOString() };
-          localStorage.setItem('brocoliPlan', JSON.stringify(updatedPlan));
+          if (window.CHILDREN) CHILDREN.savePlan(updatedPlan);
+          else localStorage.setItem('brocoliPlan', JSON.stringify(updatedPlan));
 
           // Save AI advice from check-in into history entry
           if (newPlan.analysis?.checkin_advice) {
             entry.aiAdvice = newPlan.analysis.checkin_advice;
             history[history.length - 1] = entry;
-            localStorage.setItem('brocoliHistory', JSON.stringify(history));
+            if (window.CHILDREN) CHILDREN.saveHistory(history);
+            else localStorage.setItem('brocoliHistory', JSON.stringify(history));
           }
 
           showToast(t('toast.planAdjusted')   || '✅ Plan ajusté pour la semaine prochaine !', 'success');
@@ -411,4 +420,76 @@ function escHtml(str) {
 
 function t(key) {
   return (window.I18N?.current && window.I18N.current[key]) || null;
+}
+
+// ============================================================
+// CHILD SELECTOR (multi-child support)
+// ============================================================
+
+function renderChildSelector() {
+  const container = document.getElementById('childSelectorWrap');
+  if (!container || !window.CHILDREN) return;
+
+  const allChildren = CHILDREN.getAllChildren();
+  const activeId    = CHILDREN.getActiveChildId();
+
+  // Hide selector if only 1 child and free plan
+  if (allChildren.length <= 1 && CHILDREN.getTier() === 'free') {
+    // Still show for 1 child on paid plans (to show "Add" button)
+    if (allChildren.length <= 1 && CHILDREN.getTier() === 'free') {
+      container.style.display = 'none';
+      return;
+    }
+  }
+
+  const _t = k => (window.I18N?.t(k)) || null;
+
+  let html = '<div class="child-selector">';
+  html += '<div class="child-selector-label">' + (_t('children.selector') || 'Mes enfants') + '</div>';
+  html += '<div class="child-selector-pills">';
+
+  allChildren.forEach(child => {
+    const isActive = child.id === activeId;
+    const name = child.profile?.name || (_t('s.yourChild') || 'Enfant');
+    const age  = child.profile?.age  || '?';
+    const ageUnit = child.profile?.profil === 'bebe'
+      ? (_t('q2.months') || 'mois')
+      : (_t('q2.years')  || 'ans');
+    const hasPlan = !!(child.plan && child.plan.analysis);
+
+    html += '<button class="child-pill' + (isActive ? ' active' : '') + '" data-child-id="' + child.id + '">'
+      + '<span class="child-pill-name">' + escHtml(name) + '</span>'
+      + '<span class="child-pill-age">' + age + ' ' + ageUnit + '</span>'
+      + (isActive ? '<span class="child-pill-badge">' + (_t('children.active') || 'Actif') + '</span>' : '')
+      + (!hasPlan && !isActive ? '<span class="child-pill-age">' + (_t('children.noPlan') || 'Pas de plan') + '</span>' : '')
+      + '</button>';
+  });
+
+  // Add child button
+  html += '<button class="child-pill child-pill-add" id="addChildBtn">'
+    + '<span>+ ' + (_t('children.add') || 'Ajouter un enfant') + '</span>'
+    + '</button>';
+
+  html += '</div></div>';
+  container.innerHTML = html;
+
+  // Event: switch child
+  container.querySelectorAll('.child-pill[data-child-id]').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const childId = pill.dataset.childId;
+      if (childId !== activeId) {
+        CHILDREN.setActiveChild(childId);
+        window.location.reload();
+      }
+    });
+  });
+
+  // Event: add child
+  document.getElementById('addChildBtn')?.addEventListener('click', () => {
+    if (CHILDREN.canAddChild()) {
+      CHILDREN.startAddChildFlow();
+    } else {
+      CHILDREN.showUpgradePopup();
+    }
+  });
 }

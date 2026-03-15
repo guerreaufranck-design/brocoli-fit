@@ -11,13 +11,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return (window.I18N && window.I18N.t(key)) || fallback || key;
   }
 
-  // ── Guard: free users can only create 1 plan ──────────────────────────
-  const existingPlan = JSON.parse(localStorage.getItem('brocoliPlan') || 'null');
-  const existingSub  = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
-  const existingProfile = JSON.parse(localStorage.getItem('brocoliProfile') || 'null');
-  const currentTier = existingSub?.plan || existingProfile?.selectedPlan || 'free';
+  // ── Multi-child: migration & mode detection ──────────────────────────
+  if (window.CHILDREN) CHILDREN.migrate();
+  const _qParams   = new URLSearchParams(window.location.search);
+  const _addMode   = _qParams.get('mode') === 'add-child';
+  const _addChildId= _qParams.get('childId');
+  // If in add-child mode, set the new child as active
+  if (_addMode && _addChildId && window.CHILDREN) {
+    CHILDREN.setActiveChild(_addChildId);
+  }
 
-  if (existingPlan && existingPlan.analysis && currentTier === 'free') {
+  // ── Guard: free users can only create 1 plan ──────────────────────────
+  const existingPlan = window.CHILDREN ? CHILDREN.getPlan() : JSON.parse(localStorage.getItem('brocoliPlan') || 'null');
+  const existingSub  = JSON.parse(localStorage.getItem('brocoliSubscription') || 'null');
+  const existingProfile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || 'null');
+  const currentTier = window.CHILDREN ? CHILDREN.getTier() : (existingSub?.plan || existingProfile?.selectedPlan || 'free');
+
+  // Skip guard in add-child mode (user already passed canAddChild check)
+  if (!_addMode && existingPlan && existingPlan.analysis && currentTier === 'free') {
     // Free user already has a plan → block access
     document.querySelector('.q-container')?.remove();
     const main = document.querySelector('main') || document.body;
@@ -520,8 +531,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Effective diet
     if (data.diet === 'autre' && data.dietOther.trim()) data.diet = data.dietOther.trim();
 
-    // Save profile to localStorage
-    localStorage.setItem('brocoliProfile', JSON.stringify(data));
+    // Save profile (multi-child aware)
+    if (window.CHILDREN) {
+      // If this is a brand-new user (no children yet), create the first child
+      if (!CHILDREN.getActiveChildId()) {
+        CHILDREN.addChild(data);
+      } else {
+        CHILDREN.saveProfile(data);
+      }
+    } else {
+      localStorage.setItem('brocoliProfile', JSON.stringify(data));
+    }
     localStorage.setItem('brocoliSelectedPlan', data.selectedPlan);
 
     if (nextLabel) nextLabel.textContent = t('q.loading', '⏳ Préparation…');

@@ -491,6 +491,7 @@
 <script src="config.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/auth.js"></script>
+<script src="assets/js/children.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/gemini.js"></script>
 <script>
@@ -531,16 +532,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* ── Data I/O ───────────────────────────────────────────────*/
 function loadData() {
-  try { profile      = JSON.parse(localStorage.getItem('brocoliProfile')      || '{}');         } catch(e){ profile = {}; }
-  try { plan         = JSON.parse(localStorage.getItem('brocoliPlan')         || 'null');        } catch(e){ plan = null; }
-  try { checkins     = JSON.parse(localStorage.getItem('brocoliCheckins')     || '[]');          } catch(e){ checkins = []; }
+  if (window.CHILDREN) { CHILDREN.migrate(); }
+  if (window.CHILDREN) {
+    profile  = CHILDREN.getProfile();
+    plan     = CHILDREN.getPlan();
+    checkins = CHILDREN.getCheckins();
+  } else {
+    try { profile  = JSON.parse(localStorage.getItem('brocoliProfile')  || '{}');  } catch(e){ profile = {}; }
+    try { plan     = JSON.parse(localStorage.getItem('brocoliPlan')     || 'null'); } catch(e){ plan = null; }
+    try { checkins = JSON.parse(localStorage.getItem('brocoliCheckins') || '[]');   } catch(e){ checkins = []; }
+  }
   try { subscription = JSON.parse(localStorage.getItem('brocoliSubscription') || '{"plan":"free"}'); } catch(e){ subscription = {plan:'free'}; }
 }
-function saveData() { localStorage.setItem('brocoliCheckins', JSON.stringify(checkins)); }
+function saveData() {
+  if (window.CHILDREN) { CHILDREN.saveCheckins(checkins); }
+  else { localStorage.setItem('brocoliCheckins', JSON.stringify(checkins)); }
+}
 
 /* ── Week & date helpers ────────────────────────────────────*/
 function getCurrentWeek() {
-  var pd = localStorage.getItem('brocoliPlanDate');
+  var pd = window.CHILDREN ? CHILDREN.getPlanDate() : localStorage.getItem('brocoliPlanDate');
   if (!pd) return checkins.length + 1;
   var diff = new Date() - new Date(pd);
   return Math.max(1, Math.ceil(diff / (7*24*60*60*1000)));
@@ -834,8 +845,11 @@ async function showAiAdaptation(checkinData) {
         var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
         var ap = await GEMINI.call(adaptPrompt, true);
         if (ap && ap.week) {
-          localStorage.setItem('brocoliPlan', JSON.stringify(ap));
-          localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+          if (window.CHILDREN) { CHILDREN.savePlan(ap); }
+          else {
+            localStorage.setItem('brocoliPlan', JSON.stringify(ap));
+            localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+          }
           // Show a subtle note that plan was updated
           var planNote = document.createElement('div');
           planNote.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.8rem;color:#166534;text-align:center';

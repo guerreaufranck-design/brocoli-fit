@@ -60,6 +60,7 @@
 <script src="config.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/auth.js"></script>
+<script src="assets/js/children.js"></script>
 <script src="assets/js/gemini.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
@@ -70,7 +71,8 @@
   });
 
   function startAnalysis() {
-    const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+    if (window.CHILDREN) CHILDREN.migrate();
+    const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
     if (!profile || !profile.profil) {
       window.location.href = 'questionnaire.html';
       return;

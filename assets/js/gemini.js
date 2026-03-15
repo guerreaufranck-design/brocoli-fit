@@ -870,8 +870,11 @@ async function runGeminiAnalysis(profile) {
     await delay(400);
 
     // Save result
-    localStorage.setItem('brocoliPlan', JSON.stringify(result));
-    localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+    if (window.CHILDREN) { CHILDREN.savePlan(result); }
+    else {
+      localStorage.setItem('brocoliPlan', JSON.stringify(result));
+      localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+    }
 
     // Redirect to plan page
     window.location.href = 'plan.html';

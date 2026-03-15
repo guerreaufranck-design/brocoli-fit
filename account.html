@@ -268,6 +268,7 @@
 <script src="config.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/auth.js"></script>
+<script src="assets/js/children.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
@@ -301,11 +302,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // ── Child profile ─────────────────────────────────────
-  const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
-  const hasProfile = profile && (profile.name || profile.age || profile.weight);
+  // ── Child profiles (multi-child) ──────────────────────
+  if (window.CHILDREN) CHILDREN.migrate();
+  const allChildren = window.CHILDREN ? CHILDREN.getAllChildren() : [];
+  const activeChildId = window.CHILDREN ? CHILDREN.getActiveChildId() : null;
 
-  if (hasProfile) {
+  // Fallback for old single-child layout
+  const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+
+  const childContainer = document.getElementById('childProfileContent');
+  const noChildEl = document.getElementById('noChildProfile');
+
+  if (allChildren.length > 0 && childContainer) {
+    // Multi-child: render all children as cards
+    let childHtml = '';
+    allChildren.forEach(child => {
+      const p = child.profile || {};
+      const isActive = child.id === activeChildId;
+      const name = p.name || (_t('s.yourChild') || 'Enfant');
+      const age = p.age ? p.age + (p.profil === 'bebe' ? ' mois' : ' ans') : '—';
+      const hasPlan = !!(child.plan && child.plan.analysis);
+
+      childHtml += '<div class="child-card' + (isActive ? ' child-card-active' : '') + '" style="background:#fff;border-radius:var(--r-xl);border:' + (isActive ? '2px solid var(--green)' : '1.5px solid var(--border)') + ';padding:1.25rem;margin-bottom:.875rem">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">'
+        + '<div style="display:flex;align-items:center;gap:.75rem">'
+        + '<span style="font-size:1.5rem">' + (p.profil === 'bebe' ? '👶' : p.profil === 'ado' ? '🧑' : '👧') + '</span>'
+        + '<div>'
+        + '<div style="font-weight:900;color:var(--text)">' + escH(name) + '</div>'
+        + '<div style="font-size:.75rem;color:var(--text-muted)">' + age + (p.weight ? ' · ' + p.weight + ' kg' : '') + (p.height ? ' · ' + p.height + ' cm' : '') + '</div>'
+        + '</div>'
+        + '</div>'
+        + (isActive ? '<span style="font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--green-dark);background:var(--green-pale);padding:.25rem .75rem;border-radius:var(--r-full)">' + (_t('children.active') || 'Actif') + '</span>' : '')
+        + '</div>'
+        + '<div style="display:flex;flex-wrap:wrap;gap:.5rem;font-size:.75rem">'
+        + (p.objectif ? '<span class="tag">' + escH(p.objectif) + '</span>' : '')
+        + (p.diet ? '<span class="tag">' + escH(p.diet) + '</span>' : '')
+        + (hasPlan ? '<span class="tag" style="background:var(--green-pale);color:var(--green-dark)">✅ Plan actif</span>' : '<span class="tag" style="background:var(--orange-light);color:#8a4a00">⏳ Pas de plan</span>')
+        + '</div>'
+        + '</div>';
+    });
+
+    // Add child button
+    childHtml += '<button id="accountAddChild" class="btn btn-outline btn-full btn-sm" style="margin-top:.5rem;border-style:dashed;border-color:var(--green);color:var(--green-dark)">'
+      + '+ ' + (_t('children.add') || 'Ajouter un enfant')
+      + '</button>';
+
+    childContainer.innerHTML = childHtml;
+    if (noChildEl) noChildEl.style.display = 'none';
+
+    // Add child button event
+    document.getElementById('accountAddChild')?.addEventListener('click', () => {
+      if (window.CHILDREN && CHILDREN.canAddChild()) {
+        CHILDREN.startAddChildFlow();
+      } else if (window.CHILDREN) {
+        CHILDREN.showUpgradePopup();
+      }
+    });
+  } else if (profile && (profile.name || profile.age || profile.weight)) {
+    // Single-child fallback
     document.getElementById('childName').textContent = profile.name || '—';
     const profilType = profile.profil || 'enfant';
     document.getElementById('childAge').textContent = profile.age
@@ -318,9 +372,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('childAllergens').textContent =
       (profile.allergens && profile.allergens.length) ? profile.allergens.join(', ') : 'Aucun';
   } else {
-    document.getElementById('childProfileContent').style.display = 'none';
-    document.getElementById('noChildProfile').style.display = '';
+    if (childContainer) childContainer.style.display = 'none';
+    if (noChildEl) noChildEl.style.display = '';
   }
+
+  function escH(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
   // ── Subscription ──────────────────────────────────────
   const sub = JSON.parse(localStorage.getItem('brocoliSubscription') || '{}');
