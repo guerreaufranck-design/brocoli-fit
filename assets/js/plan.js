@@ -105,10 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
               ${_t('plan.unlockDesc', 'Le plan gratuit inclut 1 semaine de programme. Passez au plan Essentiel ou Premium pour accéder aux 4 semaines complètes avec des repas variés chaque semaine.')}
             </p>
             <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
-              <a href="questionnaire.html?plan=essential" class="btn btn-green btn-sm">
+              <a href="login.html?redirect=checkout&plan=essential" class="btn btn-green btn-sm">
                 ⭐ ${_t('plan.ess', 'Essentiel')} — 9€/mois
               </a>
-              <a href="questionnaire.html?plan=premium" class="btn btn-dark btn-sm">
+              <a href="login.html?redirect=checkout&plan=premium" class="btn btn-dark btn-sm">
                 👑 ${_t('plan.prem', 'Premium')} — 14,90€/mois
               </a>
             </div>

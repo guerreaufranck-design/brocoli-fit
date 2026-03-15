@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
       payment_method_types: ['card'],
       line_items: [{ price: PRICES[plan], quantity: 1 }],
       success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}&plan=${plan}`,
-      cancel_url:  `${baseUrl}/questionnaire.html?plan=${plan}&cancelled=1`,
+      cancel_url:  `${baseUrl}/index.html#plans`,
       locale: stripeLocale,
       allow_promotion_codes: true,
       metadata: { plan },

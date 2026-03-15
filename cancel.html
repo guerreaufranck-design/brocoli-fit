@@ -25,8 +25,8 @@
   <p class="cancel-desc" data-i18n="cancel.desc">Aucun montant n'a été débité. Vous pouvez reprendre votre questionnaire ou choisir le plan gratuit pour commencer.</p>
 
   <div class="cancel-actions">
-    <a href="questionnaire.html" id="backBtn" class="btn btn-primary btn-lg" data-i18n="cancel.retry">Reprendre mon questionnaire</a>
-    <a href="questionnaire.html?plan=free" class="btn btn-outline btn-lg" data-i18n="cancel.free">Continuer avec le plan gratuit</a>
+    <a href="index.html#plans" id="backBtn" class="btn btn-primary btn-lg" data-i18n="cancel.retry">Voir nos offres</a>
+    <a href="login.html?signup=true&redirect=questionnaire&plan=free" class="btn btn-outline btn-lg" data-i18n="cancel.free">Continuer avec le plan gratuit</a>
     <a href="index.html#plans" class="btn btn-ghost" style="color:var(--text-muted);font-size:var(--text-sm)" data-i18n="cancel.viewPlans">Voir les plans →</a>
   </div>
 </div>
@@ -34,9 +34,7 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
-  // If a plan was in the URL, send back to that questionnaire step
-  const plan = new URLSearchParams(window.location.search).get('plan');
-  if (plan) document.getElementById('backBtn').href = `questionnaire.html?plan=${plan}`;
+  // Cancel page — backBtn already points to index.html#plans
 </script>
 </body>
 </html>

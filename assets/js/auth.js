@@ -24,6 +24,85 @@ if (!_sb) {
 }
 
 // ============================================================
+// Redirection post-authentification
+// Gère : redirect=checkout (→ Stripe), redirect=questionnaire, ou chemin classique
+// ============================================================
+async function _handlePostAuthRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  let redirect = params.get('redirect');
+  let plan     = params.get('plan');
+  let profil   = params.get('profil');
+
+  // Source 2 : localStorage (Google OAuth / Magic Link — params perdus après redirect externe)
+  if (!redirect) {
+    const stored = JSON.parse(localStorage.getItem('brocoliAuthRedirect') || 'null');
+    if (stored) {
+      localStorage.removeItem('brocoliAuthRedirect');
+      redirect = stored.redirect;
+      plan     = stored.plan;
+      profil   = stored.profil;
+    }
+  }
+
+  // ── redirect=checkout + plan payant → Stripe Checkout ──
+  if (redirect === 'checkout' && plan && plan !== 'free') {
+    localStorage.setItem('brocoliSelectedPlan', plan);
+    try {
+      const locale = window.I18N?.current || 'fr';
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, locale }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      console.error('Stripe session error:', data.error);
+    } catch (e) {
+      console.error('Stripe redirect error:', e);
+    }
+    // Fallback : aller au questionnaire si Stripe échoue
+    window.location.href = 'questionnaire.html?plan=' + plan;
+    return;
+  }
+
+  // ── redirect=questionnaire → questionnaire ──
+  if (redirect === 'questionnaire') {
+    if (plan) localStorage.setItem('brocoliSelectedPlan', plan);
+    const qs = [plan && `plan=${plan}`, profil && `profil=${profil}`].filter(Boolean).join('&');
+    window.location.href = `questionnaire.html${qs ? '?' + qs : ''}`;
+    return;
+  }
+
+  // ── redirect = chemin classique (ex: dashboard, plan, analyse) ──
+  if (redirect) {
+    window.location.href = decodeURIComponent(redirect);
+    return;
+  }
+
+  // ── Défaut : dashboard ──
+  if (!window.location.pathname.includes('dashboard') &&
+      !window.location.pathname.includes('plan') &&
+      !window.location.pathname.includes('analyse') &&
+      !window.location.pathname.includes('questionnaire')) {
+    window.location.href = 'dashboard.html';
+  }
+}
+
+// ── Stocker l'intent de redirection avant OAuth/MagicLink ──
+function _storeAuthRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  const redirect = params.get('redirect');
+  const plan     = params.get('plan');
+  const profil   = params.get('profil');
+  if (redirect) {
+    localStorage.setItem('brocoliAuthRedirect', JSON.stringify({ redirect, plan, profil }));
+  }
+}
+
+// ============================================================
 const AUTH = {
 
   _user: null,
@@ -39,15 +118,7 @@ const AUTH = {
       _sb.auth.onAuthStateChange((event, session) => {
         this._user = session?.user || null;
         if (event === 'SIGNED_IN') {
-          // Après login, redirige selon le paramètre ?redirect= ou vers dashboard
-          const redirectTo = new URLSearchParams(window.location.search).get('redirect');
-          if (redirectTo) {
-            window.location.href = decodeURIComponent(redirectTo);
-          } else if (!window.location.pathname.includes('dashboard') &&
-                     !window.location.pathname.includes('plan') &&
-                     !window.location.pathname.includes('analyse')) {
-            window.location.href = 'dashboard.html';
-          }
+          _handlePostAuthRedirect();
         }
         if (event === 'SIGNED_OUT') {
           window.location.href = 'index.html';
@@ -89,7 +160,8 @@ const AUTH = {
   // ── Magic Link (email sans mot de passe) ──────────────────
   async sendMagicLink(email) {
     if (!_sb) throw new Error('Supabase non configuré');
-    const redirectTo = `${window.location.origin}/dashboard.html`;
+    _storeAuthRedirect();
+    const redirectTo = `${window.location.origin}/login.html`;
     const { error } = await _sb.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectTo } });
     if (error) throw new Error(error.message);
   },
@@ -97,7 +169,8 @@ const AUTH = {
   // ── Google OAuth ──────────────────────────────────────────
   async loginWithGoogle() {
     if (!_sb) throw new Error('Supabase non configuré');
-    const redirectTo = `${window.location.origin}/dashboard.html`;
+    _storeAuthRedirect();
+    const redirectTo = `${window.location.origin}/login.html`;
     const { error } = await _sb.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo }
@@ -155,9 +228,9 @@ function _updateNavAuth() {
     }
   });
 
-  // Bouton "Commencer" → "Mon tableau de bord" si connecté
-  document.querySelectorAll('a[href="questionnaire.html"]').forEach(el => {
-    if (loggedIn) {
+  // Boutons "Commencer" / liens vers login.html?redirect=questionnaire → "Mon tableau de bord" si connecté
+  document.querySelectorAll('a[href^="login.html?"]').forEach(el => {
+    if (loggedIn && el.href.includes('redirect=questionnaire')) {
       el.textContent = '🥦 Mon tableau de bord';
       el.href = 'dashboard.html';
     }
@@ -165,7 +238,7 @@ function _updateNavAuth() {
 }
 
 // ============================================================
-// Logique de la page login.html
+// Logique de la page login.html + protection des pages
 // ============================================================
 document.addEventListener('DOMContentLoaded', async () => {
   await AUTH.init();
@@ -173,11 +246,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Mise à jour du header sur toutes les pages
   _updateNavAuth();
 
-  // Sur la page login : si déjà connecté → rediriger
+  // Sur la page login : si déjà connecté → rediriger via _handlePostAuthRedirect
   if (window.location.pathname.includes('login')) {
     if (AUTH.isLoggedIn()) {
-      const redirect = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
-      window.location.href = decodeURIComponent(redirect);
+      _handlePostAuthRedirect();
       return;
     }
   }
@@ -186,12 +258,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ⚠️ Exception : si ?code= est dans l'URL, c'est un retour OAuth PKCE en cours
   //    → ne pas rediriger, laisser Supabase finir l'échange du code
   const _hasOAuthCode = new URLSearchParams(window.location.search).has('code');
-  const _protectedPages = ['dashboard', 'plan', 'analyse'];
+  const _protectedPages = ['dashboard', 'plan', 'analyse', 'questionnaire'];
   const _currentPage = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '');
   if (!_hasOAuthCode && _protectedPages.some(p => _currentPage === p || _currentPage.startsWith(p))) {
     if (!AUTH.isLoggedIn()) {
       const _dest = _currentPage || 'dashboard';
-      window.location.href = '/login?signup=true&redirect=' + encodeURIComponent(_dest);
+      window.location.href = '/login.html?signup=true&redirect=' + encodeURIComponent(_dest);
       return;
     }
   }
