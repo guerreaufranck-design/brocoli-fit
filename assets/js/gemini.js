@@ -95,19 +95,44 @@ const GEMINI = {
 
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const finishReason = data.candidates?.[0]?.finishReason || '';
 
     if (jsonMode) {
-      try {
-        return JSON.parse(text);
-      } catch {
-        // Try markdown code block
-        const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-        if (match) { try { return JSON.parse(match[1]); } catch {} }
-        // Try raw JSON extraction (first { to last })
-        const s = text.indexOf('{'), e = text.lastIndexOf('}');
-        if (s !== -1 && e > s) { try { return JSON.parse(text.slice(s, e + 1)); } catch {} }
-        throw new Error((window.I18N?.t('gemini.invalidResp')) || 'Réponse IA invalide. Réessayez.');
+      // 1. Direct parse
+      try { return JSON.parse(text); } catch {}
+      // 2. Markdown code block
+      const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+      if (match) { try { return JSON.parse(match[1]); } catch {} }
+      // 3. Raw JSON extraction (first { to last })
+      const s = text.indexOf('{'), e = text.lastIndexOf('}');
+      if (s !== -1 && e > s) { try { return JSON.parse(text.slice(s, e + 1)); } catch {} }
+      // 4. Truncated JSON repair: close open brackets/braces
+      if (s !== -1 && text.length > 500) {
+        let truncated = text.slice(s);
+        // Remove trailing incomplete value (after last comma or colon)
+        truncated = truncated.replace(/,\s*"[^"]*"?\s*:?\s*[^,\]}]*$/, '');
+        truncated = truncated.replace(/,\s*\{[^}]*$/, '');
+        truncated = truncated.replace(/,\s*\[[^\]]*$/, '');
+        truncated = truncated.replace(/,\s*"[^"]*$/, '');
+        // Count and close open brackets
+        let opens = 0, closesNeeded = '';
+        for (const ch of truncated) {
+          if (ch === '{') opens++;
+          else if (ch === '}') opens--;
+          else if (ch === '[') { opens++; closesNeeded += ']'; }
+          else if (ch === ']') { opens--; closesNeeded = closesNeeded.slice(0, -1); }
+        }
+        // Close remaining open structures
+        while (opens > 0) { truncated += '}'; opens--; }
+        try { return JSON.parse(truncated); } catch {}
       }
+      console.error('Gemini raw response (first 500 chars):', text.slice(0, 500));
+      console.error('Gemini finishReason:', finishReason);
+      throw new Error(
+        finishReason === 'MAX_TOKENS'
+          ? ((window.I18N?.t('gemini.truncated')) || 'La réponse IA a été tronquée. Réessayez.')
+          : ((window.I18N?.t('gemini.invalidResp')) || 'Réponse IA invalide. Réessayez.')
+      );
     }
     return text;
   },
@@ -310,8 +335,6 @@ ${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à cha
       `- Viandes/poissons refusés : ${(profile.dislikeMeat || []).join(', ') || 'aucun'}`,
       `- Autres aliments refusés : ${(profile.dislikeOther || []).join(', ') || 'aucun'}`,
       `- Cuisines préférées : ${(profile.cuisines || []).join(', ') || 'familiale / française'}`,
-      `- Personnes à table : ${profile.people || '4'}`,
-      `- Budget hebdomadaire : ${profile.budget || '50-100€'}`,
       `- Temps de cuisine disponible : ${profile.cookTime || 'moyen (30-45 min)'}`,
       `- Niveau d'activité physique : ${profile.activity || 'léger'}`,
       `- Sports pratiqués : ${(profile.sports || []).join(', ') || 'aucun'}`,
@@ -366,7 +389,7 @@ RÈGLES DE GÉNÉRATION OBLIGATOIRES :
 6. ✅ MICRONUTRIMENTS : Assurer les apports en calcium, fer, zinc, vitamine D selon le référentiel
 7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 7 jours
 8. ✅ CULTURE : Respecter la structure de repas et les aliments culturellement adaptés
-9. ✅ PRATICITÉ : Adapter à la réalité familiale (budget ${profile.budget || 'moyen'}, temps cuisine ${profile.cookTime || 'moyen'})
+9. ✅ PRATICITÉ : Adapter à la réalité familiale (temps cuisine ${profile.cookTime || 'moyen'})
 10. ⚠️ AVERTISSEMENT : Rappeler qu'il s'agit de recommandations générales, à valider avec un professionnel de santé
 
 EXEMPLES DE REPAS ADAPTÉS À L'ÂGE :

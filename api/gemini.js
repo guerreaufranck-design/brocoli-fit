@@ -24,14 +24,14 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Le champ "prompt" est requis.' });
   }
 
-  const model   = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const model   = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   const url     = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const body = {
     contents: [{ parts: [{ text: prompt }] }],
     generationConfig: {
       temperature:     0.7,
-      maxOutputTokens: 32768,
+      maxOutputTokens: 65536,
       ...(jsonMode ? { responseMimeType: 'application/json' } : {})
     }
   };
@@ -56,7 +56,12 @@ module.exports = async (req, res) => {
 
     const tokensIn  = data?.usageMetadata?.promptTokenCount     || '?';
     const tokensOut = data?.usageMetadata?.candidatesTokenCount || '?';
-    console.log(`[Gemini] ✓ ${tokensIn} tokens in / ${tokensOut} tokens out`);
+    const finishReason = data?.candidates?.[0]?.finishReason || 'UNKNOWN';
+    console.log(`[Gemini] ✓ ${tokensIn} tokens in / ${tokensOut} tokens out | finishReason=${finishReason}`);
+
+    if (finishReason === 'MAX_TOKENS') {
+      console.error('[Gemini] ⚠️ Réponse tronquée (MAX_TOKENS) — le JSON est probablement incomplet');
+    }
 
     return res.status(200).json(data);
 
