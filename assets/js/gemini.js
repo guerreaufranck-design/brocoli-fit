@@ -354,8 +354,8 @@ ${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à cha
     const season = month >= 2 && month <= 4 ? 'printemps' : month >= 5 && month <= 7 ? 'été' : month >= 8 && month <= 10 ? 'automne' : 'hiver';
 
     return `Tu es NutriBot, l'expert en nutrition pédiatrique de Brocoli.fit.
-Tu dois générer un programme nutritionnel personnalisé COMPLET pour 2 SEMAINES (14 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
-⚠️ LES 2 SEMAINES DOIVENT ÊTRE DIFFÉRENTES — pas de copier-coller. Varie les protéines, les légumes, les féculents et les recettes d'une semaine à l'autre.
+Tu dois générer un programme nutritionnel personnalisé COMPLET pour 1 SEMAINE (7 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
+⚠️ CHAQUE JOUR DOIT ÊTRE DIFFÉRENT — pas de copier-coller. Varie les protéines, les légumes, les féculents et les recettes chaque jour.
 
 ═══════════════════════════════════════════════
 CONTEXTE CULTUREL — PAYS : ${culture.name}
@@ -407,7 +407,7 @@ RÈGLES DE GÉNÉRATION OBLIGATOIRES :
 4. ✅ PORTIONS : Utiliser EXACTEMENT les grammages du référentiel nutritionnel ci-dessus pour cet âge
 5. ✅ CALORIES : daily_calories = ${cal.target} kcal/j OBLIGATOIRE (calculé d'après OMS/Schofield pour ce profil)
 6. ✅ MICRONUTRIMENTS : Assurer les apports en calcium, fer, zinc, vitamine D selon le référentiel
-7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 14 jours. Chaque semaine doit proposer des plats distincts
+7. ✅ VARIÉTÉ : Chaque jour doit avoir des repas DIFFÉRENTS — pas de répétition sur 7 jours
 8. ✅ CULTURE : Respecter la structure de repas et les aliments culturellement adaptés
 9. ✅ PRATICITÉ : Adapter à la réalité familiale (temps cuisine ${profile.cookTime || 'moyen'})
 10. ⚠️ AVERTISSEMENT : Rappeler qu'il s'agit de recommandations générales, à valider avec un professionnel de santé
@@ -481,9 +481,8 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
         }
       ]
     },
-    // ... Mardi à Dimanche semaine 1 ...
-    // SEMAINE 2 — 7 jours (index 7-13) — REPAS DIFFÉRENTS de la semaine 1
-    // TOTAL : 14 objets jour dans ce tableau
+    // ... Mardi à Dimanche
+    // TOTAL : 7 objets jour dans ce tableau
   ]${isPremium ? `,
   "recipes": [
     {
@@ -514,15 +513,12 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
 }
 
 IMPORTANT FINAL :
-- Génère EXACTEMENT 14 jours (2 semaines × 7 jours) dans le tableau "week" — 14 objets au total
-- Les jours se nomment Lundi, Mardi, …, Dimanche et se RÉPÈTENT 2 fois (semaine 1 puis semaine 2)
-- CHAQUE SEMAINE doit proposer des plats VRAIMENT DIFFÉRENTS :
-  • Semaine 1 : base classique (poulet, pâtes, riz, légumes verts…)
-  • Semaine 2 : exploration (poisson, quinoa, légumineuses, légumes racines…)
+- Génère EXACTEMENT 7 jours (1 semaine, Lundi à Dimanche) dans le tableau "week" — 7 objets au total
+- Chaque jour DOIT proposer des repas DIFFÉRENTS — varie les recettes chaque jour
 - Quantités TOUJOURS en grammes (g) ou millilitres (ml) — jamais "1 portion" ou "au goût"
 - Calories PRÉCISES par item et par repas
 - Varie les sources protéiques (viande, poisson, œufs, légumineuses) chaque jour
-- Inclure au moins 5 couleurs de légumes différents PAR semaine (10+ sur les 2 semaines)
+- Inclure au moins 5 couleurs de légumes différents sur la semaine
 - Les menus du week-end peuvent être légèrement plus élaborés (plus de temps de cuisine)
 - Adapte STRICTEMENT au profil : allergènes, refus, temps cuisine`;
   },
@@ -719,7 +715,7 @@ IMPORTANT :
     const cal = _computeDailyCalories(profile);
 
     return `Tu es NutriBot, expert en nutrition pédiatrique de Brocoli.fit.
-Sur base du suivi hebdomadaire, génère un plan nutritionnel ADAPTÉ pour les 2 prochaines semaines (14 jours).
+Sur base du suivi hebdomadaire, génère un plan nutritionnel ADAPTÉ pour la semaine prochaine (7 jours).
 Langue : ${culture.lang || 'français'}.
 
 Profil : ${profile?.name || 'Enfant'}, ${profile?.age || '?'} ${profile?.profil === 'bebe' ? 'mois' : 'ans'}, ${profile?.weight || '?'} kg, objectif: ${profile?.objectif || 'alimentation saine'}
@@ -741,12 +737,12 @@ ${checkinData.mood === 'bad' || checkinData.mood === 'meh' ? '⚠️ HUMEUR BASS
 - Exclure COMPLÈTEMENT les aliments refusés listés ci-dessus
 - Calories journalières : exactement ${cal.target} kcal/j
 
-Génère EXACTEMENT 14 jours (2 semaines) au même format JSON que le plan original :
+Génère EXACTEMENT 7 jours (1 semaine, Lundi à Dimanche) au même format JSON que le plan original :
 {
   "analysis": { "daily_calories": ${cal.target}, "summary": "Résumé des ajustements", ... },
   "week": [
     { "day": "Lundi", "total_calories": ${cal.target}, "meals": [...] },
-    ... 14 jours (Lundi→Dimanche × 2 semaines)
+    ... 7 jours (Lundi à Dimanche)
   ]
 }`;
   },
