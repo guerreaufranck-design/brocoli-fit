@@ -69,11 +69,52 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---- Week & Day tabs ----
   let currentWeek = 1;
   let currentDay  = 0;
+  const isFree = userPlan === 'free';
 
   const weekData = weeks; // { 1: [...7 days], 2: [...], 3: [...], 4: [...] }
 
+  // Free plan: lock weeks 2-4
+  if (isFree) {
+    document.querySelectorAll('.week-tab').forEach(tab => {
+      const w = parseInt(tab.dataset.week);
+      if (w > 1) {
+        tab.style.opacity = '0.4';
+        tab.style.cursor = 'not-allowed';
+        tab.innerHTML = `🔒 ${tab.textContent}`;
+      }
+    });
+    // Update hero meta to show "1 semaine"
+    if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 1 ${_t('stat.week') || 'semaine'} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
+  }
+
   document.querySelectorAll('.week-tab').forEach(tab => {
     tab.addEventListener('click', () => {
+      const w = parseInt(tab.dataset.week);
+      if (isFree && w > 1) {
+        // Show upgrade card instead of meals
+        const mealsEl = document.getElementById('mealsContent');
+        const dayTabsEl = document.getElementById('dayTabs');
+        if (dayTabsEl) dayTabsEl.innerHTML = '';
+        if (mealsEl) mealsEl.innerHTML = `
+          <div style="text-align:center;padding:3rem 1.5rem;max-width:500px;margin:2rem auto;background:var(--green-pale);border-radius:1.25rem;border:2px dashed var(--green)">
+            <div style="font-size:3rem;margin-bottom:1rem">🔓</div>
+            <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
+              ${_t('plan.unlockWeeks', 'Débloquez les 4 semaines')}
+            </h3>
+            <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
+              ${_t('plan.unlockDesc', 'Le plan gratuit inclut 1 semaine de programme. Passez au plan Essentiel ou Premium pour accéder aux 4 semaines complètes avec des repas variés chaque semaine.')}
+            </p>
+            <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+              <a href="questionnaire.html?plan=essential" class="btn btn-green btn-sm">
+                ⭐ ${_t('plan.ess', 'Essentiel')} — 9€/mois
+              </a>
+              <a href="questionnaire.html?plan=premium" class="btn btn-dark btn-sm">
+                👑 ${_t('plan.prem', 'Premium')} — 19€/mois
+              </a>
+            </div>
+          </div>`;
+        return;
+      }
       document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       currentWeek = parseInt(tab.dataset.week);
