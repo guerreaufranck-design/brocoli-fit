@@ -346,6 +346,13 @@ ${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à cha
     // ── Calcul des calories spécifiques à ce profil ──────────────────────────
     const cal = _computeDailyCalories(profile);
 
+    // ── Saison actuelle ─────────────────────────────────────────────────────
+    const now = new Date();
+    const month = now.getMonth(); // 0-11
+    const monthNames = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    const currentMonth = monthNames[month];
+    const season = month >= 2 && month <= 4 ? 'printemps' : month >= 5 && month <= 7 ? 'été' : month >= 8 && month <= 10 ? 'automne' : 'hiver';
+
     return `Tu es NutriBot, l'expert en nutrition pédiatrique de Brocoli.fit.
 Tu dois générer un programme nutritionnel personnalisé COMPLET pour 4 SEMAINES (28 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
 ⚠️ CHAQUE SEMAINE DOIT ÊTRE DIFFÉRENTE — pas de copier-coller entre les semaines. Varie les protéines, les légumes, les féculents et les recettes d'une semaine à l'autre.
@@ -357,6 +364,18 @@ Langue de réponse : ${culture.lang} (réponds TOUJOURS en ${culture.lang})
 Structure des repas : ${culture.meals.join(' / ')}
 Références guidelines : ${culture.guidelines}
 ${culture.culturalNotes}
+
+═══════════════════════════════════════════════
+SAISON & DISPONIBILITÉ DES PRODUITS
+═══════════════════════════════════════════════
+Mois actuel : ${currentMonth} | Saison : ${season}
+⚠️ OBLIGATION : Utiliser UNIQUEMENT des fruits et légumes DE SAISON disponibles en ${season} dans le pays ${culture.name}.
+Exemples de produits de saison en ${season} :
+${season === 'hiver' ? '• Légumes : poireaux, choux, carottes, navets, courges, betteraves, endives, céleri, topinambour, panais\n• Fruits : pommes, poires, clémentines, oranges, kiwis, bananes' :
+  season === 'printemps' ? '• Légumes : asperges, petits pois, radis, épinards, artichauts, fèves, laitue, carottes nouvelles\n• Fruits : fraises, cerises, rhubarbe, abricots (fin mai), pommes' :
+  season === 'été' ? '• Légumes : tomates, courgettes, aubergines, poivrons, haricots verts, concombre, maïs, fenouil\n• Fruits : pêches, nectarines, abricots, melons, pastèques, figues, framboises, myrtilles' :
+  '• Légumes : potimarron, courges, champignons, brocoli, chou-fleur, poireaux, épinards, betteraves\n• Fruits : pommes, poires, raisins, figues, noix, châtaignes, coings'}
+⛔ NE PAS proposer de fraises en hiver, de courges en été, etc. — respecter la saisonnalité locale.
 
 ═══════════════════════════════════════════════
 PROFIL DE L'ENFANT :
