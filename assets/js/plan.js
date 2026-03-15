@@ -40,9 +40,18 @@ document.addEventListener('DOMContentLoaded', () => {
     heroIntro.textContent = `${_t('plan.intro') || 'Voici le programme personnalisé pour'} ${childName}${age ? `, ${age} ${ageUnit}` : ''}. ${_t('plan.introGoal') || 'Son objectif :'} ${goalText.toLowerCase()}.`;
   }
 
-  // Show upgrade bar for free users
-  if (userPlan === 'free') {
-    document.getElementById('upgradeBar')?.removeAttribute('style');
+  // Show upgrade bar for free/essential users
+  const upgradeBar = document.getElementById('upgradeBar');
+  if (upgradeBar) {
+    if (userPlan === 'free') {
+      upgradeBar.removeAttribute('style');
+      upgradeBar.innerHTML = `🔓 <span>${_t('plan.upgradeFree') || 'Passez au plan Essentiel pour les recettes détaillées, ou Premium pour les recettes + liste de courses.'}</span>
+        <a href="login.html?redirect=checkout&plan=essential" class="btn btn-white btn-sm" style="margin-left:.5rem">⭐ ${_t('plan.ess') || 'Essentiel'}</a>`;
+    } else if (userPlan === 'essential') {
+      upgradeBar.removeAttribute('style');
+      upgradeBar.innerHTML = `🛒 <span>${_t('plan.upgradeEss') || 'Passez au Premium pour la liste de courses automatique.'}</span>
+        <a href="login.html?redirect=checkout&plan=premium" class="btn btn-white btn-sm" style="margin-left:.5rem">👑 ${_t('plan.prem') || 'Premium'}</a>`;
+    }
   }
 
   // ---- Stats ----
@@ -208,9 +217,12 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // ---- Recipes & Shopping (Premium) ----
-  if (userPlan === 'premium') {
+  // ---- Recipes (Essential + Premium) ----
+  if (userPlan === 'essential' || userPlan === 'premium') {
     renderRecipes(plan.recipes || []);
+  }
+  // ---- Shopping list (Premium only) ----
+  if (userPlan === 'premium') {
     renderShopping(plan.shopping_list);
   }
 

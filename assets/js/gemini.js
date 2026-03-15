@@ -483,7 +483,7 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
     },
     // ... Mardi à Dimanche
     // TOTAL : 7 objets jour dans ce tableau
-  ]${isPremium ? `,
+  ]${isEssential ? `,
   "recipes": [
     {
       "name": "Nom de la recette",
@@ -494,10 +494,9 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
       "cook_min": 20,
       "ingredients": [{"item": "poulet", "qty": "200g", "note": "bio de préférence"}],
       "steps": ["Étape 1 précise", "Étape 2 précise"],
-      "allergens": [],
       "substitutions": ["Si pas de poulet → dinde ou tofu selon régime"]
     }
-  ],
+  ]` : ''}${isPremium ? `,
   "shopping_list": {
     "week": 1,
     "persons": ${profile.people || 4},
