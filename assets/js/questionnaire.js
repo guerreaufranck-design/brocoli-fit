@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ⭐ ${t('plan.ess', 'Essentiel')} — 9€/mois (2 enfants)
           </a>
           <a href="questionnaire.html?plan=premium" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
-            👑 ${t('plan.prem', 'Premium')} — 19€/mois (illimité)
+            👑 ${t('plan.prem', 'Premium')} — 14,90€/mois (illimité)
           </a>
         </div>
       </div>`;
