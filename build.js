@@ -26,7 +26,7 @@ window.BROCOLI_CONFIG = {
   PLANS: {
     free:      { price: 0,  name: 'Découverte' },
     essential: { price: 9,  name: 'Essentiel'  },
-    premium:   { price: 19, name: 'Premium'    }
+    premium:   { price: 14.90, name: 'Premium'  }
   }
 };
 `;

@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ⭐ ${_t('plan.ess', 'Essentiel')} — 9€/mois
               </a>
               <a href="questionnaire.html?plan=premium" class="btn btn-dark btn-sm">
-                👑 ${_t('plan.prem', 'Premium')} — 19€/mois
+                👑 ${_t('plan.prem', 'Premium')} — 14,90€/mois
               </a>
             </div>
           </div>`;
