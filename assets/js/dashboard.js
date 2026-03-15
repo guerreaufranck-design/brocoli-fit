@@ -267,7 +267,7 @@ function renderPlanPreview(plan, profile) {
       </div>
       <div class="week-card" style="text-align:center">
         <div style="font-size:1.5rem">📅</div>
-        <div style="font-size:var(--text-xl);font-weight:900;color:var(--green-dark)">4</div>
+        <div style="font-size:var(--text-xl);font-weight:900;color:var(--green-dark)">${Math.ceil((plan.week || []).length / 7)}</div>
         <div style="font-size:var(--text-xs);color:var(--text-muted);font-weight:700;margin-top:.125rem" data-i18n="stat.weeks">semaines</div>
       </div>
     </div>

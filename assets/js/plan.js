@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroMeta = document.getElementById('planHeroMeta');
   const childName = a.name || profile.name || _t('s.yourChild') || 'votre enfant';
   if (heroName) heroName.textContent = `${_t('plan.heroOf') || 'Plan de'} ${childName}`;
-  if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 ${_t('stat.weeks') || 'semaines'} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
+  const totalDays = (plan.week || []).length;
+  const totalWeeks = Math.ceil(totalDays / 7);
+  if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · ${totalWeeks} ${totalWeeks > 1 ? (_t('stat.weeks') || 'semaines') : (_t('stat.week') || 'semaine')} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
 
   // ---- Intro phrase ----
   const heroIntro = document.getElementById('planHeroIntro');
@@ -100,19 +102,39 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="text-align:center;padding:3rem 1.5rem;max-width:500px;margin:2rem auto;background:var(--green-pale);border-radius:1.25rem;border:2px dashed var(--green)">
             <div style="font-size:3rem;margin-bottom:1rem">🔓</div>
             <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
-              ${_t('plan.unlockWeeks', 'Débloquez les 4 semaines')}
+              ${_t('plan.unlockWeeks') || 'Débloquez les semaines suivantes'}
             </h3>
             <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
-              ${_t('plan.unlockDesc', 'Le plan gratuit inclut 1 semaine de programme. Passez au plan Essentiel ou Premium pour accéder aux 4 semaines complètes avec des repas variés chaque semaine.')}
+              ${_t('plan.unlockDesc') || 'Le plan gratuit inclut 1 semaine de programme. Passez au plan Essentiel ou Premium pour accéder au suivi et aux semaines suivantes.'}
             </p>
             <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
               <a href="login.html?redirect=checkout&plan=essential" class="btn btn-green btn-sm">
-                ⭐ ${_t('plan.ess', 'Essentiel')} — 9€/mois
+                ⭐ ${_t('plan.ess') || 'Essentiel'} — 9€/mois
               </a>
               <a href="login.html?redirect=checkout&plan=premium" class="btn btn-dark btn-sm">
-                👑 ${_t('plan.prem', 'Premium')} — 14,90€/mois
+                👑 ${_t('plan.prem') || 'Premium'} — 14,90€/mois
               </a>
             </div>
+          </div>`;
+        return;
+      }
+      // Check if week has real data — if not, show check-in prompt
+      if (!weekData[w] || !weekData[w].length) {
+        const mealsEl = document.getElementById('mealsContent');
+        const dayTabsEl = document.getElementById('dayTabs');
+        if (dayTabsEl) dayTabsEl.innerHTML = '';
+        if (mealsEl) mealsEl.innerHTML = `
+          <div style="text-align:center;padding:3rem 1.5rem;max-width:500px;margin:2rem auto;background:var(--green-pale);border-radius:1.25rem;border:2px dashed var(--green)">
+            <div style="font-size:3rem;margin-bottom:1rem">📋</div>
+            <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
+              ${_t('plan.checkinNeeded') || 'Bilan nécessaire'}
+            </h3>
+            <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
+              ${_t('plan.checkinNeededDesc') || 'Complétez votre bilan hebdomadaire pour générer les 2 prochaines semaines de programme, adaptées à vos retours.'}
+            </p>
+            <a href="suivi.html" class="btn btn-green btn-sm" style="min-width:200px">
+              📊 ${_t('plan.goToCheckin') || 'Faire mon bilan'}
+            </a>
           </div>`;
         return;
       }
@@ -270,13 +292,10 @@ function showRecipe(recipe) {
 }
 
 function distributeWeeks(days) {
-  // If we have 7 days, distribute across 4 weeks (cycling)
+  // Distribute days into weeks (7 days each)
   const weeks = {1:[],2:[],3:[],4:[]};
   days.forEach((d,i) => { weeks[Math.min(4, Math.ceil((i+1)/7)) || 1].push(d); });
-  // Fill weeks 2-4 by cycling week 1 if not enough data
-  for (let w=2; w<=4; w++) {
-    if (!weeks[w].length && weeks[1].length) weeks[w] = weeks[1];
-  }
+  // Do NOT cycle — empty weeks will show a "check-in" prompt
   return weeks;
 }
 
