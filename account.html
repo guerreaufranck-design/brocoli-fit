@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Mon compte</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .account-page { background: var(--bg); min-height: 100vh; font-family: var(--font-sans); }
+
+    /* Nav */
+    .account-nav {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: .875rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 200; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .account-nav-logo { font-family: var(--font-serif); font-style: italic; font-weight: 600; font-size: 1.5rem; color: var(--green-dark); text-decoration: none; }
+    .account-nav-logo span { font-family: var(--font-sans); font-weight: 900; font-size: .65rem; color: var(--orange); font-style: normal; }
+
+    /* Content */
+    .account-content { max-width: 680px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+    .account-header { margin-bottom: 2.5rem; }
+    .account-title { font-family: var(--font-serif); font-style: italic; font-size: 2rem; color: var(--green-dark); margin-bottom: .5rem; }
+    .account-subtitle { font-size: .875rem; color: var(--text-muted); }
+
+    /* Cards */
+    .account-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 1.25rem;
+      padding: 1.75rem; margin-bottom: 1.25rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    }
+    .card-header { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.25rem; }
+    .card-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .card-icon-green { background: #EEF7F1; }
+    .card-icon-orange { background: #FFF3E6; }
+    .card-icon-blue { background: #EDF5FF; }
+    .card-icon-red { background: #FFF0F0; }
+    .card-title { font-family: var(--font-serif); font-style: italic; font-size: 1.15rem; color: var(--green-dark); font-weight: 600; }
+    .card-desc { font-size: .75rem; color: var(--text-muted); }
+
+    /* Info rows */
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: .875rem 0; border-bottom: 1px solid #f0f4f1; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+    .info-value { font-size: .875rem; font-weight: 700; color: var(--text); text-align: right; max-width: 60%; word-break: break-word; }
+
+    /* Plan badge */
+    .plan-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .375rem 1rem; border-radius: 2rem;
+      font-size: .75rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .plan-badge-free { background: #f0f4f1; color: var(--text-muted); }
+    .plan-badge-essential { background: #EEF7F1; color: var(--green-dark); border: 1.5px solid #a5d6a7; }
+    .plan-badge-premium { background: linear-gradient(135deg,#FFF8F0,#FFF3E6); color: #b5651d; border: 1.5px solid #f5c78e; }
+
+    /* Features list */
+    .features-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+    .features-list li { display: flex; align-items: center; gap: .5rem; padding: .375rem 0; font-size: .8rem; color: var(--text); }
+    .feat-check { color: var(--green); font-weight: 900; }
+    .feat-lock { color: var(--text-muted); opacity: .5; }
+
+    /* Action buttons */
+    .account-actions { display: flex; flex-direction: column; gap: .75rem; margin-top: 1.25rem; }
+
+    /* Danger zone */
+    .danger-zone { border-color: #fde2e2; }
+    .danger-zone .card-title { color: #c53030; }
+
+    /* Quick nav */
+    .quick-nav { display: grid; grid-template-columns: repeat(2,1fr); gap: .75rem; margin-bottom: 2rem; }
+    @media(max-width:480px){ .quick-nav { grid-template-columns: 1fr; } }
+    .quick-nav-item {
+      background: #fff; border: 1px solid var(--border); border-radius: 1rem;
+      padding: 1.25rem; text-decoration: none; color: var(--text);
+      display: flex; align-items: center; gap: .875rem;
+      transition: all .2s; box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .quick-nav-item:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(46,125,79,.1); border-color: var(--green); }
+    .quick-nav-icon { font-size: 1.5rem; }
+    .quick-nav-label { font-weight: 700; font-size: .875rem; }
+    .quick-nav-sub { font-size: .68rem; color: var(--text-muted); margin-top: .15rem; }
+  </style>
+</head>
+<body class="account-page">
+
+<!-- NAV -->
+<nav class="account-nav">
+  <a href="index.html" class="account-nav-logo">Brocoli<span>.fit</span></a>
+  <div style="display:flex;gap:.5rem;align-items:center">
+    <a href="dashboard.html" class="btn btn-outline btn-sm" style="font-size:.8rem" data-i18n="account.nav.dashboard">← Tableau de bord</a>
+  </div>
+</nav>
+
+<div class="account-content">
+  <!-- HEADER -->
+  <div class="account-header">
+    <h1 class="account-title" data-i18n="account.title">Mon compte</h1>
+    <p class="account-subtitle" id="accountSubtitle" data-i18n="account.subtitle">Gérez votre profil et votre abonnement Brocoli.fit</p>
+  </div>
+
+  <!-- QUICK NAV -->
+  <div class="quick-nav">
+    <a href="dashboard.html" class="quick-nav-item">
+      <span class="quick-nav-icon">📊</span>
+      <div>
+        <div class="quick-nav-label" data-i18n="account.quick.dashboard">Tableau de bord</div>
+        <div class="quick-nav-sub" data-i18n="account.quick.dashboardSub">Vue d'ensemble & suivi</div>
+      </div>
+    </a>
+    <a href="plan.html" class="quick-nav-item">
+      <span class="quick-nav-icon">🥗</span>
+      <div>
+        <div class="quick-nav-label" data-i18n="account.quick.plan">Mon plan nutritionnel</div>
+        <div class="quick-nav-sub" data-i18n="account.quick.planSub">Menus & recettes</div>
+      </div>
+    </a>
+    <a href="suivi.html" class="quick-nav-item">
+      <span class="quick-nav-icon">📈</span>
+      <div>
+        <div class="quick-nav-label" data-i18n="account.quick.suivi">Suivi & progrès</div>
+        <div class="quick-nav-sub" data-i18n="account.quick.suiviSub">Check-in hebdomadaire</div>
+      </div>
+    </a>
+    <a href="questionnaire.html" class="quick-nav-item">
+      <span class="quick-nav-icon">📝</span>
+      <div>
+        <div class="quick-nav-label" data-i18n="account.quick.questionnaire">Modifier mon profil</div>
+        <div class="quick-nav-sub" data-i18n="account.quick.questionnaireSub">Préférences & objectifs</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- PROFILE CARD -->
+  <div class="account-card">
+    <div class="card-header">
+      <div class="card-icon card-icon-green">👤</div>
+      <div>
+        <div class="card-title" data-i18n="account.profile.title">Informations personnelles</div>
+        <div class="card-desc" data-i18n="account.profile.desc">Votre compte Brocoli.fit</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-label" data-i18n="account.profile.name">Nom</span>
+      <span class="info-value" id="accountName">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Email</span>
+      <span class="info-value" id="accountEmail">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label" data-i18n="account.profile.method">Méthode de connexion</span>
+      <span class="info-value" id="accountMethod">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label" data-i18n="account.profile.joined">Membre depuis</span>
+      <span class="info-value" id="accountJoined">—</span>
+    </div>
+  </div>
+
+  <!-- CHILD PROFILE CARD -->
+  <div class="account-card">
+    <div class="card-header">
+      <div class="card-icon card-icon-blue">👶</div>
+      <div>
+        <div class="card-title" data-i18n="account.child.title">Profil de l'enfant</div>
+        <div class="card-desc" data-i18n="account.child.desc">Informations utilisées pour le plan nutritionnel</div>
+      </div>
+    </div>
+    <div id="childProfileContent">
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.name">Prénom</span>
+        <span class="info-value" id="childName">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.age">Âge</span>
+        <span class="info-value" id="childAge">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.weight">Poids</span>
+        <span class="info-value" id="childWeight">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.height">Taille</span>
+        <span class="info-value" id="childHeight">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.objective">Objectif</span>
+        <span class="info-value" id="childObjective">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.diet">Régime</span>
+        <span class="info-value" id="childDiet">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label" data-i18n="account.child.allergens">Allergènes</span>
+        <span class="info-value" id="childAllergens">—</span>
+      </div>
+    </div>
+    <div id="noChildProfile" style="display:none;text-align:center;padding:1.5rem 0">
+      <p style="font-size:.875rem;color:var(--text-muted);margin-bottom:1rem" data-i18n="account.child.noProfile">Aucun profil enfant configuré</p>
+      <a href="questionnaire.html" class="btn btn-primary btn-sm" data-i18n="account.child.create">Créer un profil →</a>
+    </div>
+  </div>
+
+  <!-- SUBSCRIPTION CARD -->
+  <div class="account-card">
+    <div class="card-header">
+      <div class="card-icon card-icon-orange">💎</div>
+      <div>
+        <div class="card-title" data-i18n="account.sub.title">Mon abonnement</div>
+        <div class="card-desc" data-i18n="account.sub.desc">Gérez votre plan et votre facturation</div>
+      </div>
+    </div>
+    <div class="info-row">
+      <span class="info-label" data-i18n="account.sub.plan">Plan actuel</span>
+      <span class="info-value" id="subPlanBadge"><span class="plan-badge plan-badge-free">Découverte</span></span>
+    </div>
+    <div class="info-row" id="subPriceRow" style="display:none">
+      <span class="info-label" data-i18n="account.sub.price">Prix</span>
+      <span class="info-value" id="subPrice">—</span>
+    </div>
+    <div class="info-row" id="subDateRow" style="display:none">
+      <span class="info-label" data-i18n="account.sub.since">Abonné depuis</span>
+      <span class="info-value" id="subDate">—</span>
+    </div>
+
+    <!-- Plan features -->
+    <ul class="features-list" id="featuresList">
+      <li><span class="feat-check">✓</span> Plan nutritionnel 1 semaine</li>
+    </ul>
+
+    <div class="account-actions">
+      <!-- For free users: upgrade -->
+      <div id="upgradeSection">
+        <a href="index.html#plans" class="btn btn-primary btn-lg btn-full" data-i18n="account.sub.upgrade">Passer à un plan payant →</a>
+      </div>
+      <!-- For paid users: manage -->
+      <div id="manageSection" style="display:none">
+        <button class="btn btn-outline btn-lg btn-full" id="manageSubBtn" data-i18n="account.sub.manage">Gérer mon abonnement (facturation, résiliation)</button>
+        <p style="font-size:.65rem;color:var(--text-muted);text-align:center;margin-top:.5rem" data-i18n="account.sub.stripeNote">Vous serez redirigé vers le portail sécurisé Stripe pour gérer votre abonnement.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DANGER ZONE -->
+  <div class="account-card danger-zone">
+    <div class="card-header">
+      <div class="card-icon card-icon-red">⚠️</div>
+      <div>
+        <div class="card-title" data-i18n="account.danger.title">Zone de danger</div>
+        <div class="card-desc" data-i18n="account.danger.desc">Actions irréversibles</div>
+      </div>
+    </div>
+    <div class="account-actions">
+      <button class="btn btn-outline btn-full" id="logoutBtn" style="border-color:#e53935;color:#e53935" data-i18n="account.danger.logout">Se déconnecter</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  // Wait for auth to init
+  await window.AUTH?.init?.();
+
+  const _t = k => (window.I18N?.t(k)) || null;
+  const user = window.AUTH?.getUser?.();
+
+  // ── User profile ──────────────────────────────────────
+  if (user) {
+    const nameEl = document.getElementById('accountName');
+    const emailEl = document.getElementById('accountEmail');
+    const methodEl = document.getElementById('accountMethod');
+    const joinedEl = document.getElementById('accountJoined');
+
+    const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || '—';
+    if (nameEl) nameEl.textContent = name;
+    if (emailEl) emailEl.textContent = user.email || '—';
+
+    // Auth method
+    const provider = user.app_metadata?.provider || 'email';
+    const methodMap = { google: 'Google', email: 'Email + mot de passe', apple: 'Apple' };
+    if (methodEl) methodEl.textContent = methodMap[provider] || provider;
+
+    // Join date
+    if (joinedEl && user.created_at) {
+      joinedEl.textContent = new Date(user.created_at).toLocaleDateString('fr-FR', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+    }
+  }
+
+  // ── Child profile ─────────────────────────────────────
+  const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+  const hasProfile = profile && (profile.name || profile.age || profile.weight);
+
+  if (hasProfile) {
+    document.getElementById('childName').textContent = profile.name || '—';
+    const profilType = profile.profil || 'enfant';
+    document.getElementById('childAge').textContent = profile.age
+      ? profile.age + (profilType === 'bebe' ? ' mois' : ' ans')
+      : '—';
+    document.getElementById('childWeight').textContent = profile.weight ? profile.weight + ' kg' : '—';
+    document.getElementById('childHeight').textContent = profile.height ? profile.height + ' cm' : '—';
+    document.getElementById('childObjective').textContent = profile.objectif || '—';
+    document.getElementById('childDiet').textContent = profile.diet || 'Omnivore';
+    document.getElementById('childAllergens').textContent =
+      (profile.allergens && profile.allergens.length) ? profile.allergens.join(', ') : 'Aucun';
+  } else {
+    document.getElementById('childProfileContent').style.display = 'none';
+    document.getElementById('noChildProfile').style.display = '';
+  }
+
+  // ── Subscription ──────────────────────────────────────
+  const sub = JSON.parse(localStorage.getItem('brocoliSubscription') || '{}');
+  const planName = sub.plan || localStorage.getItem('brocoliSelectedPlan') || 'free';
+  const config = window.BROCOLI_CONFIG?.PLANS || {};
+
+  const badgeEl = document.getElementById('subPlanBadge');
+  const priceRow = document.getElementById('subPriceRow');
+  const dateRow = document.getElementById('subDateRow');
+  const priceEl = document.getElementById('subPrice');
+  const dateEl = document.getElementById('subDate');
+  const upgradeSection = document.getElementById('upgradeSection');
+  const manageSection = document.getElementById('manageSection');
+  const featuresList = document.getElementById('featuresList');
+
+  const planLabels = {
+    free: { name: _t('account.plan.free') || 'Découverte', badge: 'plan-badge-free', emoji: '🌱' },
+    essential: { name: _t('account.plan.essential') || 'Essentiel', badge: 'plan-badge-essential', emoji: '✅' },
+    premium: { name: _t('account.plan.premium') || 'Premium', badge: 'plan-badge-premium', emoji: '⭐' },
+  };
+
+  const pl = planLabels[planName] || planLabels.free;
+  if (badgeEl) {
+    badgeEl.innerHTML = '<span class="plan-badge ' + pl.badge + '">' + pl.emoji + ' ' + pl.name + '</span>';
+  }
+
+  const isPaid = planName === 'essential' || planName === 'premium';
+
+  if (isPaid) {
+    // Show price
+    if (priceRow) priceRow.style.display = '';
+    const price = config[planName]?.price || (planName === 'essential' ? 9 : 14.90);
+    if (priceEl) priceEl.textContent = price.toFixed(2).replace('.', ',') + ' \u20ac/mois';
+
+    // Show date
+    if (dateRow && sub.paidAt) {
+      dateRow.style.display = '';
+      dateEl.textContent = new Date(sub.paidAt).toLocaleDateString('fr-FR', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+    }
+
+    // Show manage, hide upgrade
+    if (upgradeSection) upgradeSection.style.display = 'none';
+    if (manageSection) manageSection.style.display = '';
+  }
+
+  // Features list
+  const features = {
+    free: [
+      { ok: true, text: _t('account.feat.plan1w') || 'Plan nutritionnel 1 semaine' },
+      { ok: true, text: _t('account.feat.analysis') || 'Analyse nutritionnelle' },
+      { ok: false, text: _t('account.feat.plan4w') || 'Plan 4 semaines complet' },
+      { ok: false, text: _t('account.feat.recipes') || 'Recettes personnalisées' },
+      { ok: false, text: _t('account.feat.shopping') || 'Liste de courses' },
+      { ok: false, text: _t('account.feat.adapt') || 'Adaptation IA hebdomadaire du plan' },
+    ],
+    essential: [
+      { ok: true, text: _t('account.feat.plan4w') || 'Plan nutritionnel 4 semaines' },
+      { ok: true, text: _t('account.feat.analysis') || 'Analyse nutritionnelle complète' },
+      { ok: true, text: _t('account.feat.adapt') || 'Adaptation IA hebdomadaire du plan' },
+      { ok: false, text: _t('account.feat.recipes') || 'Recettes personnalisées' },
+      { ok: false, text: _t('account.feat.shopping') || 'Liste de courses' },
+    ],
+    premium: [
+      { ok: true, text: _t('account.feat.plan4w') || 'Plan nutritionnel 4 semaines' },
+      { ok: true, text: _t('account.feat.analysis') || 'Analyse nutritionnelle complète' },
+      { ok: true, text: _t('account.feat.recipes') || 'Recettes personnalisées' },
+      { ok: true, text: _t('account.feat.shopping') || 'Liste de courses hebdomadaire' },
+      { ok: true, text: _t('account.feat.adapt') || 'Adaptation IA hebdomadaire du plan' },
+    ],
+  };
+
+  const f = features[planName] || features.free;
+  if (featuresList) {
+    featuresList.innerHTML = f.map(item =>
+      '<li><span class="' + (item.ok ? 'feat-check' : 'feat-lock') + '">' +
+      (item.ok ? '✓' : '✗') + '</span> ' +
+      '<span style="' + (item.ok ? '' : 'opacity:.5') + '">' + item.text + '</span></li>'
+    ).join('');
+  }
+
+  // ── Manage subscription (Stripe portal) ───────────────
+  const manageBtn = document.getElementById('manageSubBtn');
+  if (manageBtn) {
+    manageBtn.addEventListener('click', async () => {
+      const customerId = sub.customerId;
+      if (!customerId) {
+        if (window.showToast) showToast(_t('account.err.noCustomer') || 'Impossible de trouver votre identifiant client. Contactez le support.', 'error');
+        return;
+      }
+
+      manageBtn.disabled = true;
+      manageBtn.textContent = _t('account.sub.loading') || 'Redirection en cours…';
+
+      try {
+        const res = await fetch('/api/create-portal-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customerId }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error(data.error || 'Erreur inconnue');
+        }
+      } catch (err) {
+        if (window.showToast) showToast(err.message, 'error');
+        manageBtn.disabled = false;
+        manageBtn.textContent = _t('account.sub.manage') || 'Gérer mon abonnement';
+      }
+    });
+  }
+
+  // ── Logout ────────────────────────────────────────────
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      if (window.AUTH) AUTH.logout();
+    });
+  }
+});
+</script>
+</body>
+</html>
