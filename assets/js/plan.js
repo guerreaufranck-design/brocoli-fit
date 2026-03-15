@@ -195,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="meal-chevron">▼</span>
         </div>
         <div class="meal-body">
+          ${meal.dish_name ? `<div style="font-weight:800;font-size:1.05rem;color:var(--green-dark);margin-bottom:.75rem;line-height:1.4;font-family:var(--font-serif);font-style:italic">🍽️ ${escHtml(meal.dish_name)}</div>` : ''}
           <div class="meal-items">
             ${(meal.items || []).map(item => `
               <div class="meal-item">
@@ -202,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   <div>
                     <div class="meal-item-name">${escHtml(item.name || '')}</div>
                     <div class="meal-item-qty">${escHtml(item.quantity || '')}</div>
-                    ${(item.allergens||[]).map(a => `<span class="allergen-tag">${escHtml(a)}</span>`).join(' ')}
                   </div>
                 </div>
                 <div class="meal-item-r">
@@ -211,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
             `).join('')}
           </div>
-          ${meal.recipe_hint ? `<div class="meal-note">💡 ${escHtml(meal.recipe_hint)}</div>` : ''}
+          ${meal.cooking_notes ? `<div class="meal-note">👨‍🍳 ${escHtml(meal.cooking_notes)}</div>` : ''}
+          ${!meal.cooking_notes && meal.recipe_hint ? `<div class="meal-note">💡 ${escHtml(meal.recipe_hint)}</div>` : ''}
         </div>
       </div>
     `).join('');
