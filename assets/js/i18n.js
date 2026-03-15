@@ -518,6 +518,8 @@ const TRANSLATIONS = {
     'dash.analyzing':         'Analyse en cours…',
     // Plan — chaînes de rendu
     'plan.heroOf':            'Plan de',
+    'plan.intro':             'Voici le programme personnalisé pour',
+    'plan.introGoal':         'Son objectif :',
     'plan.day':               'Jour',
     'plan.recipesTitle':      'Fiches recettes',
     'plan.pers':              'pers.',
@@ -1118,6 +1120,8 @@ const TRANSLATIONS = {
     'dash.analyzing':         'Analysing…',
     // Plan — render strings
     'plan.heroOf':            'Plan for',
+    'plan.intro':             'Here is the personalised programme for',
+    'plan.introGoal':         'Their goal:',
     'plan.day':               'Day',
     'plan.recipesTitle':      'Recipe cards',
     'plan.pers':              'pers.',
@@ -1718,6 +1722,8 @@ const TRANSLATIONS = {
     'dash.analyzing':         'Analyse läuft…',
     // Plan — Anzeigestrings
     'plan.heroOf':            'Plan für',
+    'plan.intro':             'Hier ist das personalisierte Programm für',
+    'plan.introGoal':         'Ziel:',
     'plan.day':               'Tag',
     'plan.recipesTitle':      'Rezeptkarten',
     'plan.pers':              'Pers.',
@@ -2318,6 +2324,8 @@ const TRANSLATIONS = {
     'dash.analyzing':         'Analisi in corso…',
     // Plan — stringhe di rendering
     'plan.heroOf':            'Piano di',
+    'plan.intro':             'Ecco il programma personalizzato per',
+    'plan.introGoal':         'Il suo obiettivo:',
     'plan.day':               'Giorno',
     'plan.recipesTitle':      'Schede ricette',
     'plan.pers':              'pers.',

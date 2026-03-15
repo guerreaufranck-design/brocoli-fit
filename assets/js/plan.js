@@ -27,6 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroName) heroName.textContent = `${_t('plan.heroOf') || 'Plan de'} ${childName}`;
   if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · 4 ${_t('stat.weeks') || 'semaines'} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
 
+  // ---- Intro phrase ----
+  const heroIntro = document.getElementById('planHeroIntro');
+  if (heroIntro) {
+    const goalKey = profile.objectif ? `goal.${profile.objectif}` : null;
+    const goalText = (goalKey && _t(goalKey)) || { sante: 'manger sainement', maintien: 'maintenir son poids', prise: 'prendre du poids', perte: 'perdre du poids' }[profile.objectif] || 'une alimentation équilibrée';
+    const age = profile.age || a.age || '';
+    const ageUnit = profile.profil === 'bebe' ? (_t('unit.months') || 'mois') : (_t('unit.years') || 'ans');
+    heroIntro.textContent = `${_t('plan.intro') || 'Voici le programme personnalisé pour'} ${childName}${age ? `, ${age} ${ageUnit}` : ''}. ${_t('plan.introGoal') || 'Son objectif :'} ${goalText.toLowerCase()}.`;
+  }
+
   // Show upgrade bar for free users
   if (userPlan === 'free') {
     document.getElementById('upgradeBar')?.removeAttribute('style');
