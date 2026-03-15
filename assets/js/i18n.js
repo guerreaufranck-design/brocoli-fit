@@ -725,6 +725,16 @@ const TRANSLATIONS = {
     'account.quick.questionnaire': 'Modifier mon profil',
     'account.quick.questionnaireSub': 'Préférences & objectifs',
     'dash.account':           '⚙️ Compte',
+    // Multi-enfants
+    'children.selector':          'Mes enfants',
+    'children.add':               'Ajouter un enfant',
+    'children.active':            'Actif',
+    'children.noPlan':            'Pas de plan',
+    'children.upgrade.title':     'Limite atteinte',
+    'children.limit.free':        'Le plan Découverte est limité à 1 enfant. Passez au plan Essentiel pour ajouter jusqu\'à 2 enfants.',
+    'children.limit.essential':   'Le plan Essentiel est limité à 2 enfants. Passez au plan Premium pour un nombre illimité d\'enfants.',
+    'children.delete':            'Supprimer ce profil',
+    'children.deleteConfirm':     'Voulez-vous vraiment supprimer ce profil enfant ? Cette action est irréversible.',
   },
 
   en: {
@@ -1397,6 +1407,16 @@ const TRANSLATIONS = {
     'account.quick.questionnaire': 'Edit my profile',
     'account.quick.questionnaireSub': 'Preferences & goals',
     'dash.account':           '⚙️ Account',
+    // Multi-child
+    'children.selector':          'My children',
+    'children.add':               'Add a child',
+    'children.active':            'Active',
+    'children.noPlan':            'No plan',
+    'children.upgrade.title':     'Limit reached',
+    'children.limit.free':        'The Free plan is limited to 1 child. Upgrade to Essential to add up to 2 children.',
+    'children.limit.essential':   'The Essential plan is limited to 2 children. Upgrade to Premium for unlimited children.',
+    'children.delete':            'Delete this profile',
+    'children.deleteConfirm':     'Are you sure you want to delete this child profile? This action cannot be undone.',
   },
 
   de: {
@@ -2030,6 +2050,16 @@ const TRANSLATIONS = {
     'account.danger.title':   'Gefahrenzone',
     'account.danger.logout':  'Abmelden',
     'dash.account':           '⚙️ Konto',
+    // Multi-Kind
+    'children.selector':          'Meine Kinder',
+    'children.add':               'Kind hinzufügen',
+    'children.active':            'Aktiv',
+    'children.noPlan':            'Kein Plan',
+    'children.upgrade.title':     'Limit erreicht',
+    'children.limit.free':        'Der kostenlose Plan ist auf 1 Kind beschränkt. Upgrade auf Essential für bis zu 2 Kinder.',
+    'children.limit.essential':   'Der Essential-Plan ist auf 2 Kinder beschränkt. Upgrade auf Premium für unbegrenzte Kinder.',
+    'children.delete':            'Dieses Profil löschen',
+    'children.deleteConfirm':     'Möchten Sie dieses Kinderprofil wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
   },
 
   it: {
@@ -2663,6 +2693,16 @@ const TRANSLATIONS = {
     'account.danger.title':   'Zona pericolosa',
     'account.danger.logout':  'Disconnettersi',
     'dash.account':           '⚙️ Account',
+    // Multi-bambino
+    'children.selector':          'I miei bambini',
+    'children.add':               'Aggiungi un bambino',
+    'children.active':            'Attivo',
+    'children.noPlan':            'Nessun piano',
+    'children.upgrade.title':     'Limite raggiunto',
+    'children.limit.free':        'Il piano gratuito è limitato a 1 bambino. Passa a Essential per aggiungere fino a 2 bambini.',
+    'children.limit.essential':   'Il piano Essential è limitato a 2 bambini. Passa a Premium per bambini illimitati.',
+    'children.delete':            'Elimina questo profilo',
+    'children.deleteConfirm':     'Vuoi davvero eliminare questo profilo bambino? Questa azione non può essere annullata.',
   }
 };
 

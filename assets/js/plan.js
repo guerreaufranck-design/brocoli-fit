@@ -4,8 +4,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const _t = k => (window.I18N && window.I18N.t(k)) || null;
-  const plan    = JSON.parse(localStorage.getItem('brocoliPlan')    || 'null');
-  const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+  if (window.CHILDREN) CHILDREN.migrate();
+  const plan    = window.CHILDREN ? CHILDREN.getPlan()    : JSON.parse(localStorage.getItem('brocoliPlan')    || 'null');
+  const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
   const userPlan= profile?.selectedPlan || 'free';
 
   if (!plan || !plan.analysis) {

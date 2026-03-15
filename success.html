@@ -50,6 +50,7 @@
 <script src="config.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/auth.js"></script>
+<script src="assets/js/children.js"></script>
 <script src="assets/js/app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
@@ -87,9 +88,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       localStorage.setItem('brocoliSubscription', JSON.stringify(sub));
 
       // Update profile with correct plan
-      const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+      if (window.CHILDREN) CHILDREN.migrate();
+      const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
       profile.selectedPlan = data.plan;
-      localStorage.setItem('brocoliProfile', JSON.stringify(profile));
+      if (window.CHILDREN) CHILDREN.saveProfile(profile);
+      else localStorage.setItem('brocoliProfile', JSON.stringify(profile));
       localStorage.setItem('brocoliSelectedPlan', data.plan);
 
       document.getElementById('loadingMsg').innerHTML =

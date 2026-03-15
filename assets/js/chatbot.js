@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let isOpen    = false;
   let isTyping  = false;
-  const profile = JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
-  const plan    = JSON.parse(localStorage.getItem('brocoliPlan') || '{}');
+  if (window.CHILDREN) CHILDREN.migrate();
+  const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+  const plan    = window.CHILDREN ? (CHILDREN.getPlan() || {}) : JSON.parse(localStorage.getItem('brocoliPlan') || '{}');
 
   // Toggle
   toggle.addEventListener('click', () => {
