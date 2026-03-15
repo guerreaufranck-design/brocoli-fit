@@ -229,11 +229,11 @@ function _updateNavAuth() {
   const loggedIn  = AUTH.isLoggedIn();
   const userName  = AUTH.getUserName();
 
-  // Tous les liens "Connexion" → "Mon espace" si connecté
+  // Tous les liens "Connexion" → "Mon compte" si connecté
   document.querySelectorAll('a[href="login.html"]').forEach(el => {
     if (loggedIn) {
       el.textContent = '👤 ' + userName;
-      el.href = 'dashboard.html';
+      el.href = 'account.html';
     }
   });
 
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ⚠️ Exception : si ?code= est dans l'URL, c'est un retour OAuth PKCE en cours
   //    → ne pas rediriger, laisser Supabase finir l'échange du code
   const _hasOAuthCode = new URLSearchParams(window.location.search).has('code');
-  const _protectedPages = ['dashboard', 'plan', 'analyse', 'questionnaire', 'suivi'];
+  const _protectedPages = ['dashboard', 'plan', 'analyse', 'questionnaire', 'suivi', 'account'];
   const _currentPage = window.location.pathname.replace(/^\//, '').replace(/\.html$/, '');
   if (!_hasOAuthCode && _protectedPages.some(p => _currentPage === p || _currentPage.startsWith(p))) {
     if (!AUTH.isLoggedIn()) {

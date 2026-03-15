@@ -7,12 +7,26 @@
       "maxDuration": 300
     }
   },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/plan",                "destination": "/plan.html" },
     { "source": "/dashboard",           "destination": "/dashboard.html" },
     { "source": "/questionnaire",       "destination": "/questionnaire.html" },
     { "source": "/login",               "destination": "/login.html" },
     { "source": "/analyse",             "destination": "/analyse.html" },
+    { "source": "/suivi",               "destination": "/suivi.html" },
+    { "source": "/account",             "destination": "/account.html" },
+    { "source": "/success",             "destination": "/success.html" },
+    { "source": "/cancel",              "destination": "/cancel.html" },
     { "source": "/blog",                "destination": "/blog/index.html" },
     { "source": "/blog/:article",       "destination": "/blog/:article.html" }
   ]
