@@ -380,7 +380,7 @@
       </div>
     </div>
     <!-- Overlay to prevent navigation during generation -->
-    <div id="aiGenOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:none;align-items:center;justify-content:center">
+    <div id="aiGenOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;align-items:center;justify-content:center">
       <div style="background:#fff;border-radius:1.25rem;padding:2rem 2.5rem;text-align:center;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
         <div style="font-size:2.5rem;margin-bottom:.75rem">⏳</div>
         <div style="font-weight:900;font-size:1.1rem;color:var(--text);margin-bottom:.5rem" id="overlayTitle">Génération en cours…</div>
@@ -556,6 +556,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 1000);
   }
+  // Check for pending generation (check-in done but next week not generated)
+  setTimeout(function(){ checkPendingGeneration(); }, 500);
 });
 
 /* ── Data I/O ───────────────────────────────────────────────*/
@@ -1007,6 +1009,71 @@ function _retryGeneration() {
   if (!_lastCheckinData || !plan) return;
   var nextWeek = Math.floor(((plan && plan.week) ? plan.week.length : 7) / 7) + 1;
   _generateNextWeek(_lastCheckinData, nextWeek);
+}
+
+/* ── Pending generation check (on page load) ───────────────*/
+function checkPendingGeneration() {
+  if (!window.GEMINI || !plan || !checkins || !checkins.length) return;
+
+  var uPlan = (profile && profile.selectedPlan) || (subscription && subscription.plan) || 'free';
+  var isPaid = uPlan === 'essential' || uPlan === 'premium';
+  if (!isPaid) return;
+
+  var generatedWeeks = plan.week ? Math.floor(plan.week.length / 7) : 0;
+  var checkinsCount = checkins.length;
+
+  // Pending = check-in done for a week but next week not yet generated
+  if (checkinsCount >= generatedWeeks && generatedWeeks < 4) {
+    var nextWeek = generatedWeeks + 1;
+    var lastCheckin = checkins[checkins.length - 1];
+    _lastCheckinData = lastCheckin; // store for retry
+
+    // Auto-trigger if URL has ?generate=1 (from plan.html redirect)
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('generate') === '1') {
+      window.history.replaceState({}, '', window.location.pathname);
+      showAiAdaptation(lastCheckin);
+      return;
+    }
+
+    // Otherwise show a banner with a "Generate" button
+    var sec = document.getElementById('aiAdaptSection');
+    if (!sec) return;
+    sec.classList.remove('hidden');
+
+    var tx = document.getElementById('aiAdaptText');
+    var ld = document.getElementById('aiLoadingState');
+    var genStat = document.getElementById('aiGenStatus');
+    var actions = document.getElementById('aiAdaptActions');
+    var stepLbl = document.getElementById('aiStepLabel');
+    var step1Dot = document.getElementById('aiStep1Dot');
+    var step2Dot = document.getElementById('aiStep2Dot');
+
+    if (ld) ld.style.display = 'none';
+    if (tx) { tx.classList.add('hidden'); tx.innerHTML = ''; }
+    if (step1Dot) step1Dot.style.background = 'var(--border-light)';
+    if (step2Dot) step2Dot.style.background = 'var(--border-light)';
+    if (stepLbl) stepLbl.textContent = '';
+
+    if (genStat) {
+      genStat.style.display = 'block';
+      genStat.style.cssText = 'display:block;margin-top:1rem;padding:1.25rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;text-align:center';
+      genStat.innerHTML =
+        '<div style="font-size:2rem;margin-bottom:.5rem">🔄</div>' +
+        '<div style="font-weight:700;color:#92400e;margin-bottom:.5rem">' +
+          (_t('suivi.pendingTitle') || 'Semaine ' + nextWeek + ' pas encore générée') +
+        '</div>' +
+        '<div style="font-size:.85rem;color:#92400e;margin-bottom:1rem;line-height:1.5">' +
+          (_t('suivi.pendingDesc') || 'Votre bilan a été enregistré. Lancez la génération pour obtenir votre programme adapté.') +
+        '</div>' +
+        '<button class="btn btn-green" onclick="showAiAdaptation(_lastCheckinData)" style="min-width:250px">' +
+          '🚀 ' + (_t('suivi.pendingBtn') || 'Générer la semaine ' + nextWeek) +
+        '</button>';
+    }
+    if (actions) actions.style.display = 'none';
+
+    setTimeout(function(){ sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 600);
+  }
 }
 
 /* ── History render ─────────────────────────────────────────*/

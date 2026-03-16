@@ -151,9 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? (_t('plan.weekNotReadyDesc') || 'La génération n\'a pas abouti. Relancez-la depuis votre bilan hebdomadaire.')
                 : (_t('plan.checkinNeededDesc') || 'Complétez votre bilan hebdomadaire pour générer la semaine suivante, adaptée à vos retours.')}
             </p>
-            <a href="suivi.html" class="btn btn-green btn-sm" style="min-width:200px">
-              📊 ${hasCheckinForPrevWeek
-                ? (_t('plan.goToSuivi') || 'Relancer depuis le bilan')
+            <a href="${hasCheckinForPrevWeek ? 'suivi.html?generate=1' : 'suivi.html'}" class="btn btn-green btn-sm" style="min-width:200px">
+              ${hasCheckinForPrevWeek ? '🚀' : '📊'} ${hasCheckinForPrevWeek
+                ? (_t('plan.goToSuivi') || 'Générer la semaine')
                 : (_t('plan.goToCheckin') || 'Faire mon bilan')}
             </a>
           </div>`;
