@@ -346,12 +346,26 @@ ${gender === 'fille' ? '• Filles spécifique : surveiller statut en fer à cha
     // ── Calcul des calories spécifiques à ce profil ──────────────────────────
     const cal = _computeDailyCalories(profile);
 
-    // ── Saison actuelle ─────────────────────────────────────────────────────
+    // ── Saison & Produits de saison (par mois, précis) ──────────────────────
     const now = new Date();
     const month = now.getMonth(); // 0-11
     const monthNames = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
     const currentMonth = monthNames[month];
-    const season = month >= 2 && month <= 4 ? 'printemps' : month >= 5 && month <= 7 ? 'été' : month >= 8 && month <= 10 ? 'automne' : 'hiver';
+    const seasonData = [
+      /* Jan */ { season: 'hiver', produce: '• Légumes : poireaux, choux, carottes, navets, courges, betteraves, endives, céleri, topinambour, panais, épinards\n• Fruits : pommes, poires, clémentines, oranges, kiwis, bananes', forbidden: 'tomates, courgettes, aubergines, poivrons, concombres, fraises, cerises, melons, pastèques, pêches, abricots, nectarines, framboises, myrtilles, figues' },
+      /* Fév */ { season: 'hiver', produce: '• Légumes : poireaux, choux, carottes, navets, endives, épinards, mâche, betteraves, céleri-rave, panais\n• Fruits : pommes, poires, kiwis, oranges, clémentines, citrons, bananes', forbidden: 'tomates, courgettes, aubergines, poivrons, concombres, fraises, cerises, melons, pastèques, pêches, abricots, nectarines, framboises, myrtilles, figues' },
+      /* Mar */ { season: 'fin d\'hiver / début printemps', produce: '• Légumes : poireaux, choux, carottes, navets, endives, épinards, mâche, panais, céleri-rave, topinambour, betteraves, radis roses\n• Fruits : pommes, poires, kiwis, oranges, citrons, bananes', forbidden: 'cerises, fraises, melons, pastèques, pêches, abricots, nectarines, framboises, myrtilles, figues, prunes, raisins, tomates, courgettes, aubergines, poivrons, concombres, haricots verts frais, maïs' },
+      /* Avr */ { season: 'printemps', produce: '• Légumes : asperges, radis, épinards, artichauts, petits pois, fèves, laitue, carottes nouvelles\n• Fruits : pommes, fraises (fin avril), rhubarbe, bananes', forbidden: 'cerises (pas avant fin mai), melons, pastèques, pêches, nectarines, abricots, myrtilles, figues, tomates, aubergines, poivrons' },
+      /* Mai */ { season: 'printemps', produce: '• Légumes : asperges, petits pois, fèves, radis, épinards, artichauts, laitue, carottes nouvelles, navets nouveaux\n• Fruits : fraises, cerises (fin mai), rhubarbe, pommes', forbidden: 'melons, pastèques, pêches (pas avant juin), nectarines, figues, myrtilles (pas avant juin)' },
+      /* Jun */ { season: 'été', produce: '• Légumes : tomates, courgettes, aubergines, poivrons, haricots verts, concombre, petits pois, fenouil\n• Fruits : cerises, fraises, abricots, pêches, framboises, melons', forbidden: 'courges, potimarron, topinambour, panais, endives, clémentines' },
+      /* Jul */ { season: 'été', produce: '• Légumes : tomates, courgettes, aubergines, poivrons, haricots verts, concombre, maïs, fenouil\n• Fruits : pêches, nectarines, abricots, melons, pastèques, cerises, framboises, myrtilles, figues', forbidden: 'courges, potimarron, topinambour, panais, endives, clémentines' },
+      /* Aoû */ { season: 'été', produce: '• Légumes : tomates, courgettes, aubergines, poivrons, haricots verts, concombre, maïs, fenouil\n• Fruits : pêches, nectarines, melons, pastèques, figues, framboises, myrtilles, prunes, raisins', forbidden: 'courges, potimarron, topinambour, panais, endives, clémentines' },
+      /* Sep */ { season: 'automne', produce: '• Légumes : potimarron, courges, champignons, brocoli, chou-fleur, poireaux, épinards, betteraves, haricots verts\n• Fruits : pommes, poires, raisins, figues, prunes, framboises, noix', forbidden: 'cerises, fraises, melons (fin), pastèques' },
+      /* Oct */ { season: 'automne', produce: '• Légumes : potimarron, courges, champignons, brocoli, chou-fleur, poireaux, épinards, betteraves, céleri\n• Fruits : pommes, poires, raisins, noix, châtaignes, coings, kakis', forbidden: 'cerises, fraises, melons, pastèques, pêches, nectarines, abricots' },
+      /* Nov */ { season: 'automne', produce: '• Légumes : potimarron, courges, champignons, choux, poireaux, endives, céleri, betteraves, topinambour\n• Fruits : pommes, poires, clémentines, oranges, kiwis, châtaignes, noix', forbidden: 'cerises, fraises, melons, pastèques, pêches, abricots, tomates, courgettes, aubergines' },
+      /* Déc */ { season: 'hiver', produce: '• Légumes : poireaux, choux, carottes, navets, courges, betteraves, endives, céleri, topinambour, panais\n• Fruits : pommes, poires, clémentines, oranges, kiwis, bananes', forbidden: 'tomates, courgettes, aubergines, poivrons, concombres, fraises, cerises, melons, pastèques, pêches, abricots, framboises, myrtilles, figues' },
+    ][month];
+    const season = seasonData.season;
 
     return `Tu es NutriBot, l'expert en nutrition pédiatrique de Brocoli.fit.
 Tu dois générer un programme nutritionnel personnalisé COMPLET pour 1 SEMAINE (7 jours), RIGOUREUSEMENT adapté à l'âge, au poids, au sexe et aux besoins spécifiques de l'enfant ci-dessous.
@@ -366,16 +380,14 @@ Références guidelines : ${culture.guidelines}
 ${culture.culturalNotes}
 
 ═══════════════════════════════════════════════
-SAISON & DISPONIBILITÉ DES PRODUITS
+SAISON & DISPONIBILITÉ DES PRODUITS — ${currentMonth.toUpperCase()}
 ═══════════════════════════════════════════════
 Mois actuel : ${currentMonth} | Saison : ${season}
-⚠️ OBLIGATION : Utiliser UNIQUEMENT des fruits et légumes DE SAISON disponibles en ${season} dans le pays ${culture.name}.
-Exemples de produits de saison en ${season} :
-${season === 'hiver' ? '• Légumes : poireaux, choux, carottes, navets, courges, betteraves, endives, céleri, topinambour, panais\n• Fruits : pommes, poires, clémentines, oranges, kiwis, bananes' :
-  season === 'printemps' ? '• Légumes : asperges, petits pois, radis, épinards, artichauts, fèves, laitue, carottes nouvelles\n• Fruits : fraises, cerises, rhubarbe, abricots (fin mai), pommes' :
-  season === 'été' ? '• Légumes : tomates, courgettes, aubergines, poivrons, haricots verts, concombre, maïs, fenouil\n• Fruits : pêches, nectarines, abricots, melons, pastèques, figues, framboises, myrtilles' :
-  '• Légumes : potimarron, courges, champignons, brocoli, chou-fleur, poireaux, épinards, betteraves\n• Fruits : pommes, poires, raisins, figues, noix, châtaignes, coings'}
-⛔ NE PAS proposer de fraises en hiver, de courges en été, etc. — respecter la saisonnalité locale.
+⚠️ OBLIGATION ABSOLUE : N'utiliser QUE les fruits et légumes DISPONIBLES en ${currentMonth} dans le pays ${culture.name}.
+Produits AUTORISÉS en ${currentMonth} :
+${seasonData.produce}
+⛔ PRODUITS STRICTEMENT INTERDITS en ${currentMonth} (hors saison) : ${seasonData.forbidden}
+⛔ Si un fruit ou légume n'est PAS dans la liste autorisée ci-dessus, NE PAS l'utiliser.
 
 ═══════════════════════════════════════════════
 PROFIL DE L'ENFANT :
@@ -443,6 +455,36 @@ age < 14 ? `
 - Collation post-sport : smoothie banane-lait + poignée amandes
 - Dîner : saumon (100g) + riz (120g) + légumes variés + fromage`}
 
+═══════════════════════════════════════════════
+STRUCTURE & QUALITÉ DES REPAS — OBLIGATOIRE
+═══════════════════════════════════════════════
+⚠️ CHAQUE REPAS doit avoir un champ "dish_name" : un NOM DE PLAT COMPLET et APPÉTISSANT, comme dans un menu de restaurant.
+
+✅ BONS exemples de dish_name :
+- "Filet de dinde rissolé, semoule de blé aux poivrons et oignons caramélisés"
+- "Gratin de pâtes complètes au saumon et brocoli"
+- "Velouté de carottes au cumin, tartine de fromage frais"
+- "Omelette aux épinards frais, salade de mâche et croûtons"
+- "Porridge onctueux aux flocons d'avoine, pomme poêlée à la cannelle"
+- "Dahl de lentilles corail au lait de coco, riz basmati"
+- "Bowl de riz complet, poulet mariné aux herbes, légumes rôtis"
+
+❌ MAUVAIS exemples — NE JAMAIS FAIRE :
+- "Filet de dinde 100g cuit" → trop clinique, pas appétissant
+- "Huile d'olive" → l'huile n'est PAS un aliment à lister comme item
+- "Riz + poulet" → pas structuré, pas gourmand
+
+⛔ RÈGLE CONDIMENTS & MATIÈRES GRASSES :
+- Huile d'olive, huile de colza, beurre, sel, poivre, herbes, épices NE SONT JAMAIS des "items" de repas.
+- Ils doivent apparaître UNIQUEMENT dans le champ "cooking_notes" du repas.
+- Exemple de cooking_notes : "Cuire le filet dans 1 c.à.s d'huile d'olive. Assaisonner de sel, poivre et herbes de Provence."
+
+✅ CHAQUE REPAS = UN PLAT COMPLET ET COHÉRENT :
+- Petit-déjeuner : un vrai petit-déjeuner nommé (pas une liste disparate d'ingrédients)
+- Déjeuner : protéine + féculent + légume = un plat nommé de façon gourmande
+- Goûter : un en-cas cohérent (fruit + laitage ou fruit + céréale)
+- Dîner : un plat complet, plus léger que le déjeuner mais tout aussi nommé
+
 Génère une réponse JSON stricte avec cette structure EXACTE :
 {
   "analysis": {
@@ -468,16 +510,13 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
           "type": "Petit-déjeuner",
           "emoji": "🥣",
           "time": "7h30",
+          "dish_name": "Porridge onctueux aux flocons d'avoine, pomme poêlée à la cannelle",
           "total_calories": ${cal.breakfast},
           "items": [
-            {
-              "name": "Flocons d'avoine",
-              "quantity": "40g",
-              "calories": ${Math.round(cal.breakfast / 2)}
-            }
+            { "name": "Flocons d'avoine au lait", "quantity": "40g", "calories": 160 },
+            { "name": "Pomme poêlée à la cannelle", "quantity": "100g", "calories": 75 }
           ],
-          "prep_time_min": 5,
-          "recipe_hint": "Astuce de préparation"
+          "cooking_notes": "Cuire les flocons dans du lait 5 min. Poêler la pomme en dés avec une pincée de cannelle."
         }
       ]
     },
@@ -504,22 +543,34 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
       {
         "category": "Fruits & Légumes",
         "emoji": "🥦",
-        "items": [{"name": "Carottes", "qty": "500g", "approx_cost": "1.20€"}]
+        "items": [{"name": "Carottes", "qty": "1 kg", "approx_cost": "1.80€"}]
       }
     ],
     "estimated_total": "65€"
   }` : ''}
 }
+⚠️ LISTE DE COURSES — RÈGLE DE CONSOLIDATION :
+La "shopping_list" doit regrouper les QUANTITÉS TOTALES pour TOUTE la semaine (7 jours).
+Si un même ingrédient apparaît plusieurs jours, ADDITIONNE les quantités en une seule ligne.
+Exemple : poulet lundi 100g + poulet jeudi 100g = "Poulet" → "200g" (pas 2 lignes séparées).
+Les quantités doivent être arrondies pour être pratiques en courses (ex: "1 kg" plutôt que "950g", "6 yaourts" plutôt que "5.6 yaourts").
 
 IMPORTANT FINAL :
-- Génère EXACTEMENT 7 jours (1 semaine, Lundi à Dimanche) dans le tableau "week" — 7 objets au total
-- Chaque jour DOIT proposer des repas DIFFÉRENTS — varie les recettes chaque jour
-- Quantités TOUJOURS en grammes (g) ou millilitres (ml) — jamais "1 portion" ou "au goût"
+- Génère EXACTEMENT 7 jours (Lundi à Dimanche) dans "week" — 7 objets
+- CHAQUE REPAS a un "dish_name" : nom de plat COMPLET et APPÉTISSANT (comme un menu de restaurant)
+- CHAQUE REPAS a un "cooking_notes" : instructions courtes de préparation (1-2 phrases, huile/assaisonnement ici)
+- ⛔ JAMAIS d'huile, beurre, sel, poivre ou épices seuls comme "item" de repas — TOUJOURS dans "cooking_notes"
+- ⛔ Les "items" sont les ALIMENTS principaux du plat (protéine, féculent, légumes, laitage, fruit)
+- Chaque jour DOIT avoir des repas DIFFÉRENTS — AUCUNE répétition sur 7 jours
+- Quantités TOUJOURS en grammes (g) ou millilitres (ml)
 - Calories PRÉCISES par item et par repas
-- Varie les sources protéiques (viande, poisson, œufs, légumineuses) chaque jour
-- Inclure au moins 5 couleurs de légumes différents sur la semaine
-- Les menus du week-end peuvent être légèrement plus élaborés (plus de temps de cuisine)
-- Adapte STRICTEMENT au profil : allergènes, refus, temps cuisine`;
+- Varie protéines (viande, poisson, œufs, légumineuses) chaque jour
+- Au moins 5 couleurs de légumes différents sur la semaine
+- Week-end légèrement plus élaboré (plus de temps cuisine)
+- ⛔ SAISONNALITÉ : uniquement les produits autorisés en ${currentMonth} — pas de produits interdits
+- Adapte STRICTEMENT : allergènes, refus, temps cuisine${isEssential ? `
+- RECETTES : génère AU MINIMUM 7 recettes (une par jour, pour les déjeuners ou dîners principaux)
+- Chaque recette explique COMMENT préparer le plat étape par étape, avec des instructions claires` : ''}`;
   },
 
   buildChatPrompt(userMessage, profile, planContext) {
@@ -736,11 +787,18 @@ ${checkinData.mood === 'bad' || checkinData.mood === 'meh' ? '⚠️ HUMEUR BASS
 - Exclure COMPLÈTEMENT les aliments refusés listés ci-dessus
 - Calories journalières : exactement ${cal.target} kcal/j
 
-Génère EXACTEMENT 7 jours (1 semaine, Lundi à Dimanche) au même format JSON que le plan original :
+QUALITÉ DES REPAS — OBLIGATOIRE :
+- Chaque repas DOIT avoir un "dish_name" appétissant (nom de plat complet, comme un menu de restaurant)
+- Chaque repas DOIT avoir un "cooking_notes" (1-2 phrases : instructions de préparation, huile/assaisonnement)
+- ⛔ JAMAIS d'huile, beurre, sel, poivre, épices comme "item" de repas — toujours dans "cooking_notes"
+- Les "items" = aliments principaux seulement (protéine, féculent, légume, laitage, fruit)
+- Saisonnalité : utiliser uniquement des produits de saison pour ${new Date().toLocaleDateString('fr-FR', {month:'long'})}
+
+Génère EXACTEMENT 7 jours (Lundi à Dimanche) au même format JSON que le plan original :
 {
   "analysis": { "daily_calories": ${cal.target}, "summary": "Résumé des ajustements", ... },
   "week": [
-    { "day": "Lundi", "total_calories": ${cal.target}, "meals": [...] },
+    { "day": "Lundi", "total_calories": ${cal.target}, "meals": [{ "type": "...", "dish_name": "Nom appétissant du plat", "total_calories": ..., "items": [...], "cooking_notes": "..." }] },
     ... 7 jours (Lundi à Dimanche)
   ]
 }`;
