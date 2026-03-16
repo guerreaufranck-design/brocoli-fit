@@ -349,7 +349,7 @@
       </div>
     </div>
 
-    <!-- AI ADAPT SECTION -->
+    <!-- AI ADAPT SECTION — stepped flow -->
     <div class="ai-adapt-section hidden" id="aiAdaptSection">
       <div class="ai-adapt-header">
         <div class="ai-adapt-icon">🤖</div>
@@ -358,15 +358,36 @@
           <div class="ai-adapt-subtitle" data-i18n="suivi.ai.sub">Analyse basée sur votre suivi de cette semaine</div>
         </div>
       </div>
+      <!-- Steps progress -->
+      <div id="aiStepsProgress" style="padding:1rem 1.25rem .5rem">
+        <div style="display:flex;gap:.5rem;margin-bottom:.75rem">
+          <div class="ai-step-dot" id="aiStep1Dot" style="flex:1;height:4px;border-radius:4px;background:var(--border-light);transition:background .3s"></div>
+          <div class="ai-step-dot" id="aiStep2Dot" style="flex:1;height:4px;border-radius:4px;background:var(--border-light);transition:background .3s"></div>
+        </div>
+        <div id="aiStepLabel" style="font-size:.8rem;font-weight:700;color:var(--text-muted);text-align:center"></div>
+      </div>
       <div class="ai-adapt-body">
         <div class="ai-loading" id="aiLoadingState">
           <div class="ai-dots"><span></span><span></span><span></span></div>
-          <span data-i18n="suivi.ai.loading">Analyse en cours, veuillez patienter…</span>
+          <span id="aiLoadingLabel" data-i18n="suivi.ai.loading">Analyse en cours, veuillez patienter…</span>
         </div>
         <div id="aiAdaptText" class="hidden"></div>
+        <!-- Generation status (for paid plan adaptation) -->
+        <div id="aiGenStatus" style="display:none"></div>
       </div>
-      <div class="mt-3">
-        <a href="plan.html" class="btn btn-primary btn-sm" data-i18n="suivi.ai.cta">Voir le programme adapté →</a>
+      <div class="mt-3" id="aiAdaptActions" style="display:none">
+        <a href="plan.html" class="btn btn-green btn-sm" style="min-width:220px" data-i18n="suivi.ai.cta">Voir le programme adapté →</a>
+      </div>
+    </div>
+    <!-- Overlay to prevent navigation during generation -->
+    <div id="aiGenOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:none;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:1.25rem;padding:2rem 2.5rem;text-align:center;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">⏳</div>
+        <div style="font-weight:900;font-size:1.1rem;color:var(--text);margin-bottom:.5rem" id="overlayTitle">Génération en cours…</div>
+        <div style="font-size:.85rem;color:var(--text-muted);line-height:1.5" id="overlayDesc">Ne quittez pas cette page pendant la génération du programme.</div>
+        <div style="margin-top:1rem;height:6px;background:var(--border-light);border-radius:6px;overflow:hidden">
+          <div id="overlayProgressFill" style="height:100%;width:0%;background:linear-gradient(135deg,var(--green),var(--green-dark));border-radius:6px;transition:width .5s"></div>
+        </div>
       </div>
     </div>
 
@@ -816,24 +837,54 @@ function resetForm() {
   goStep(0);
 }
 
-/* ── AI adaptation ──────────────────────────────────────────*/
+/* ── AI adaptation — stepped flow ─────────────────────────────*/
+var _lastCheckinData = null; // stored for retry
+
 async function showAiAdaptation(checkinData) {
+  _lastCheckinData = checkinData;
   var sec = document.getElementById('aiAdaptSection');
   if (!sec) return;
   sec.classList.remove('hidden');
-  var ld = document.getElementById('aiLoadingState');
-  var tx = document.getElementById('aiAdaptText');
+
+  var ld       = document.getElementById('aiLoadingState');
+  var ldLabel  = document.getElementById('aiLoadingLabel');
+  var tx       = document.getElementById('aiAdaptText');
+  var genStat  = document.getElementById('aiGenStatus');
+  var actions  = document.getElementById('aiAdaptActions');
+  var step1Dot = document.getElementById('aiStep1Dot');
+  var step2Dot = document.getElementById('aiStep2Dot');
+  var stepLbl  = document.getElementById('aiStepLabel');
+  var overlay  = document.getElementById('aiGenOverlay');
+  var overlayFill = document.getElementById('overlayProgressFill');
+
+  // Determine if paid
+  var uPlan = (profile && profile.selectedPlan) || (subscription && subscription.plan) || 'free';
+  var isPaid = uPlan === 'essential' || uPlan === 'premium';
+  var nextWeek = Math.floor(((plan && plan.week) ? plan.week.length : 7) / 7) + 1;
+
+  // Reset UI
   if (ld) ld.style.display = 'flex';
-  if (tx) tx.classList.add('hidden');
+  if (tx) { tx.classList.add('hidden'); tx.innerHTML = ''; }
+  if (genStat) { genStat.style.display = 'none'; genStat.innerHTML = ''; }
+  if (actions) actions.style.display = 'none';
+  if (step1Dot) step1Dot.style.background = 'var(--border-light)';
+  if (step2Dot) step2Dot.style.background = 'var(--border-light)';
+
   setTimeout(function(){ sec.scrollIntoView({ behavior:'smooth', block:'start' }); }, 400);
+
+  // ── STEP 1: Feedback text ──────────────────────────────
+  if (stepLbl) stepLbl.textContent = isPaid
+    ? (_t('suivi.step1of2') || 'Étape 1/2 · Analyse de votre bilan…')
+    : (_t('suivi.step1of1') || 'Analyse de votre bilan…');
+  if (ldLabel) ldLabel.textContent = _t('suivi.ai.loading') || 'Analyse en cours, veuillez patienter…';
+  if (step1Dot) step1Dot.style.background = 'var(--green)';
+
   try {
-    // Build the TEXT feedback prompt (detailed coaching response)
     var feedbackPrompt = GEMINI.buildCheckinFeedbackPrompt(profile, checkinData, checkins, plan);
-    var adapted = await GEMINI.call(feedbackPrompt, false);
+    var feedback = await GEMINI.call(feedbackPrompt, false);
     if (ld) ld.style.display = 'none';
     if (tx) {
-      // Format the AI response nicely
-      var formatted = adapted
+      var formatted = feedback
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/^### (.+)$/gm, '<h4 style="color:var(--green-dark);margin:1.25rem 0 .5rem;font-family:var(--font-serif);font-style:italic">$1</h4>')
         .replace(/^## (.+)$/gm, '<h3 style="color:var(--green-dark);margin:1.5rem 0 .75rem;font-family:var(--font-serif);font-style:italic">$1</h3>')
@@ -844,57 +895,118 @@ async function showAiAdaptation(checkinData) {
       tx.innerHTML = '<p style="margin:.75rem 0">' + formatted + '</p>';
       tx.classList.remove('hidden');
     }
-    // For paid plans: also regenerate the plan JSON in background
-    var userPlan = (profile && profile.selectedPlan) || (subscription && subscription.plan) || 'free';
-    var isPaid = userPlan === 'essential' || userPlan === 'premium';
-    if (isPaid && plan) {
-      // Show loading indicator for plan adaptation
-      var adaptLoading = document.createElement('div');
-      adaptLoading.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;font-size:.8rem;color:#92400e;text-align:center';
-      adaptLoading.innerHTML = '⏳ Adaptation de votre programme pour la semaine prochaine en cours… (1-2 min)';
-      tx.parentNode.appendChild(adaptLoading);
-      try {
-        var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
-        var ap = await GEMINI.call(adaptPrompt, true);
-        adaptLoading.remove();
-        if (ap && ap.week) {
-          // MERGE: append new week's days to existing plan (don't replace!)
-          var mergedPlan = JSON.parse(JSON.stringify(plan));
-          mergedPlan.week = (mergedPlan.week || []).concat(ap.week);
-          if (ap.analysis) {
-            mergedPlan.analysis = Object.assign({}, mergedPlan.analysis, ap.analysis);
-          }
-          if (ap.recipes && ap.recipes.length) {
-            mergedPlan.recipes = (mergedPlan.recipes || []).concat(ap.recipes);
-          }
-          if (ap.shopping_list) mergedPlan.shopping_list = ap.shopping_list;
-
-          if (window.CHILDREN) { CHILDREN.savePlan(mergedPlan); }
-          else {
-            localStorage.setItem('brocoliPlan', JSON.stringify(mergedPlan));
-            localStorage.setItem('brocoliPlanDate', new Date().toISOString());
-          }
-          plan = mergedPlan; // update local reference
-
-          // Show a subtle note that plan was updated
-          var planNote = document.createElement('div');
-          planNote.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.8rem;color:#166534;text-align:center';
-          planNote.innerHTML = '✅ Votre programme a été adapté pour la semaine prochaine. <a href="plan.html" style="color:#166534;font-weight:800;text-decoration:underline">Voir le programme →</a>';
-          tx.parentNode.appendChild(planNote);
-        }
-      } catch(e2){
-        adaptLoading.remove();
-        console.warn('Plan adapt failed:', e2);
-      }
-    }
   } catch(err) {
-    console.error('AI adaptation error:', err);
+    console.error('AI feedback error:', err);
     if (ld) ld.style.display = 'none';
     if (tx) {
-      tx.innerHTML = '<span style="color:var(--text-muted)">' + _t('suivi.ai.error') + '</span>';
+      tx.innerHTML = '<span style="color:var(--text-muted)">' + (_t('suivi.ai.error') || 'Erreur lors de l\'analyse.') + '</span>';
       tx.classList.remove('hidden');
     }
+    // Even if feedback fails, still try to generate the week for paid users
   }
+
+  // ── STEP 2: Generate next week (paid plans only) ───────
+  if (isPaid && plan) {
+    await _generateNextWeek(checkinData, nextWeek);
+  } else {
+    // Free plan: just show the feedback, done
+    if (step1Dot) step1Dot.style.background = 'var(--green)';
+    if (stepLbl) stepLbl.textContent = '✅ ' + (_t('suivi.analysisDone') || 'Analyse terminée');
+  }
+}
+
+async function _generateNextWeek(checkinData, nextWeek) {
+  var step2Dot    = document.getElementById('aiStep2Dot');
+  var stepLbl     = document.getElementById('aiStepLabel');
+  var genStat     = document.getElementById('aiGenStatus');
+  var actions     = document.getElementById('aiAdaptActions');
+  var overlay     = document.getElementById('aiGenOverlay');
+  var overlayFill = document.getElementById('overlayProgressFill');
+  var overlayTitle = document.getElementById('overlayTitle');
+  var overlayDesc  = document.getElementById('overlayDesc');
+
+  if (stepLbl) stepLbl.textContent = _t('suivi.step2of2') || 'Étape 2/2 · Génération de la semaine ' + nextWeek + '…';
+  if (step2Dot) step2Dot.style.background = '#FF8C42';
+
+  // Show overlay to prevent navigation
+  if (overlay) overlay.style.display = 'flex';
+  if (overlayTitle) overlayTitle.textContent = _t('suivi.genOverlayTitle') || 'Génération de la semaine ' + nextWeek + '…';
+  if (overlayDesc) overlayDesc.textContent = _t('suivi.genOverlayDesc') || 'Ne quittez pas cette page pendant la génération du programme.';
+
+  // Animate progress bar (fake progress for UX, real completion at end)
+  var progress = 0;
+  var progressInterval = setInterval(function() {
+    progress = Math.min(progress + 1, 85);
+    if (overlayFill) overlayFill.style.width = progress + '%';
+  }, 1500);
+
+  // Show inline status
+  if (genStat) {
+    genStat.style.display = 'block';
+    genStat.style.cssText = 'display:block;margin-top:1rem;padding:.75rem 1rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;font-size:.8rem;color:#92400e;text-align:center';
+    genStat.innerHTML = '⏳ ' + (_t('suivi.genInProgress') || 'Génération de la semaine ' + nextWeek + ' en cours… (1-2 min)');
+  }
+
+  try {
+    var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
+    var ap = await GEMINI.call(adaptPrompt, true, 300000);
+
+    clearInterval(progressInterval);
+    if (overlayFill) overlayFill.style.width = '100%';
+
+    if (ap && ap.week) {
+      // MERGE: append new week's days to existing plan
+      var mergedPlan = JSON.parse(JSON.stringify(plan));
+      mergedPlan.week = (mergedPlan.week || []).concat(ap.week);
+      if (ap.analysis) mergedPlan.analysis = Object.assign({}, mergedPlan.analysis, ap.analysis);
+      if (ap.recipes && ap.recipes.length) mergedPlan.recipes = (mergedPlan.recipes || []).concat(ap.recipes);
+      if (ap.shopping_list) mergedPlan.shopping_list = ap.shopping_list;
+
+      if (window.CHILDREN) CHILDREN.savePlan(mergedPlan);
+      else {
+        localStorage.setItem('brocoliPlan', JSON.stringify(mergedPlan));
+        localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+      }
+      plan = mergedPlan;
+
+      // Success UI
+      if (step2Dot) step2Dot.style.background = 'var(--green)';
+      if (stepLbl) stepLbl.textContent = '✅ ' + (_t('suivi.genDone') || 'Programme semaine ' + nextWeek + ' généré !');
+      if (genStat) {
+        genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem 1.25rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.9rem;color:#166534;text-align:center';
+        genStat.innerHTML = '<div style="font-size:1.5rem;margin-bottom:.5rem">🎉</div><strong>' +
+          (_t('suivi.genSuccess') || 'Semaine ' + nextWeek + ' générée avec succès !') + '</strong><br>' +
+          '<span style="font-size:.8rem;color:#166534">' + (_t('suivi.genSuccessDesc') || 'Le programme a été adapté en fonction de vos retours.') + '</span>';
+      }
+      if (actions) {
+        actions.style.display = 'block';
+        actions.innerHTML = '<a href="plan.html" class="btn btn-green" style="min-width:250px;margin-top:.5rem">📋 ' +
+          (_t('suivi.genViewPlan') || 'Voir la semaine ' + nextWeek + ' →') + '</a>';
+      }
+    } else {
+      throw new Error('Invalid response: no week data');
+    }
+  } catch(e) {
+    clearInterval(progressInterval);
+    console.error('Week generation failed:', e);
+    if (step2Dot) step2Dot.style.background = '#e53935';
+    if (stepLbl) stepLbl.textContent = '❌ ' + (_t('suivi.genFailed') || 'Génération échouée');
+    if (genStat) {
+      genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem 1.25rem;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:.75rem;font-size:.85rem;color:#991b1b;text-align:center';
+      genStat.innerHTML = '<div style="margin-bottom:.75rem">' + (_t('suivi.genError') || 'La génération a échoué. Vous pouvez réessayer.') + '</div>' +
+        '<button class="btn btn-outline btn-sm" onclick="_retryGeneration()" style="border-color:#991b1b;color:#991b1b">🔄 ' +
+        (_t('suivi.genRetry') || 'Réessayer') + '</button>';
+    }
+  } finally {
+    // Always remove overlay
+    setTimeout(function() { if (overlay) overlay.style.display = 'none'; }, 800);
+  }
+}
+
+function _retryGeneration() {
+  if (!_lastCheckinData || !plan) return;
+  var nextWeek = Math.floor(((plan && plan.week) ? plan.week.length : 7) / 7) + 1;
+  _generateNextWeek(_lastCheckinData, nextWeek);
 }
 
 /* ── History render ─────────────────────────────────────────*/
