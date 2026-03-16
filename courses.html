@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brocoli.fit — Liste de courses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .courses-hero {
+      background: linear-gradient(135deg, #FF8C42, #e07020);
+      color: #fff;
+      padding: 2.5rem var(--pad) 2rem;
+      text-align: center;
+    }
+    .courses-hero h1 {
+      font-family: var(--font-serif);
+      font-size: var(--text-3xl);
+      font-weight: 900;
+      margin-bottom: .5rem;
+    }
+    .courses-hero p {
+      font-size: var(--text-sm);
+      opacity: .9;
+    }
+    .courses-content {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 1.5rem var(--pad) 4rem;
+    }
+    .shopping-cat-card {
+      background: #fff;
+      border-radius: var(--r-xl);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .shopping-cat-title {
+      font-size: var(--text-base);
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: .875rem;
+    }
+    .shopping-item-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .5rem .75rem;
+      background: var(--bg);
+      border-radius: var(--r-md);
+      cursor: pointer;
+      transition: opacity .2s;
+      margin-bottom: .25rem;
+    }
+    .shopping-item-row.checked {
+      opacity: .45;
+    }
+    .shopping-item-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .shopping-item-name {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      flex: 1;
+    }
+    .shopping-item-qty {
+      font-size: var(--text-sm);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .shopping-item-cost {
+      font-size: var(--text-xs);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .courses-empty {
+      text-align: center;
+      padding: 4rem 1.5rem;
+    }
+    .courses-empty-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .courses-progress {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: #fff;
+      border-radius: var(--r-xl);
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .courses-progress-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--border-light);
+      border-radius: var(--r-full);
+      margin: 0 1rem;
+      overflow: hidden;
+    }
+    .courses-progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #FF8C42, #e07020);
+      border-radius: var(--r-full);
+      transition: width .3s;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav style="background:#fff;border-bottom:1px solid var(--border);padding:.875rem var(--pad);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200">
+  <a href="index.html" class="logo">
+    <span class="logo-brocoli" style="font-size:1.5rem">Brocoli</span><span class="logo-dotfit">.fit</span>
+  </a>
+  <div style="display:flex;gap:.75rem;align-items:center">
+    <a href="plan.html" class="btn btn-outline btn-sm">📋 <span data-i18n="courses.backToPlan">Mon plan</span></a>
+    <a href="dashboard.html" class="btn btn-ghost btn-sm" data-i18n="plan.dashboard">Mon espace</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="courses-hero">
+  <h1>🛒 <span id="coursesTitle" data-i18n="courses.title">Liste de courses</span></h1>
+  <p id="coursesMeta"></p>
+</div>
+
+<!-- Content -->
+<div class="courses-content">
+  <!-- Progress bar -->
+  <div class="courses-progress" id="coursesProgress" style="display:none">
+    <span style="font-size:var(--text-sm);font-weight:800;color:var(--text)" id="coursesChecked">0</span>
+    <div class="courses-progress-bar">
+      <div class="courses-progress-fill" id="coursesProgressFill" style="width:0%"></div>
+    </div>
+    <span style="font-size:var(--text-sm);font-weight:700;color:var(--text-muted)" id="coursesTotal">0</span>
+  </div>
+
+  <!-- Shopping list content -->
+  <div id="coursesContent">
+    <div class="courses-empty">
+      <div class="courses-empty-icon">🛒</div>
+      <p style="color:var(--text-muted)" data-i18n="courses.loading">Chargement…</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/children.js"></script>
+<script src="assets/js/app.js"></script>
+<script>
+// ============================================================
+// BROCOLI.FIT — Courses (Shopping List) page
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+  if (window.CHILDREN) CHILDREN.migrate();
+
+  const plan    = window.CHILDREN ? CHILDREN.getPlan()    : JSON.parse(localStorage.getItem('brocoliPlan') || 'null');
+  const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
+  const userPlan = profile?.selectedPlan || 'free';
+
+  const content = document.getElementById('coursesContent');
+  const metaEl  = document.getElementById('coursesMeta');
+
+  // Only Premium users can access shopping list
+  if (userPlan !== 'premium') {
+    content.innerHTML = `
+      <div class="courses-empty">
+        <div class="courses-empty-icon">🔒</div>
+        <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
+          ${_t('courses.premiumOnly') || 'Fonctionnalité Premium'}
+        </h3>
+        <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
+          ${_t('courses.premiumDesc') || 'La liste de courses automatique est disponible avec le plan Premium.'}
+        </p>
+        <a href="login.html?redirect=checkout&plan=premium" class="btn btn-green">
+          👑 ${_t('courses.upgradeCta') || 'Passer au Premium — 14,90€/mois'}
+        </a>
+      </div>`;
+    return;
+  }
+
+  if (!plan || !plan.week) {
+    content.innerHTML = `
+      <div class="courses-empty">
+        <div class="courses-empty-icon">🥦</div>
+        <p style="color:var(--text-muted)">${_t('dash.noPlanActive') || 'Aucun plan disponible.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${_t('dash.createProgram') || 'Créez votre programme →'}</a></p>
+      </div>`;
+    return;
+  }
+
+  // Build shopping list
+  const rawList = plan.shopping_list || buildShoppingFromMeals(plan.week || []);
+  const list = consolidateShopping(rawList);
+
+  if (!list || !list.categories || !list.categories.length) {
+    content.innerHTML = `
+      <div class="courses-empty">
+        <div class="courses-empty-icon">🛒</div>
+        <p style="color:var(--text-muted)">${_t('courses.empty') || 'Aucun article à afficher.'}</p>
+      </div>`;
+    return;
+  }
+
+  // Meta info
+  const totalItems = list.categories.reduce((s, c) => s + (c.items || []).length, 0);
+  const childName = plan.analysis?.name || profile.name || '';
+  if (metaEl) {
+    metaEl.textContent = `${_t('courses.metaDesc') || 'Quantités regroupées pour toute la semaine'}${childName ? ` · ${childName}` : ''} · ${totalItems} ${_t('plan.items') || 'articles'}${list.estimated_total && list.estimated_total !== '—' ? ` · ~${list.estimated_total}` : ''}`;
+  }
+
+  // Progress bar
+  const progressWrap = document.getElementById('coursesProgress');
+  const checkedEl    = document.getElementById('coursesChecked');
+  const totalEl      = document.getElementById('coursesTotal');
+  const fillEl       = document.getElementById('coursesProgressFill');
+  if (progressWrap) progressWrap.style.display = 'flex';
+  if (totalEl) totalEl.textContent = `${totalItems} ${_t('plan.items') || 'articles'}`;
+
+  function updateProgress() {
+    const checked = content.querySelectorAll('input[type="checkbox"]:checked').length;
+    if (checkedEl) checkedEl.textContent = `${checked}/${totalItems}`;
+    if (fillEl) fillEl.style.width = `${totalItems ? Math.round(checked / totalItems * 100) : 0}%`;
+  }
+
+  // Render categories
+  content.innerHTML = list.categories.map(cat => `
+    <div class="shopping-cat-card">
+      <div class="shopping-cat-title">${escHtml(cat.emoji || '🛒')} ${escHtml(cat.category || '')}</div>
+      ${(cat.items || []).map(item => `
+        <label class="shopping-item-row">
+          <input type="checkbox" onchange="this.closest('.shopping-item-row').classList.toggle('checked',this.checked);document.dispatchEvent(new Event('shopping-check'))">
+          <span class="shopping-item-name">${escHtml(item.name || '')}</span>
+          <span class="shopping-item-qty">${escHtml(item.qty || '')}</span>
+          ${item.approx_cost ? `<span class="shopping-item-cost">${escHtml(item.approx_cost)}</span>` : ''}
+        </label>
+      `).join('')}
+    </div>
+  `).join('');
+
+  document.addEventListener('shopping-check', updateProgress);
+  updateProgress();
+});
+
+// ---- Build shopping list from meal items (fallback) ----
+function buildShoppingFromMeals(weekDays) {
+  if (!weekDays || !weekDays.length) return null;
+  const catMap = {
+    'Protéines':            { emoji: '🥩', items: {} },
+    'Fruits & Légumes':     { emoji: '🥦', items: {} },
+    'Féculents & Céréales': { emoji: '🌾', items: {} },
+    'Produits laitiers':    { emoji: '🧀', items: {} },
+    'Autres':               { emoji: '🛒', items: {} },
+  };
+  const protKeywords     = ['poulet','dinde','boeuf','bœuf','porc','veau','agneau','saumon','thon','cabillaud','sardine','maquereau','crevette','poisson','viande','steak','jambon','oeuf','œuf','tofu','lentille','pois chiche','haricot sec'];
+  const fruitLegKeywords = ['pomme','poire','banane','orange','kiwi','citron','clémentine','fraise','cerise','pêche','abricot','raisin','figue','mangue','ananas','carotte','courgette','tomate','poivron','brocoli','épinard','haricot vert','chou','navet','poireau','endive','betterave','radis','salade','laitue','mâche','champignon','oignon','ail','courge','potimarron','aubergine','concombre','céleri','panais','artichaut','asperge','avocat','fenouil','légume','fruit','compote','soupe','velouté','purée'];
+  const fecKeywords      = ['riz','pâte','semoule','quinoa','boulgour','pain','flocon','avoine','céréale','blé','maïs','patate','pomme de terre','farine','muesli','granola','biscotte','crêpe','galette'];
+  const laitKeywords     = ['lait','yaourt','yogourt','fromage','beurre','crème','mozzarella','parmesan','emmental','comté','chèvre','roquefort','camembert','petit-suisse','fromage blanc','faisselle','kéfir'];
+
+  function categorize(name) {
+    const n = name.toLowerCase();
+    if (protKeywords.some(k => n.includes(k))) return 'Protéines';
+    if (fruitLegKeywords.some(k => n.includes(k))) return 'Fruits & Légumes';
+    if (fecKeywords.some(k => n.includes(k))) return 'Féculents & Céréales';
+    if (laitKeywords.some(k => n.includes(k))) return 'Produits laitiers';
+    return 'Autres';
+  }
+
+  for (const day of weekDays) {
+    for (const meal of (day.meals || [])) {
+      for (const item of (meal.items || [])) {
+        const name = (item.name || '').trim();
+        if (!name) continue;
+        const cat = categorize(name);
+        const key = name.toLowerCase();
+        if (catMap[cat].items[key]) {
+          const existing = catMap[cat].items[key];
+          if (item.quantity && existing.qty !== item.quantity) {
+            existing.qty = existing.qty + ' + ' + item.quantity;
+          }
+          existing._count = (existing._count || 1) + 1;
+        } else {
+          catMap[cat].items[key] = { name, qty: item.quantity || '', _count: 1 };
+        }
+      }
+    }
+  }
+
+  const categories = [];
+  for (const [catName, catData] of Object.entries(catMap)) {
+    const items = Object.values(catData.items);
+    if (items.length > 0) {
+      categories.push({ category: catName, emoji: catData.emoji, items: items.map(i => ({ name: i.name, qty: i.qty })) });
+    }
+  }
+  if (!categories.length) return null;
+  return { week: 1, persons: 1, categories, estimated_total: '—' };
+}
+
+// ---- Consolidate shopping list (merge duplicates) ----
+function consolidateShopping(list) {
+  if (!list || !list.categories) return list;
+  const consolidated = { ...list, categories: [] };
+  for (const cat of list.categories) {
+    const merged = {};
+    for (const item of (cat.items || [])) {
+      const key = (item.name || '').toLowerCase().trim();
+      if (!key) continue;
+      if (merged[key]) {
+        if (item.qty && merged[key].qty && item.qty !== merged[key].qty) {
+          merged[key].qty = merged[key].qty + ' + ' + item.qty;
+        }
+      } else {
+        merged[key] = { ...item };
+      }
+    }
+    consolidated.categories.push({ ...cat, items: Object.values(merged) });
+  }
+  return consolidated;
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>

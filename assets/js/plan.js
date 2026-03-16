@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const plan    = window.CHILDREN ? CHILDREN.getPlan()    : JSON.parse(localStorage.getItem('brocoliPlan')    || 'null');
   const profile = window.CHILDREN ? CHILDREN.getProfile() : JSON.parse(localStorage.getItem('brocoliProfile') || '{}');
   const userPlan= profile?.selectedPlan || 'free';
+  const allRecipes = (plan && plan.recipes) || [];
 
   if (!plan || !plan.analysis) {
     document.getElementById('mealsContent').innerHTML = `
@@ -177,12 +178,25 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMeals(days[currentDay] || days[0]);
   }
 
+  function findRecipeForMeal(dayName, mealType) {
+    if (!allRecipes.length) return null;
+    const dn = (dayName || '').toLowerCase();
+    const mt = (mealType || '').toLowerCase();
+    return allRecipes.find(r => {
+      const fm = (r.for_meal || '').toLowerCase();
+      return fm.includes(dn) && fm.includes(mt);
+    }) || null;
+  }
+
   function renderMeals(dayData) {
     const container = document.getElementById('mealsContent');
     if (!container || !dayData) return;
+    const showRecipeBtn = userPlan === 'essential' || userPlan === 'premium';
 
     const meals = dayData.meals || [];
-    container.innerHTML = meals.map(meal => `
+    container.innerHTML = meals.map((meal, mi) => {
+      const recipe = showRecipeBtn ? findRecipeForMeal(dayData.day, meal.type) : null;
+      return `
       <div class="meal-card open">
         <div class="meal-head" onclick="this.closest('.meal-card').classList.toggle('open')">
           <div class="meal-type-wrap">
@@ -195,7 +209,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="meal-chevron">▼</span>
         </div>
         <div class="meal-body">
-          ${meal.dish_name ? `<div style="font-weight:800;font-size:1.05rem;color:var(--green-dark);margin-bottom:.75rem;line-height:1.4;font-family:var(--font-serif);font-style:italic">🍽️ ${escHtml(meal.dish_name)}</div>` : ''}
+          ${meal.dish_name ? `<div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap">
+            <span style="font-weight:800;font-size:1.05rem;color:var(--green-dark);line-height:1.4;font-family:var(--font-serif);font-style:italic;flex:1">🍽️ ${escHtml(meal.dish_name)}</span>
+            ${recipe ? `<button class="recipe-btn" onclick='event.stopPropagation();showRecipe(${JSON.stringify(recipe).replace(/'/g,"&#39;")})'>📖 ${_t('plan.recipeBtn') || 'Recette'}</button>` : ''}
+          </div>` : (recipe ? `<div style="margin-bottom:.75rem"><button class="recipe-btn" onclick='event.stopPropagation();showRecipe(${JSON.stringify(recipe).replace(/'/g,"&#39;")})'>📖 ${_t('plan.recipeBtn') || 'Recette'}</button></div>` : '')}
           <div class="meal-items">
             ${(meal.items || []).map(item => `
               <div class="meal-item">
@@ -214,161 +231,18 @@ document.addEventListener('DOMContentLoaded', () => {
           ${meal.cooking_notes ? `<div class="meal-note">👨‍🍳 ${escHtml(meal.cooking_notes)}</div>` : ''}
           ${!meal.cooking_notes && meal.recipe_hint ? `<div class="meal-note">💡 ${escHtml(meal.recipe_hint)}</div>` : ''}
         </div>
-      </div>
-    `).join('');
-  }
-
-  // ---- Recipes (Essential + Premium) ----
-  if (userPlan === 'essential' || userPlan === 'premium') {
-    renderRecipes(plan.recipes || []);
-  }
-  // ---- Shopping list (Premium only) ----
-  if (userPlan === 'premium') {
-    // Use Gemini's shopping_list if available, otherwise build from meals
-    const rawList = plan.shopping_list || buildShoppingFromMeals(plan.week || []);
-    const consolidated = consolidateShopping(rawList);
-    if (consolidated) {
-      renderShopping(consolidated);
-      // ---- Orange shopping button (inserted after dayTabs) ----
-      const btnWrap = document.createElement('div');
-      btnWrap.id = 'shoppingBtnWrap';
-      btnWrap.style.cssText = 'text-align:center;margin:1.25rem 0 .5rem';
-      btnWrap.innerHTML = `<button onclick="document.getElementById('shoppingSection').scrollIntoView({behavior:'smooth',block:'start'})" style="display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#FF8C42,#e07020);color:#fff;font-weight:800;border:none;border-radius:99px;padding:.75rem 1.75rem;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(255,140,66,.35);transition:transform .15s,box-shadow .15s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(255,140,66,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(255,140,66,.35)'">🛒 ${_t('plan.shoppingBtn') || 'Liste de courses de la semaine'}</button>`;
-      const dayTabsEl = document.getElementById('dayTabs');
-      if (dayTabsEl) dayTabsEl.parentNode.insertBefore(btnWrap, dayTabsEl.nextSibling);
-    }
-  }
-
-  function renderRecipes(recipes) {
-    const section = document.getElementById('recipesSection');
-    if (!section || !recipes.length) return;
-    section.innerHTML = `
-      <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark);margin-bottom:1rem">📖 ${_t('plan.recipesTitle') || 'Fiches recettes'}</h3>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem">
-        ${recipes.map(r => `
-          <div class="recipe-card">
-            <div class="recipe-thumb">${r.emoji || '🍲'}</div>
-            <div class="recipe-body">
-              <div class="recipe-name">${escHtml(r.name || '')}</div>
-              <div class="recipe-meta">⏱ ${r.prep_min || 0}+${r.cook_min || 0} min · 🍽 ${r.servings || 4} ${_t('plan.pers') || 'pers.'}</div>
-              <div class="recipe-tags">${(r.allergens||[]).map(a => `<span class="allergen-tag">${escHtml(a)}</span>`).join('')}</div>
-              <button class="btn btn-outline btn-sm btn-full" style="margin-top:.875rem" onclick='showRecipe(${JSON.stringify(r).replace(/'/g,"&#39;")})'>${_t('plan.viewRecipe') || 'Voir la recette'}</button>
-            </div>
-          </div>
-        `).join('')}
       </div>`;
+    }).join('');
   }
 
-  function renderShopping(list) {
-    const section = document.getElementById('shoppingSection');
-    if (!section || !list) return;
-    const totalItems = (list.categories || []).reduce((s, c) => s + (c.items || []).length, 0);
-    section.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-        <h3 style="font-family:var(--font-serif);font-style:italic;font-size:var(--text-2xl);color:var(--green-dark)">🛒 ${_t('plan.shoppingTitle') || 'Liste de courses de la semaine'}</h3>
-        <div style="display:flex;gap:.5rem;align-items:center">
-          <span class="badge badge-green">${totalItems} ${_t('plan.items') || 'articles'}</span>
-          <span class="badge badge-green">~${list.estimated_total || '?'}</span>
-        </div>
-      </div>
-      <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1rem">📋 ${_t('plan.shoppingDesc') || 'Quantités regroupées pour toute la semaine. Cochez au fur et à mesure de vos courses !'}</p>
-      ${(list.categories||[]).map((cat, ci) => `
-        <div class="card" style="margin-bottom:1rem">
-          <div style="font-size:var(--text-base);font-weight:900;color:var(--text);margin-bottom:.875rem">${cat.emoji || '🛒'} ${escHtml(cat.category || '')}</div>
-          <div style="display:flex;flex-direction:column;gap:.375rem">
-            ${(cat.items||[]).map((item, ii) => `
-              <label style="display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;background:var(--bg);border-radius:var(--r-md);cursor:pointer;transition:opacity .2s" onclick="this.style.opacity=this.querySelector('input').checked?'.5':'1'">
-                <input type="checkbox" style="width:18px;height:18px;accent-color:var(--green);flex-shrink:0;cursor:pointer">
-                <span style="font-size:var(--text-sm);font-weight:700;flex:1">${escHtml(item.name || '')}</span>
-                <span style="font-size:var(--text-sm);color:var(--text-muted);white-space:nowrap">${escHtml(item.qty || '')}</span>
-                ${item.approx_cost ? `<span style="font-size:var(--text-xs);color:var(--text-muted);white-space:nowrap">${escHtml(item.approx_cost)}</span>` : ''}
-              </label>
-            `).join('')}
-          </div>
-        </div>
-      `).join('')}`;
-  }
-
-  // ---- Build shopping list from meal items (fallback when Gemini didn't generate one) ----
-  function buildShoppingFromMeals(weekDays) {
-    if (!weekDays || !weekDays.length) return null;
-    // Categorize items by type heuristic
-    const catMap = {
-      'Protéines': { emoji: '🥩', items: {} },
-      'Fruits & Légumes': { emoji: '🥦', items: {} },
-      'Féculents & Céréales': { emoji: '🌾', items: {} },
-      'Produits laitiers': { emoji: '🧀', items: {} },
-      'Autres': { emoji: '🛒', items: {} },
-    };
-    const protKeywords = ['poulet','dinde','boeuf','bœuf','porc','veau','agneau','saumon','thon','cabillaud','sardine','maquereau','crevette','poisson','viande','steak','jambon','oeuf','œuf','tofu','lentille','pois chiche','haricot sec'];
-    const fruitLegKeywords = ['pomme','poire','banane','orange','kiwi','citron','clémentine','fraise','cerise','pêche','abricot','raisin','figue','mangue','ananas','carotte','courgette','tomate','poivron','brocoli','épinard','haricot vert','chou','navet','poireau','endive','betterave','radis','salade','laitue','mâche','champignon','oignon','ail','courge','potimarron','aubergine','concombre','céleri','panais','artichaut','asperge','avocat','fenouil','légume','fruit','compote','soupe','velouté','purée'];
-    const fecKeywords = ['riz','pâte','semoule','quinoa','boulgour','pain','flocon','avoine','céréale','blé','maïs','patate','pomme de terre','farine','muesli','granola','biscotte','crêpe','galette'];
-    const laitKeywords = ['lait','yaourt','yogourt','fromage','beurre','crème','mozzarella','parmesan','emmental','comté','chèvre','roquefort','camembert','petit-suisse','fromage blanc','faisselle','kéfir'];
-
-    function categorize(name) {
-      const n = name.toLowerCase();
-      if (protKeywords.some(k => n.includes(k))) return 'Protéines';
-      if (fruitLegKeywords.some(k => n.includes(k))) return 'Fruits & Légumes';
-      if (fecKeywords.some(k => n.includes(k))) return 'Féculents & Céréales';
-      if (laitKeywords.some(k => n.includes(k))) return 'Produits laitiers';
-      return 'Autres';
-    }
-
-    // Extract all items from all meals all days
-    for (const day of weekDays) {
-      for (const meal of (day.meals || [])) {
-        for (const item of (meal.items || [])) {
-          const name = (item.name || '').trim();
-          if (!name) continue;
-          const cat = categorize(name);
-          const key = name.toLowerCase();
-          if (catMap[cat].items[key]) {
-            // Merge quantities
-            const existing = catMap[cat].items[key];
-            if (item.quantity && existing.qty !== item.quantity) {
-              existing.qty = existing.qty + ' + ' + item.quantity;
-            }
-            existing._count = (existing._count || 1) + 1;
-          } else {
-            catMap[cat].items[key] = { name, qty: item.quantity || '', _count: 1 };
-          }
-        }
-      }
-    }
-
-    // Build categories array (skip empty)
-    const categories = [];
-    for (const [catName, catData] of Object.entries(catMap)) {
-      const items = Object.values(catData.items);
-      if (items.length > 0) {
-        categories.push({ category: catName, emoji: catData.emoji, items: items.map(i => ({ name: i.name, qty: i.qty })) });
-      }
-    }
-    if (!categories.length) return null;
-    return { week: 1, persons: 1, categories, estimated_total: '—' };
-  }
-
-  // ---- Consolidate shopping list (merge duplicate items per category) ----
-  function consolidateShopping(list) {
-    if (!list || !list.categories) return list;
-    const consolidated = { ...list, categories: [] };
-    for (const cat of list.categories) {
-      const merged = {};
-      for (const item of (cat.items || [])) {
-        const key = (item.name || '').toLowerCase().trim();
-        if (!key) continue;
-        if (merged[key]) {
-          // Merge: concatenate qty if different, keep higher cost
-          if (item.qty && merged[key].qty && item.qty !== merged[key].qty) {
-            merged[key].qty = merged[key].qty + ' + ' + item.qty;
-          }
-        } else {
-          merged[key] = { ...item };
-        }
-      }
-      consolidated.categories.push({ ...cat, items: Object.values(merged) });
-    }
-    return consolidated;
+  // ---- Orange shopping button for Premium (links to courses.html) ----
+  if (userPlan === 'premium') {
+    const btnWrap = document.createElement('div');
+    btnWrap.id = 'shoppingBtnWrap';
+    btnWrap.style.cssText = 'text-align:center;margin:1.25rem 0 .5rem';
+    btnWrap.innerHTML = `<a href="courses.html" style="display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#FF8C42,#e07020);color:#fff;font-weight:800;border:none;border-radius:99px;padding:.75rem 1.75rem;font-size:.95rem;cursor:pointer;box-shadow:0 4px 14px rgba(255,140,66,.35);transition:transform .15s,box-shadow .15s;text-decoration:none" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(255,140,66,.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(255,140,66,.35)'">🛒 ${_t('plan.shoppingBtn') || 'Liste de courses de la semaine'}</a>`;
+    const dayTabsEl = document.getElementById('dayTabs');
+    if (dayTabsEl) dayTabsEl.parentNode.insertBefore(btnWrap, dayTabsEl.nextSibling);
   }
 
   // Init with week 1

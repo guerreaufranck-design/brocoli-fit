@@ -525,16 +525,22 @@ Génère une réponse JSON stricte avec cette structure EXACTE :
   ]${isEssential ? `,
   "recipes": [
     {
-      "name": "Nom de la recette",
+      "name": "Nom de la recette (= dish_name du repas)",
       "emoji": "🍲",
-      "for_meal": "Lundi déjeuner",
+      "for_meal": "Lundi Petit-déjeuner",
       "servings": ${profile.people || 4},
-      "prep_min": 15,
-      "cook_min": 20,
-      "ingredients": [{"item": "poulet", "qty": "200g", "note": "bio de préférence"}],
-      "steps": ["Étape 1 précise", "Étape 2 précise"],
+      "prep_min": 10,
+      "cook_min": 15,
+      "ingredients": [
+        {"item": "poulet", "qty": "200g", "note": "bio de préférence"},
+        {"item": "huile d'olive", "qty": "1 c.à.s", "note": "pour la cuisson"},
+        {"item": "sel, poivre", "qty": "", "note": "à ajuster"},
+        {"item": "herbes de Provence", "qty": "1 c.à.c", "note": ""}
+      ],
+      "steps": ["Étape 1 précise", "Étape 2 précise avec assaisonnement"],
       "substitutions": ["Si pas de poulet → dinde ou tofu selon régime"]
     }
+    // ⚠️ UNE RECETTE PAR REPAS = 4 par jour × 7 jours = 28 recettes MINIMUM
   ]` : ''}${isPremium ? `,
   "shopping_list": {
     "week": 1,
@@ -569,8 +575,11 @@ IMPORTANT FINAL :
 - Week-end légèrement plus élaboré (plus de temps cuisine)
 - ⛔ SAISONNALITÉ : uniquement les produits autorisés en ${currentMonth} — pas de produits interdits
 - Adapte STRICTEMENT : allergènes, refus, temps cuisine${isEssential ? `
-- RECETTES : génère AU MINIMUM 7 recettes (une par jour, pour les déjeuners ou dîners principaux)
-- Chaque recette explique COMMENT préparer le plat étape par étape, avec des instructions claires` : ''}`;
+- RECETTES : génère UNE RECETTE PAR REPAS (petit-déjeuner, déjeuner, goûter, dîner = 4 par jour × 7 jours = 28 recettes minimum)
+- Le champ "for_meal" de chaque recette = "Jour Type" exact (ex: "Lundi Petit-déjeuner", "Mardi Déjeuner", "Mercredi Goûter", "Jeudi Dîner")
+- Chaque recette explique COMMENT préparer le plat étape par étape, avec des instructions claires
+- ASSAISONNEMENTS OBLIGATOIRES dans chaque recette : huile (olive, colza…), sel, poivre, herbes, épices, ail, oignon etc. DOIVENT figurer dans la liste "ingredients" de la recette avec leurs quantités
+- Même les petits-déjeuners et goûters simples ont une fiche recette (peut être brève : 2-3 étapes)` : ''}`;
   },
 
   buildChatPrompt(userMessage, profile, planContext) {
@@ -794,13 +803,16 @@ QUALITÉ DES REPAS — OBLIGATOIRE :
 - Les "items" = aliments principaux seulement (protéine, féculent, légume, laitage, fruit)
 - Saisonnalité : utiliser uniquement des produits de saison pour ${new Date().toLocaleDateString('fr-FR', {month:'long'})}
 
-Génère EXACTEMENT 7 jours (Lundi à Dimanche) au même format JSON que le plan original :
+Génère EXACTEMENT 7 jours (Lundi à Dimanche) au même format JSON que le plan original.
+${profile.selectedPlan === 'essential' || profile.selectedPlan === 'premium' ? `RECETTES : UNE RECETTE PAR REPAS (28 minimum). Chaque recette inclut les assaisonnements (huile, sel, poivre, herbes, épices) dans "ingredients".
+"for_meal" = "Jour Type" exact (ex: "Lundi Petit-déjeuner", "Mardi Déjeuner").` : ''}
 {
   "analysis": { "daily_calories": ${cal.target}, "summary": "Résumé des ajustements", ... },
   "week": [
     { "day": "Lundi", "total_calories": ${cal.target}, "meals": [{ "type": "...", "dish_name": "Nom appétissant du plat", "total_calories": ..., "items": [...], "cooking_notes": "..." }] },
     ... 7 jours (Lundi à Dimanche)
-  ]
+  ]${profile.selectedPlan === 'essential' || profile.selectedPlan === 'premium' ? `,
+  "recipes": [ { "name": "...", "for_meal": "Lundi Petit-déjeuner", "ingredients": [...], "steps": [...] }, ... 28 recettes ]` : ''}
 }`;
   },
 
