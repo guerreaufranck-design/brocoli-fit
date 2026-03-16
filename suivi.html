@@ -839,24 +839,47 @@ async function showAiAdaptation(checkinData) {
       tx.classList.remove('hidden');
     }
     // For paid plans: also regenerate the plan JSON in background
-    var isPaid = subscription && (subscription.plan === 'essential' || subscription.plan === 'premium');
+    var userPlan = (profile && profile.selectedPlan) || (subscription && subscription.plan) || 'free';
+    var isPaid = userPlan === 'essential' || userPlan === 'premium';
     if (isPaid && plan) {
+      // Show loading indicator for plan adaptation
+      var adaptLoading = document.createElement('div');
+      adaptLoading.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;font-size:.8rem;color:#92400e;text-align:center';
+      adaptLoading.innerHTML = '⏳ Adaptation de votre plan pour la semaine prochaine en cours… (1-2 min)';
+      tx.parentNode.appendChild(adaptLoading);
       try {
         var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
         var ap = await GEMINI.call(adaptPrompt, true);
+        adaptLoading.remove();
         if (ap && ap.week) {
-          if (window.CHILDREN) { CHILDREN.savePlan(ap); }
+          // MERGE: append new week's days to existing plan (don't replace!)
+          var mergedPlan = JSON.parse(JSON.stringify(plan));
+          mergedPlan.week = (mergedPlan.week || []).concat(ap.week);
+          if (ap.analysis) {
+            mergedPlan.analysis = Object.assign({}, mergedPlan.analysis, ap.analysis);
+          }
+          if (ap.recipes && ap.recipes.length) {
+            mergedPlan.recipes = (mergedPlan.recipes || []).concat(ap.recipes);
+          }
+          if (ap.shopping_list) mergedPlan.shopping_list = ap.shopping_list;
+
+          if (window.CHILDREN) { CHILDREN.savePlan(mergedPlan); }
           else {
-            localStorage.setItem('brocoliPlan', JSON.stringify(ap));
+            localStorage.setItem('brocoliPlan', JSON.stringify(mergedPlan));
             localStorage.setItem('brocoliPlanDate', new Date().toISOString());
           }
+          plan = mergedPlan; // update local reference
+
           // Show a subtle note that plan was updated
           var planNote = document.createElement('div');
           planNote.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.8rem;color:#166534;text-align:center';
-          planNote.innerHTML = '✅ ' + _t('suivi.ai.planUpdated');
+          planNote.innerHTML = '✅ Votre plan a été adapté pour la semaine prochaine. <a href="plan.html" style="color:#166534;font-weight:800;text-decoration:underline">Voir le plan →</a>';
           tx.parentNode.appendChild(planNote);
         }
-      } catch(e2){ console.warn('Plan adapt failed:', e2); }
+      } catch(e2){
+        adaptLoading.remove();
+        console.warn('Plan adapt failed:', e2);
+      }
     }
   } catch(err) {
     console.error('AI adaptation error:', err);

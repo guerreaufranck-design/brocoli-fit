@@ -772,10 +772,13 @@ IMPORTANT :
     }
 
     const cal = _computeDailyCalories(profile);
+    const currentWeekDays = (currentPlan && currentPlan.week) ? currentPlan.week.length : 7;
+    const nextWeekNum = Math.floor(currentWeekDays / 7) + 1;
 
     return `Tu es NutriBot, expert en nutrition pédiatrique de Brocoli.fit.
-Sur base du suivi hebdomadaire, génère un plan nutritionnel ADAPTÉ pour la semaine prochaine (7 jours).
+Sur base du suivi hebdomadaire, génère un plan nutritionnel ADAPTÉ pour la SEMAINE ${nextWeekNum} (7 jours DIFFÉRENTS de la semaine précédente).
 Langue : ${culture.lang || 'français'}.
+IMPORTANT : Les menus doivent être VARIÉS et DIFFÉRENTS des semaines précédentes. Propose de nouveaux plats.
 
 Profil : ${profile?.name || 'Enfant'}, ${profile?.age || '?'} ${profile?.profil === 'bebe' ? 'mois' : 'ans'}, ${profile?.weight || '?'} kg, objectif: ${profile?.objectif || 'alimentation saine'}
 Régime : ${profile?.diet || 'omnivore'}

@@ -24,6 +24,7 @@
     { "source": "/login",               "destination": "/login.html" },
     { "source": "/analyse",             "destination": "/analyse.html" },
     { "source": "/suivi",               "destination": "/suivi.html" },
+    { "source": "/courses",             "destination": "/courses.html" },
     { "source": "/account",             "destination": "/account.html" },
     { "source": "/success",             "destination": "/success.html" },
     { "source": "/cancel",              "destination": "/cancel.html" },
