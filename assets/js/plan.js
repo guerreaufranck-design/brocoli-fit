@@ -224,10 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   // ---- Shopping list (Premium only) ----
   if (userPlan === 'premium') {
-    const consolidated = consolidateShopping(plan.shopping_list);
-    renderShopping(consolidated);
-    // ---- Orange shopping button ----
+    // Use Gemini's shopping_list if available, otherwise build from meals
+    const rawList = plan.shopping_list || buildShoppingFromMeals(plan.week || []);
+    const consolidated = consolidateShopping(rawList);
     if (consolidated) {
+      renderShopping(consolidated);
+      // ---- Orange shopping button (inserted after dayTabs) ----
       const btnWrap = document.createElement('div');
       btnWrap.id = 'shoppingBtnWrap';
       btnWrap.style.cssText = 'text-align:center;margin:1.25rem 0 .5rem';
@@ -285,6 +287,65 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
       `).join('')}`;
+  }
+
+  // ---- Build shopping list from meal items (fallback when Gemini didn't generate one) ----
+  function buildShoppingFromMeals(weekDays) {
+    if (!weekDays || !weekDays.length) return null;
+    // Categorize items by type heuristic
+    const catMap = {
+      'Protéines': { emoji: '🥩', items: {} },
+      'Fruits & Légumes': { emoji: '🥦', items: {} },
+      'Féculents & Céréales': { emoji: '🌾', items: {} },
+      'Produits laitiers': { emoji: '🧀', items: {} },
+      'Autres': { emoji: '🛒', items: {} },
+    };
+    const protKeywords = ['poulet','dinde','boeuf','bœuf','porc','veau','agneau','saumon','thon','cabillaud','sardine','maquereau','crevette','poisson','viande','steak','jambon','oeuf','œuf','tofu','lentille','pois chiche','haricot sec'];
+    const fruitLegKeywords = ['pomme','poire','banane','orange','kiwi','citron','clémentine','fraise','cerise','pêche','abricot','raisin','figue','mangue','ananas','carotte','courgette','tomate','poivron','brocoli','épinard','haricot vert','chou','navet','poireau','endive','betterave','radis','salade','laitue','mâche','champignon','oignon','ail','courge','potimarron','aubergine','concombre','céleri','panais','artichaut','asperge','avocat','fenouil','légume','fruit','compote','soupe','velouté','purée'];
+    const fecKeywords = ['riz','pâte','semoule','quinoa','boulgour','pain','flocon','avoine','céréale','blé','maïs','patate','pomme de terre','farine','muesli','granola','biscotte','crêpe','galette'];
+    const laitKeywords = ['lait','yaourt','yogourt','fromage','beurre','crème','mozzarella','parmesan','emmental','comté','chèvre','roquefort','camembert','petit-suisse','fromage blanc','faisselle','kéfir'];
+
+    function categorize(name) {
+      const n = name.toLowerCase();
+      if (protKeywords.some(k => n.includes(k))) return 'Protéines';
+      if (fruitLegKeywords.some(k => n.includes(k))) return 'Fruits & Légumes';
+      if (fecKeywords.some(k => n.includes(k))) return 'Féculents & Céréales';
+      if (laitKeywords.some(k => n.includes(k))) return 'Produits laitiers';
+      return 'Autres';
+    }
+
+    // Extract all items from all meals all days
+    for (const day of weekDays) {
+      for (const meal of (day.meals || [])) {
+        for (const item of (meal.items || [])) {
+          const name = (item.name || '').trim();
+          if (!name) continue;
+          const cat = categorize(name);
+          const key = name.toLowerCase();
+          if (catMap[cat].items[key]) {
+            // Merge quantities
+            const existing = catMap[cat].items[key];
+            if (item.quantity && existing.qty !== item.quantity) {
+              existing.qty = existing.qty + ' + ' + item.quantity;
+            }
+            existing._count = (existing._count || 1) + 1;
+          } else {
+            catMap[cat].items[key] = { name, qty: item.quantity || '', _count: 1 };
+          }
+        }
+      }
+    }
+
+    // Build categories array (skip empty)
+    const categories = [];
+    for (const [catName, catData] of Object.entries(catMap)) {
+      const items = Object.values(catData.items);
+      if (items.length > 0) {
+        categories.push({ category: catName, emoji: catData.emoji, items: items.map(i => ({ name: i.name, qty: i.qty })) });
+      }
+    }
+    if (!categories.length) return null;
+    return { week: 1, persons: 1, categories, estimated_total: '—' };
   }
 
   // ---- Consolidate shopping list (merge duplicate items per category) ----
