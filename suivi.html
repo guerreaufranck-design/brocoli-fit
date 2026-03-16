@@ -861,10 +861,11 @@ async function showAiAdaptation(checkinData) {
   var overlay  = document.getElementById('aiGenOverlay');
   var overlayFill = document.getElementById('overlayProgressFill');
 
-  // Determine if paid
+  // Determine if paid (match plan.js logic: everything not 'free' is paid)
   var uPlan = (profile && profile.selectedPlan) || (subscription && subscription.plan) || 'free';
-  var isPaid = uPlan === 'essential' || uPlan === 'premium';
+  var isPaid = uPlan !== 'free';
   var nextWeek = Math.floor(((plan && plan.week) ? plan.week.length : 7) / 7) + 1;
+  console.log('[AI] showAiAdaptation — uPlan:', uPlan, 'isPaid:', isPaid, 'nextWeek:', nextWeek, 'plan.week.length:', plan && plan.week ? plan.week.length : 'no plan');
 
   // Reset UI
   if (ld) ld.style.display = 'flex';
@@ -1050,10 +1051,12 @@ function _retryGeneration() {
 
 /* ── Pending generation check (on page load) ───────────────*/
 function checkPendingGeneration() {
+  console.log('[AI] checkPendingGeneration — GEMINI:', !!window.GEMINI, 'plan:', !!plan, 'checkins:', checkins ? checkins.length : 0);
   if (!window.GEMINI || !plan || !checkins || !checkins.length) return;
 
   var uPlan = (profile && profile.selectedPlan) || (subscription && subscription.plan) || 'free';
-  var isPaid = uPlan === 'essential' || uPlan === 'premium';
+  var isPaid = uPlan !== 'free'; // match plan.js logic: everything not 'free' is paid
+  console.log('[AI] checkPendingGeneration — uPlan:', uPlan, 'isPaid:', isPaid, 'profile.selectedPlan:', profile && profile.selectedPlan, 'subscription.plan:', subscription && subscription.plan);
   if (!isPaid) return;
 
   var generatedWeeks = plan.week ? Math.floor(plan.week.length / 7) : 0;
