@@ -61,7 +61,7 @@ function _computeDailyCalories(profile) {
   };
 }
 
-const GEMINI = {
+window.GEMINI = {
 
   async call(prompt, jsonMode = true, timeoutMs = 300000) {
     // ── Appel via la route serverless Vercel /api/gemini ──────
