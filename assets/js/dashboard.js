@@ -473,14 +473,15 @@ function renderChildSelector() {
   html += '</div></div>';
   container.innerHTML = html;
 
-  // Event: switch child
+  // Event: switch child → go directly to programme
   container.querySelectorAll('.child-pill[data-child-id]').forEach(pill => {
     pill.addEventListener('click', () => {
       const childId = pill.dataset.childId;
       if (childId !== activeId) {
         CHILDREN.setActiveChild(childId);
-        window.location.reload();
       }
+      // Navigate directly to the child's programme
+      window.location.href = 'plan.html';
     });
   });
 

@@ -317,7 +317,7 @@
             <div class="ring-sub" data-i18n="suivi.ring.sub">Objectif</div>
           </div>
         </div>
-        <div class="ring-goal-lbl"  id="ringGoalLabel" data-i18n="suivi.ring.defaultlbl">Adhérence au plan</div>
+        <div class="ring-goal-lbl"  id="ringGoalLabel" data-i18n="suivi.ring.defaultlbl">Adhérence au programme</div>
         <div class="ring-goal-desc" id="ringGoalDesc" data-i18n="suivi.ring.defaultdesc">Moyenne des 4 derniers suivis</div>
         <div class="ring-weight-row hidden" id="ringWeightRow">
           <div class="ring-weight-item"><div class="ring-weight-val" id="ringStartWeight">—</div><div class="ring-weight-lbl" data-i18n="suivi.ring.start">Départ</div></div>
@@ -366,7 +366,7 @@
         <div id="aiAdaptText" class="hidden"></div>
       </div>
       <div class="mt-3">
-        <a href="plan.html" class="btn btn-primary btn-sm" data-i18n="suivi.ai.cta">Voir le plan adapté →</a>
+        <a href="plan.html" class="btn btn-primary btn-sm" data-i18n="suivi.ai.cta">Voir le programme adapté →</a>
       </div>
     </div>
 
@@ -431,8 +431,8 @@
 
         <!-- Step 2 : Adhésion -->
         <div class="form-section" data-step="2">
-          <div class="section-label" data-i18n="suivi.step3.label">📋 Étape 3 / 5 — Adhésion au plan</div>
-          <label class="form-lbl" for="ci_adherence" data-i18n="suivi.step3.q">Quelle part du plan avez-vous respectée cette semaine ?</label>
+          <div class="section-label" data-i18n="suivi.step3.label">📋 Étape 3 / 5 — Adhésion au programme</div>
+          <label class="form-lbl" for="ci_adherence" data-i18n="suivi.step3.q">Quelle part du programme avez-vous respectée cette semaine ?</label>
           <div class="range-wrap">
             <input type="range" id="ci_adherence" min="0" max="100" value="70" step="5">
             <span class="range-val" id="adherenceVal">70%</span>
@@ -486,6 +486,13 @@
 
   </div><!-- /appState -->
 </div><!-- /suivi-content -->
+
+<!-- Bottom Quick Nav -->
+<div class="bottom-nav" id="suiviBottomNav">
+  <a href="plan.html">← Mon programme</a>
+  <a href="dashboard.html">📊 Tableau de bord</a>
+  <a href="courses.html" class="bnav-orange">🛒 Courses</a>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -551,10 +558,9 @@ function saveData() {
 
 /* ── Week & date helpers ────────────────────────────────────*/
 function getCurrentWeek() {
-  var pd = window.CHILDREN ? CHILDREN.getPlanDate() : localStorage.getItem('brocoliPlanDate');
-  if (!pd) return checkins.length + 1;
-  var diff = new Date() - new Date(pd);
-  return Math.max(1, Math.ceil(diff / (7*24*60*60*1000)));
+  // The next week to check in = number of completed check-ins + 1
+  // This ensures that after completing week 1's check-in, it shows week 2
+  return Math.min(checkins.length + 1, 4);
 }
 function formatDate(s) {
   try { return new Date(s).toLocaleDateString('fr-FR', {day:'numeric', month:'short', year:'numeric'}); }
@@ -845,7 +851,7 @@ async function showAiAdaptation(checkinData) {
       // Show loading indicator for plan adaptation
       var adaptLoading = document.createElement('div');
       adaptLoading.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;font-size:.8rem;color:#92400e;text-align:center';
-      adaptLoading.innerHTML = '⏳ Adaptation de votre plan pour la semaine prochaine en cours… (1-2 min)';
+      adaptLoading.innerHTML = '⏳ Adaptation de votre programme pour la semaine prochaine en cours… (1-2 min)';
       tx.parentNode.appendChild(adaptLoading);
       try {
         var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
@@ -873,7 +879,7 @@ async function showAiAdaptation(checkinData) {
           // Show a subtle note that plan was updated
           var planNote = document.createElement('div');
           planNote.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.8rem;color:#166534;text-align:center';
-          planNote.innerHTML = '✅ Votre plan a été adapté pour la semaine prochaine. <a href="plan.html" style="color:#166534;font-weight:800;text-decoration:underline">Voir le plan →</a>';
+          planNote.innerHTML = '✅ Votre programme a été adapté pour la semaine prochaine. <a href="plan.html" style="color:#166534;font-weight:800;text-decoration:underline">Voir le programme →</a>';
           tx.parentNode.appendChild(planNote);
         }
       } catch(e2){
