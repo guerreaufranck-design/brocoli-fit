@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brocoli.fit — Mon plan nutritionnel</title>
+  <title>Brocoli.fit — Mon programme nutritionnel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
@@ -75,20 +75,20 @@
 <div class="plan-hero">
   <div class="container">
     <div class="plan-hero-eye" data-i18n="plan.eyebrow">PROGRAMME NUTRITIONNEL PERSONNALISÉ</div>
-    <h1 class="plan-hero-name" id="planHeroName">Plan de Lucas, 8 ans</h1>
+    <h1 class="plan-hero-name" id="planHeroName">Programme de Lucas, 8 ans</h1>
     <p class="plan-hero-meta" id="planHeroMeta">Plan Essentiel · 4 semaines · Généré par nos experts</p>
     <p class="plan-hero-intro" id="planHeroIntro" style="margin-top:1rem;font-size:1.05rem;color:rgba(255,255,255,.85);max-width:600px;margin-left:auto;margin-right:auto;line-height:1.6"></p>
 
     <!-- Free plan upgrade bar -->
     <div class="plan-upgrade-bar" id="upgradeBar" style="display:none">
-      🔓 <span data-i18n="plan.upgrade">Débloquez les recettes détaillées et listes de courses avec le plan </span><strong>Premium 14,90€/mois</strong>
+      🔓 <span data-i18n="plan.upgrade">Débloquez les recettes détaillées et listes de courses avec le </span><strong>Premium 14,90€/mois</strong>
       <a href="login.html?redirect=checkout&plan=premium" class="btn btn-white btn-sm" style="margin-left:.5rem" data-i18n="plan.upgradeCta">Passer au Premium</a>
     </div>
 
     <!-- Hero actions -->
     <div class="plan-hero-btns" style="margin-top:1.5rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
       <a href="dashboard.html" class="btn btn-white btn-sm">📊 <span data-i18n="plan.tracking">Suivi hebdomadaire</span></a>
-      <button class="btn btn-dark btn-sm" onclick="window.print()">🖨️ <span data-i18n="plan.print">Imprimer le plan</span></button>
+      <button class="btn btn-dark btn-sm" onclick="window.print()">🖨️ <span data-i18n="plan.print">Imprimer</span></button>
     </div>
   </div>
 </div>
@@ -126,7 +126,7 @@
   <div class="advice-box" id="adviceBox">
     <div class="advice-title">💚 <span data-i18n="plan.advice">Recommandations personnalisées</span></div>
     <div class="advice-list" id="adviceList">
-      <div class="advice-item">⏳ <span data-i18n="plan.loading">Chargement du plan…</span></div>
+      <div class="advice-item">⏳ <span data-i18n="plan.loading">Chargement du programme…</span></div>
     </div>
   </div>
 
@@ -145,7 +145,7 @@
   <div id="mealsContent">
     <div style="text-align:center;padding:3rem;color:var(--text-muted)">
       <div style="font-size:3rem;margin-bottom:1rem">🥦</div>
-      <p data-i18n="plan.generating">Génération du plan en cours…</p>
+      <p data-i18n="plan.generating">Génération du programme en cours…</p>
     </div>
   </div>
 
@@ -178,6 +178,13 @@
   <button class="chatbot-btn" id="chatToggle">🥦</button>
 </div>
 
+<!-- Bottom Quick Nav -->
+<div class="bottom-nav">
+  <a href="dashboard.html">← Tableau de bord</a>
+  <a href="courses.html" class="bnav-orange">🛒 Liste de courses</a>
+  <a href="suivi.html" class="bnav-primary">📈 Bilan hebdo</a>
+</div>
+
 <div class="toasts" id="toasts"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -186,6 +193,7 @@
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/children.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/gemini.js"></script>
 <script src="assets/js/plan.js"></script>
 <script src="assets/js/chatbot.js"></script>
 </body>

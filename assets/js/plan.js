@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('mealsContent').innerHTML = `
       <div style="text-align:center;padding:3rem">
         <div style="font-size:3rem">🥦</div>
-        <p style="color:var(--text-muted);margin-top:1rem">${_t('dash.noPlanActive') || 'Aucun plan disponible.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${_t('dash.createProgram') || 'Créez votre programme →'}</a></p>
+        <p style="color:var(--text-muted);margin-top:1rem">${_t('dash.noPlanActive') || 'Aucun programme disponible.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${_t('dash.createProgram') || 'Créez votre programme →'}</a></p>
       </div>`;
     return;
   }
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroName = document.getElementById('planHeroName');
   const heroMeta = document.getElementById('planHeroMeta');
   const childName = a.name || profile.name || _t('s.yourChild') || 'votre enfant';
-  if (heroName) heroName.textContent = `${_t('plan.heroOf') || 'Plan de'} ${childName}`;
+  if (heroName) heroName.textContent = `${_t('plan.heroOf') || 'Programme de'} ${childName}`;
   const totalDays = (plan.week || []).length;
   const totalWeeks = Math.ceil(totalDays / 7);
   if (heroMeta) heroMeta.textContent = `Plan ${planLabel(userPlan)} · ${totalWeeks} ${totalWeeks > 1 ? (_t('stat.weeks') || 'semaines') : (_t('stat.week') || 'semaine')} · ${_t('plan.eyebrow') || 'Généré par nos experts'}`;
@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentWeek = 1;
   let currentDay  = 0;
   const isFree = userPlan === 'free';
+  const isPaid = userPlan === 'essential' || userPlan === 'premium';
 
   const weekData = weeks; // { 1: [...7 days], 2: [...], 3: [...], 4: [...] }
 
@@ -128,24 +129,49 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>`;
         return;
       }
-      // Check if week has real data — if not, show check-in prompt
+      // Check if week has real data — if not, show check-in or re-generate prompt
       if (!weekData[w] || !weekData[w].length) {
         const mealsEl = document.getElementById('mealsContent');
         const dayTabsEl = document.getElementById('dayTabs');
         if (dayTabsEl) dayTabsEl.innerHTML = '';
-        if (mealsEl) mealsEl.innerHTML = `
-          <div style="text-align:center;padding:3rem 1.5rem;max-width:500px;margin:2rem auto;background:var(--green-pale);border-radius:1.25rem;border:2px dashed var(--green)">
-            <div style="font-size:3rem;margin-bottom:1rem">📋</div>
-            <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
-              ${_t('plan.checkinNeeded') || 'Bilan nécessaire'}
-            </h3>
-            <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
-              ${_t('plan.checkinNeededDesc') || 'Complétez votre bilan hebdomadaire pour générer les 2 prochaines semaines de programme, adaptées à vos retours.'}
-            </p>
-            <a href="suivi.html" class="btn btn-green btn-sm" style="min-width:200px">
-              📊 ${_t('plan.goToCheckin') || 'Faire mon bilan'}
-            </a>
-          </div>`;
+
+        // Check if user already did the check-in for the previous week
+        const checkins = window.CHILDREN ? CHILDREN.getCheckins() : JSON.parse(localStorage.getItem('brocoliCheckins') || '[]');
+        const hasCheckinForPrevWeek = checkins && checkins.length >= (w - 1) && (w - 1) >= 1;
+
+        if (hasCheckinForPrevWeek && isPaid) {
+          // Check-in exists but adaptation failed or user navigated away — offer re-generate
+          if (mealsEl) mealsEl.innerHTML = `
+            <div style="text-align:center;padding:3rem 1.5rem;max-width:500px;margin:2rem auto;background:var(--green-pale);border-radius:1.25rem;border:2px dashed var(--green)">
+              <div style="font-size:3rem;margin-bottom:1rem">🔄</div>
+              <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
+                ${_t('plan.weekNotReady') || 'Programme pas encore généré'}
+              </h3>
+              <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
+                ${_t('plan.weekNotReadyDesc') || 'Votre bilan a été enregistré mais le programme adapté n\'a pas pu être généré. Relancez la génération ci-dessous.'}
+              </p>
+              <button class="btn btn-green btn-sm" style="min-width:200px" id="regenWeekBtn">
+                🤖 ${_t('plan.regenWeek') || 'Générer la semaine ' + w}
+              </button>
+              <div id="regenStatus" style="margin-top:1rem;display:none"></div>
+            </div>`;
+          const regenBtn = document.getElementById('regenWeekBtn');
+          if (regenBtn) regenBtn.addEventListener('click', () => regenerateWeek(w, checkins, plan, profile));
+        } else {
+          if (mealsEl) mealsEl.innerHTML = `
+            <div style="text-align:center;padding:3rem 1.5rem;max-width:500px;margin:2rem auto;background:var(--green-pale);border-radius:1.25rem;border:2px dashed var(--green)">
+              <div style="font-size:3rem;margin-bottom:1rem">📋</div>
+              <h3 style="font-family:var(--font-heading);color:var(--green-dark);margin-bottom:.75rem">
+                ${_t('plan.checkinNeeded') || 'Bilan nécessaire'}
+              </h3>
+              <p style="color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem;font-size:.95rem">
+                ${_t('plan.checkinNeededDesc') || 'Complétez votre bilan hebdomadaire pour générer les 2 prochaines semaines de programme, adaptées à vos retours.'}
+              </p>
+              <a href="suivi.html" class="btn btn-green btn-sm" style="min-width:200px">
+                📊 ${_t('plan.goToCheckin') || 'Faire mon bilan'}
+              </a>
+            </div>`;
+        }
         return;
       }
       document.querySelectorAll('.week-tab').forEach(t => t.classList.remove('active'));
@@ -305,4 +331,51 @@ function planLabel(p) {
     essential: _t('plan.ess.name')  || 'Essentiel',
     premium:   _t('plan.prem.name') || 'Premium',
   }[p] || _t('plan.free.name') || 'Découverte';
+}
+
+// ---- Re-generate a missing week from plan page ----
+async function regenerateWeek(weekNum, checkins, currentPlan, profile) {
+  const _t = k => (window.I18N && window.I18N.t(k)) || null;
+  const btn = document.getElementById('regenWeekBtn');
+  const status = document.getElementById('regenStatus');
+  if (!btn || !status) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ ' + (_t('plan.regenLoading') || 'Génération en cours… (1-2 min)');
+  status.style.display = 'block';
+  status.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;font-size:.8rem;color:#92400e;text-align:center';
+  status.textContent = _t('plan.regenWait') || 'Ne quittez pas cette page pendant la génération…';
+
+  try {
+    // Use the last check-in for the previous week
+    const lastCheckin = checkins[weekNum - 2] || checkins[checkins.length - 1];
+    if (!lastCheckin || !window.GEMINI) throw new Error('Missing data');
+
+    const adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, lastCheckin, checkins, currentPlan);
+    const ap = await GEMINI.call(adaptPrompt, true, 300000);
+
+    if (ap && ap.week) {
+      // Merge new week days into existing plan
+      const mergedPlan = JSON.parse(JSON.stringify(currentPlan));
+      mergedPlan.week = (mergedPlan.week || []).concat(ap.week);
+      if (ap.analysis) mergedPlan.analysis = Object.assign({}, mergedPlan.analysis, ap.analysis);
+      if (ap.recipes && ap.recipes.length) mergedPlan.recipes = (mergedPlan.recipes || []).concat(ap.recipes);
+      if (ap.shopping_list) mergedPlan.shopping_list = ap.shopping_list;
+
+      if (window.CHILDREN) CHILDREN.savePlan(mergedPlan);
+      else localStorage.setItem('brocoliPlan', JSON.stringify(mergedPlan));
+
+      status.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.8rem;color:#166534;text-align:center';
+      status.innerHTML = '✅ ' + (_t('plan.regenSuccess') || 'Programme généré ! Rechargement…');
+      setTimeout(() => location.reload(), 1200);
+    } else {
+      throw new Error('Invalid response');
+    }
+  } catch (e) {
+    console.error('Week regen failed:', e);
+    btn.disabled = false;
+    btn.textContent = '🤖 ' + (_t('plan.regenWeek') || 'Générer la semaine ' + weekNum);
+    status.style.cssText = 'margin-top:1rem;padding:.75rem 1rem;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:.75rem;font-size:.8rem;color:#991b1b;text-align:center';
+    status.textContent = _t('plan.regenError') || 'Erreur lors de la génération. Réessayez ou contactez le support.';
+  }
 }

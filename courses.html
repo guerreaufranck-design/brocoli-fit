@@ -121,7 +121,7 @@
     <span class="logo-brocoli" style="font-size:1.5rem">Brocoli</span><span class="logo-dotfit">.fit</span>
   </a>
   <div style="display:flex;gap:.75rem;align-items:center">
-    <a href="plan.html" class="btn btn-outline btn-sm">📋 <span data-i18n="courses.backToPlan">Mon plan</span></a>
+    <a href="plan.html" class="btn btn-outline btn-sm">📋 <span data-i18n="courses.backToPlan">Mon programme</span></a>
     <a href="dashboard.html" class="btn btn-ghost btn-sm" data-i18n="plan.dashboard">Mon espace</a>
   </div>
 </nav>
@@ -150,6 +150,13 @@
       <p style="color:var(--text-muted)" data-i18n="courses.loading">Chargement…</p>
     </div>
   </div>
+</div>
+
+<!-- Bottom Quick Nav -->
+<div class="bottom-nav">
+  <a href="plan.html">← Mon programme</a>
+  <a href="dashboard.html">📊 Tableau de bord</a>
+  <a href="suivi.html" class="bnav-primary">📈 Bilan hebdo</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -195,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     content.innerHTML = `
       <div class="courses-empty">
         <div class="courses-empty-icon">🥦</div>
-        <p style="color:var(--text-muted)">${_t('dash.noPlanActive') || 'Aucun plan disponible.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${_t('dash.createProgram') || 'Créez votre programme →'}</a></p>
+        <p style="color:var(--text-muted)">${_t('dash.noPlanActive') || 'Aucun programme disponible.'} <a href="questionnaire.html" style="color:var(--green-dark);font-weight:700">${_t('dash.createProgram') || 'Créez votre programme →'}</a></p>
       </div>`;
     return;
   }

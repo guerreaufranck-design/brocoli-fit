@@ -1412,6 +1412,42 @@ ul, ol { list-style: none; }
   display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap;
 }
 
+/* ── Bottom Quick Nav ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+  background: #fff; border-top: 1px solid var(--border);
+  padding: .625rem var(--pad) calc(.625rem + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+}
+.bottom-nav a, .bottom-nav button {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .5rem 1rem; border-radius: var(--r-full);
+  font-size: var(--text-sm); font-weight: 800;
+  text-decoration: none; border: 1.5px solid var(--border);
+  background: #fff; color: var(--text); cursor: pointer;
+  transition: all .15s; white-space: nowrap; flex-shrink: 0;
+}
+.bottom-nav a:hover, .bottom-nav button:hover {
+  background: var(--green-light); border-color: var(--green); color: var(--green-dark);
+}
+.bottom-nav .bnav-primary {
+  background: var(--green-dark); color: #fff; border-color: var(--green-dark);
+}
+.bottom-nav .bnav-primary:hover {
+  background: var(--green); border-color: var(--green);
+}
+.bottom-nav .bnav-orange {
+  background: linear-gradient(135deg, #FF8C42, #e07020); color: #fff; border-color: #FF8C42;
+}
+.bottom-nav .bnav-orange:hover {
+  background: linear-gradient(135deg, #e07020, #c86018); border-color: #e07020;
+}
+/* Add padding to page content so bottom nav doesn't overlap */
+.plan-page .plan-content,
+.courses-content { padding-bottom: 5rem; }
+@media print { .bottom-nav { display: none; } }
+
 /* ── Safe area iOS (notch, home bar) ── */
 @supports (padding: env(safe-area-inset-bottom)) {
   .q-footer   { padding-bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
