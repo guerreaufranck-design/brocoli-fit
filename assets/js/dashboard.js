@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setText('ds-imc',    calcBMI?.(profile.weight, profile.height) || '—');
   setText('ds-plan',   planLabel(userPlan));
 
-  // ---- Plan preview in "Mon plan" tab ----
+  // ---- Plan preview in "Mon programme" tab ----
   renderPlanPreview(plan, profile);
 
   // ---- AI advice timeline from history ----
@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resetCheckinForm();
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = `🧠 <span>${t('ci.submit') || 'Analyser et ajuster mon plan'}</span>`;
+      btn.innerHTML = `🧠 <span>${t('ci.submit') || 'Analyser et ajuster mon programme'}</span>`;
     }
 
     // Hide check-in banner

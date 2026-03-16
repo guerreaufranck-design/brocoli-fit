@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${t('q.freeLimitDesc', 'Le plan gratuit inclut un seul programme de 4 semaines. Pour créer de nouveaux programmes pour d\'autres enfants, passez à un plan supérieur.')}
         </p>
         <a href="plan.html" class="btn btn-green" style="margin-bottom:.75rem;display:inline-block">
-          ${t('q.freeLimitViewPlan', '📋 Voir mon plan actuel')}
+          ${t('q.freeLimitViewPlan', '📋 Voir mon programme actuel')}
         </a>
         <div style="margin-top:1rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
           <a href="login.html?redirect=checkout&plan=essential" class="btn btn-dark btn-sm" onclick="localStorage.removeItem('brocoliPlan')">
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (nextLabel) {
       if (currentStep === TOTAL_STEPS) {
-        nextLabel.textContent = t('q.generate', '🥦 Générer mon plan — 4 semaines !');
+        nextLabel.textContent = t('q.generate', '🥦 Générer mon programme — 4 semaines !');
         nextBtn?.classList.add('btn-secondary');
         nextBtn?.classList.remove('btn-primary');
       } else {
