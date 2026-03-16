@@ -820,8 +820,10 @@ async function submitCheckin() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (window.showToast) showToast(_t('suivi.toast.saved'), 'success');
 
-  // AI feedback for ALL plans (not just premium)
-  if (window.GEMINI) showAiAdaptation(data);
+  // AI feedback for ALL plans (not just premium) — AWAIT to block until complete
+  if (window.GEMINI) {
+    await showAiAdaptation(data);
+  }
 
   if (btn) { btn.disabled = false; btn.innerHTML = '<span>💚</span><span>' + _t('suivi.btn.submit') + '</span>'; }
 }
@@ -908,10 +910,24 @@ async function showAiAdaptation(checkinData) {
   }
 
   // ── STEP 2: Generate next week (paid plans only) ───────
-  if (isPaid && plan) {
-    await _generateNextWeek(checkinData, nextWeek);
+  if (isPaid) {
+    if (!plan) {
+      console.error('[AI] plan is null — reloading from storage');
+      loadData(); // try reloading
+    }
+    if (plan) {
+      await _generateNextWeek(checkinData, nextWeek);
+    } else {
+      console.error('[AI] plan still null after reload — cannot generate');
+      if (genStat) {
+        genStat.style.display = 'block';
+        genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:.75rem;font-size:.85rem;color:#991b1b;text-align:center';
+        genStat.innerHTML = 'Aucun programme trouvé. Créez d\'abord un programme depuis le questionnaire.';
+      }
+    }
   } else {
     // Free plan: just show the feedback, done
+    console.log('[AI] Plan:', uPlan, '— skipping week generation (free plan)');
     if (step1Dot) step1Dot.style.background = 'var(--green)';
     if (stepLbl) stepLbl.textContent = '✅ ' + (_t('suivi.analysisDone') || 'Analyse terminée');
   }
@@ -935,74 +951,95 @@ async function _generateNextWeek(checkinData, nextWeek) {
   if (overlayTitle) overlayTitle.textContent = _t('suivi.genOverlayTitle') || 'Génération de la semaine ' + nextWeek + '…';
   if (overlayDesc) overlayDesc.textContent = _t('suivi.genOverlayDesc') || 'Ne quittez pas cette page pendant la génération du programme.';
 
-  // Animate progress bar (fake progress for UX, real completion at end)
+  // Animate progress bar
   var progress = 0;
   var progressInterval = setInterval(function() {
     progress = Math.min(progress + 1, 85);
     if (overlayFill) overlayFill.style.width = progress + '%';
   }, 1500);
 
-  // Show inline status
   if (genStat) {
     genStat.style.display = 'block';
     genStat.style.cssText = 'display:block;margin-top:1rem;padding:.75rem 1rem;background:#fffbeb;border:1.5px solid #fbbf24;border-radius:.75rem;font-size:.8rem;color:#92400e;text-align:center';
     genStat.innerHTML = '⏳ ' + (_t('suivi.genInProgress') || 'Génération de la semaine ' + nextWeek + ' en cours… (1-2 min)');
   }
 
-  try {
-    var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
-    var ap = await GEMINI.call(adaptPrompt, true, 300000);
+  var MAX_RETRIES = 2;
+  var lastError = null;
 
-    clearInterval(progressInterval);
-    if (overlayFill) overlayFill.style.width = '100%';
+  for (var attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      console.log('[AI] _generateNextWeek attempt', attempt, '/', MAX_RETRIES, 'for week', nextWeek);
+      var adaptPrompt = GEMINI.buildCheckinAdaptPrompt(profile, checkinData, checkins, plan);
+      var ap = await GEMINI.call(adaptPrompt, true, 300000);
 
-    if (ap && ap.week) {
-      // MERGE: append new week's days to existing plan
-      var mergedPlan = JSON.parse(JSON.stringify(plan));
-      mergedPlan.week = (mergedPlan.week || []).concat(ap.week);
-      if (ap.analysis) mergedPlan.analysis = Object.assign({}, mergedPlan.analysis, ap.analysis);
-      if (ap.recipes && ap.recipes.length) mergedPlan.recipes = (mergedPlan.recipes || []).concat(ap.recipes);
-      if (ap.shopping_list) mergedPlan.shopping_list = ap.shopping_list;
+      if (ap && ap.week && Array.isArray(ap.week) && ap.week.length >= 7) {
+        clearInterval(progressInterval);
+        if (overlayFill) overlayFill.style.width = '100%';
 
-      if (window.CHILDREN) CHILDREN.savePlan(mergedPlan);
-      else {
-        localStorage.setItem('brocoliPlan', JSON.stringify(mergedPlan));
-        localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+        // MERGE: append new week's days to existing plan
+        var mergedPlan = JSON.parse(JSON.stringify(plan));
+        mergedPlan.week = (mergedPlan.week || []).concat(ap.week.slice(0, 7)); // exactly 7 days
+        if (ap.analysis) mergedPlan.analysis = Object.assign({}, mergedPlan.analysis, ap.analysis);
+        if (ap.recipes && ap.recipes.length) mergedPlan.recipes = (mergedPlan.recipes || []).concat(ap.recipes);
+        if (ap.shopping_list) mergedPlan.shopping_list = ap.shopping_list;
+
+        if (window.CHILDREN) CHILDREN.savePlan(mergedPlan);
+        else {
+          localStorage.setItem('brocoliPlan', JSON.stringify(mergedPlan));
+          localStorage.setItem('brocoliPlanDate', new Date().toISOString());
+        }
+        plan = mergedPlan;
+        console.log('[AI] ✅ Week', nextWeek, 'generated successfully —', ap.week.length, 'days,', (ap.recipes || []).length, 'recipes');
+
+        // Success UI
+        if (step2Dot) step2Dot.style.background = 'var(--green)';
+        if (stepLbl) stepLbl.textContent = '✅ ' + (_t('suivi.genDone') || 'Programme semaine ' + nextWeek + ' généré !');
+        if (genStat) {
+          genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem 1.25rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.9rem;color:#166534;text-align:center';
+          genStat.innerHTML = '<div style="font-size:1.5rem;margin-bottom:.5rem">🎉</div><strong>' +
+            (_t('suivi.genSuccess') || 'Semaine ' + nextWeek + ' générée avec succès !') + '</strong><br>' +
+            '<span style="font-size:.8rem;color:#166534">' + (_t('suivi.genSuccessDesc') || 'Le programme a été adapté en fonction de vos retours.') + '</span>';
+        }
+        if (actions) {
+          actions.style.display = 'block';
+          actions.innerHTML = '<a href="plan.html" class="btn btn-green" style="min-width:250px;margin-top:.5rem">📋 ' +
+            (_t('suivi.genViewPlan') || 'Voir la semaine ' + nextWeek + ' →') + '</a>';
+        }
+        // Hide overlay on success
+        setTimeout(function() { if (overlay) overlay.style.display = 'none'; }, 800);
+        return; // SUCCESS — exit function
+      } else {
+        var weekLen = ap && ap.week ? ap.week.length : 0;
+        throw new Error('Invalid response: week has ' + weekLen + ' days (need 7)');
       }
-      plan = mergedPlan;
-
-      // Success UI
-      if (step2Dot) step2Dot.style.background = 'var(--green)';
-      if (stepLbl) stepLbl.textContent = '✅ ' + (_t('suivi.genDone') || 'Programme semaine ' + nextWeek + ' généré !');
-      if (genStat) {
-        genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem 1.25rem;background:#f0fdf4;border:1.5px solid #86efac;border-radius:.75rem;font-size:.9rem;color:#166534;text-align:center';
-        genStat.innerHTML = '<div style="font-size:1.5rem;margin-bottom:.5rem">🎉</div><strong>' +
-          (_t('suivi.genSuccess') || 'Semaine ' + nextWeek + ' générée avec succès !') + '</strong><br>' +
-          '<span style="font-size:.8rem;color:#166534">' + (_t('suivi.genSuccessDesc') || 'Le programme a été adapté en fonction de vos retours.') + '</span>';
+    } catch(e) {
+      lastError = e;
+      console.error('[AI] Attempt', attempt, 'failed:', e.message);
+      if (attempt < MAX_RETRIES) {
+        // Update UI for retry
+        if (genStat) genStat.innerHTML = '🔄 Tentative ' + (attempt + 1) + '/' + MAX_RETRIES + '… ' +
+          (_t('suivi.genInProgress') || 'Génération en cours…');
+        if (overlayDesc) overlayDesc.textContent = 'Nouvelle tentative en cours…';
+        // Reset progress bar for retry
+        progress = 0;
+        if (overlayFill) overlayFill.style.width = '0%';
       }
-      if (actions) {
-        actions.style.display = 'block';
-        actions.innerHTML = '<a href="plan.html" class="btn btn-green" style="min-width:250px;margin-top:.5rem">📋 ' +
-          (_t('suivi.genViewPlan') || 'Voir la semaine ' + nextWeek + ' →') + '</a>';
-      }
-    } else {
-      throw new Error('Invalid response: no week data');
     }
-  } catch(e) {
-    clearInterval(progressInterval);
-    console.error('Week generation failed:', e);
-    if (step2Dot) step2Dot.style.background = '#e53935';
-    if (stepLbl) stepLbl.textContent = '❌ ' + (_t('suivi.genFailed') || 'Génération échouée');
-    if (genStat) {
-      genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem 1.25rem;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:.75rem;font-size:.85rem;color:#991b1b;text-align:center';
-      genStat.innerHTML = '<div style="margin-bottom:.75rem">' + (_t('suivi.genError') || 'La génération a échoué. Vous pouvez réessayer.') + '</div>' +
-        '<button class="btn btn-outline btn-sm" onclick="_retryGeneration()" style="border-color:#991b1b;color:#991b1b">🔄 ' +
-        (_t('suivi.genRetry') || 'Réessayer') + '</button>';
-    }
-  } finally {
-    // Always remove overlay
-    setTimeout(function() { if (overlay) overlay.style.display = 'none'; }, 800);
   }
+
+  // All retries failed
+  clearInterval(progressInterval);
+  console.error('[AI] ❌ All', MAX_RETRIES, 'attempts failed. Last error:', lastError);
+  if (step2Dot) step2Dot.style.background = '#e53935';
+  if (stepLbl) stepLbl.textContent = '❌ ' + (_t('suivi.genFailed') || 'Génération échouée');
+  if (genStat) {
+    genStat.style.cssText = 'display:block;margin-top:1rem;padding:1rem 1.25rem;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:.75rem;font-size:.85rem;color:#991b1b;text-align:center';
+    genStat.innerHTML = '<div style="margin-bottom:.75rem">' + (_t('suivi.genError') || 'La génération a échoué. Vous pouvez réessayer.') + '</div>' +
+      '<button class="btn btn-outline btn-sm" onclick="_retryGeneration()" style="border-color:#991b1b;color:#991b1b">🔄 ' +
+      (_t('suivi.genRetry') || 'Réessayer') + '</button>';
+  }
+  setTimeout(function() { if (overlay) overlay.style.display = 'none'; }, 800);
 }
 
 function _retryGeneration() {
